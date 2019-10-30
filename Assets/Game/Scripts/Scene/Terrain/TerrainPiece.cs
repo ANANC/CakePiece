@@ -9,10 +9,10 @@ public class TerrainPiece : BaseSceneObject
     /// </summary>
     public enum Direction
     {
+        Not,    //不可移动
         Flat,   //平面
         Up,     //上升
         Down,   //下沉
-        Not,    //不可移动
     }
 
     /// <summary>
@@ -24,13 +24,29 @@ public class TerrainPiece : BaseSceneObject
         Loop,   //循环
     }
 
+    /// <summary>
+    ///     ↗z
+    ///    /         
+    ///   /-----------/→x
+    ///  /    |      /
+    /// /-----|-----/
+    ///       |
+    ///      ↓ y
+    /// </summary>
+    protected Vector3 m_SpacePosition;
     protected Direction m_Direction;
     protected Space m_Space;
 
-    public TerrainPiece(Vector3 position, Direction direction, Space space) : base(position)
+    public TerrainPiece(int id, Vector3 spacePosition, Vector3 position, Direction direction, Space space) : base(id,position)
     {
+        m_SpacePosition = spacePosition;
         m_Direction = direction;
         m_Space = space;
+    }
+
+    public Vector3 GetSpacePosition()
+    {
+        return m_SpacePosition;
     }
 
     public Direction GetDirection()
