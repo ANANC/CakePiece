@@ -18,4 +18,9 @@ public class FrameworkEntrance : MonoBehaviour
     {
         Framework.Core.Update();
     }
+
+    void OnDestroy()
+    {
+        Framework.Core.Destroy();
+    }
 }

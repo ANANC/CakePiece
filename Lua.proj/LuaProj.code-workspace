@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "..\\Assets\\Game\\Lua"
+		},
+		{
+			"path": "F:\\SelfEnvironment\\CakePiece\\Assets\\Framework\\Lua"
 		}
 	]
 }

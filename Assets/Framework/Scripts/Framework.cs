@@ -24,36 +24,48 @@ public class Framework
         {
             if(m_RootGo == null)
             {
-                m_RootGo = GameObject.Find(FrameworkDefine.FrameworkGameObjectName);
+                m_RootGo = GameObject.Find(FrameworkDefine.ROOT_GAMEOBJECT_NAME);
             }
             return m_RootGo;
         }
     }
 
-    Managers m_Managers;
+    private Managers m_Managers;
     public Managers Mgr
     {
         get { return m_Managers; }
     }
 
+    private States m_States;
+
     private Framework()
     {
         m_Managers = new Managers();
+        m_States = new States();
     }
 
     public void Init()
     {
         m_Managers.Init();
+        m_States.Init();
     }
 
     public void Start()
     {
         m_Managers.Start();
+        m_States.Start();
     }
 
     public void Update()
     {
         m_Managers.Update();
+        m_States.Update();
+    }
+
+    public void Destroy()
+    {
+        m_Managers.Destroy();
+        m_States.Destroy();
     }
 
 }

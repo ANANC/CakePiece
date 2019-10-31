@@ -9,7 +9,7 @@ public class Entrance : MonoBehaviour
     {
         GameObject framework = new GameObject("FrameworkEntrance");
         framework.AddComponent<FrameworkEntrance>();
-
-        GameObject.Destroy(this);
+        
+        GameObject.Destroy(this.gameObject);
     }
 }

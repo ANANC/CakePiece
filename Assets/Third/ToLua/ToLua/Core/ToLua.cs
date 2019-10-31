@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using Debug = System.Diagnostics.Debug;
 #if UNITY_EDITOR  
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -526,6 +526,7 @@ namespace LuaInterface
                 int end = LuaConst.toluaDir.LastIndexOf("/Lua");
                 string dir = LuaConst.toluaDir.Substring(start, end - start);
                 dir += "/Core/ToLua.cs";
+                UnityEngine.Debug.Log("GetToLuaInstanceID path:" + dir);
                 _instanceID = AssetDatabase.LoadAssetAtPath(dir, typeof(MonoScript)).GetInstanceID();//"Assets/ToLua/Core/ToLua.cs"
             }
         }
