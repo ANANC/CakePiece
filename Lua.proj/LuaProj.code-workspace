@@ -4,7 +4,10 @@
 			"path": "..\\Assets\\Game\\Lua"
 		},
 		{
-			"path": "F:\\SelfEnvironment\\CakePiece\\Assets\\Framework\\Lua"
+			"path": "..\\Assets\\Framework\\Lua"
+		},
+		{
+			"path": "..\\Assets\\Third\\ToLua\\ToLua\\Lua"
 		}
 	]
 }
