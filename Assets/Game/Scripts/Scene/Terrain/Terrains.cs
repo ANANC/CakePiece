@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Terrains
 {
-    protected enum Space
+    protected enum Axial
     {
         X,
         Y,
@@ -30,15 +30,16 @@ public class Terrains
     private Vector3 FloorPositionCorrection(Vector3 spacePosition)
     {
         Vector3 newPos = spacePosition;
-        newPos = SpaceDirectionCorrection(Space.X, newPos);
-        newPos = SpaceDirectionCorrection(Space.Z, newPos);
+        newPos = SpaceDirectionCorrection(Axial.X, newPos);
+        newPos = SpaceDirectionCorrection(Axial.Z, newPos);
         return newPos;
     }
 
-    private Vector3 SpaceDirectionCorrection(Space space, Vector3 spacePosition)
+    //-
+    private Vector3 SpaceDirectionCorrection(Axial axial, Vector3 spacePosition)
     {
-        float value = space == Space.X ? spacePosition.x : (space == Space.Y ? spacePosition.y : spacePosition.z);
-        float round = space == Space.X ? m_Width : (space == Space.Y ? m_Height : m_FloorCount);
+        float value = axial == Axial.X ? spacePosition.x : (axial == Axial.Y ? spacePosition.y : spacePosition.z);
+        float round = axial == Axial.X ? m_Width : (axial == Axial.Y ? m_Height : m_FloorCount);
 
         bool update = false;
 
@@ -56,26 +57,26 @@ public class Terrains
         if (update)
         {
             Vector3 newSpacePos = spacePosition;
-            UpdateSpaceValue(space, newSpacePos, value);
+            UpdateSpaceValue(axial, newSpacePos, value);
 
             int pieceId = SpacePositionToId(newSpacePos);
             TerrainPiece curPiece = m_TerrainPieces[pieceId];
             if (curPiece.GetSpace() == TerrainPiece.Space.Loop)
             {
-                UpdateSpaceValue(space, newSpacePos, value);
+                UpdateSpaceValue(axial, newSpacePos, value);
             }
         }
 
         return spacePosition;
     }
 
-    private Vector3 UpdateSpaceValue(Space space,Vector3 position,float value)
+    private Vector3 UpdateSpaceValue(Axial axial, Vector3 position,float value)
     {
-        if (space == Space.X)
+        if (axial == Axial.X)
         {
             position.x = value;
         }
-        else if (space == Space.Y)
+        else if (axial == Axial.Y)
         {
             position.y = value;
         }
@@ -89,42 +90,42 @@ public class Terrains
 
     public Vector3 GetNextSpacePosition(Vector3 curSpacePos, Vector3 direction)
     {
-        Vector3 nextPos = curSpacePos;
+        Vector3 nextSpacePos = curSpacePos;
         direction.y = 0;
-        nextPos += direction;
-        nextPos = FloorPositionCorrection(nextPos);
+        nextSpacePos += direction;
+        nextSpacePos = FloorPositionCorrection(nextSpacePos);
 
         bool loop = false;
-        Vector3 lastPos = nextPos;
+        Vector3 lastPos = nextSpacePos;
         do
         {
             loop = false;
 
-            int pieceId = SpacePositionToId(nextPos);
+            int pieceId = SpacePositionToId(nextSpacePos);
             TerrainPiece curPiece = m_TerrainPieces[pieceId];
             TerrainPiece.Direction pieceDirection = curPiece.GetDirection();
 
             if (pieceDirection == TerrainPiece.Direction.Down)
             {
-                nextPos += Vector3.up;
+                nextSpacePos += Vector3.up;
                 loop = true;
             }
             else if (pieceDirection == TerrainPiece.Direction.Up)
             {
-                nextPos += Vector3.down;
+                nextSpacePos += Vector3.down;
                 loop = true;
             }
             else if (pieceDirection == TerrainPiece.Direction.Not)
             {
-                nextPos = lastPos;
+                nextSpacePos = lastPos;
             }
 
-            nextPos = SpaceDirectionCorrection(Space.Y, nextPos);
-            lastPos = nextPos;
+            nextSpacePos = SpaceDirectionCorrection(Axial.Y, nextSpacePos);
+            lastPos = nextSpacePos;
 
         } while (loop);
 
 
-        return nextPos;
+        return nextSpacePos;
     }
 }
