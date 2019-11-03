@@ -9,12 +9,17 @@ TerrainPiece = class(BaseSceneObject)
 --       |
 --       ↓ y 层级
 
-function TerrainPiece:ctor(id, position, spacePosition, direction, space)
+function TerrainPiece:ctor(id, position, index, spacePosition, direction, space)
     self[BaseSceneObject]:ctor(id, position)
 
+    self.pIndex = index
     self.pSpacePosition = spacePosition
     self.pDirection = direction
     self.pSpace = space
+end
+
+function TerrainPiece:GetIndex()
+    return self.pIndex
 end
 
 function TerrainPiece:GetSpacePosition()

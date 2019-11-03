@@ -11,12 +11,14 @@ end
 function EngineGame:Start()
     print("EngineGame Start")
 
-
 	-- 调试
     self.Debug()
-    
+
+    -- 框架初始化
+    require "Engine/Engine"
+
     -- 業務入口
-    require "Game"
+    require "Client/Game"
     Game:Start()
 
 end

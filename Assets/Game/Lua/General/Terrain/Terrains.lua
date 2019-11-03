@@ -1,11 +1,60 @@
 Terrains = class()
 
-function Terrains:ctor()
-    self.pWidth = 0
-    self.pHeight = 0
-    self.pFloorCount = 0
+require "General/SceneObject/TerrainPiece/TerrainPiece"
+
+function Terrains:ctor(terrainData)
+    self.pWidth = terrainData.Width
+    self.pHeight = terrainData.Height
+    self.pFloorCount = terrainData.FloorCount
     self.pFloorPieceCount = self.pWidth * self.pHeight
     self.pTerrainPieces = {}
+
+    self:Create(terrainData)
+end
+
+function Terrains:Create(terrainData)
+    local x = 0
+    local y = 0
+    local pieceCount = 1
+
+    local pieceSize = Vector3.New(terrainData.Building.PieceSize.Width, 0, terrainData.Building.PieceSize.Height) 
+    local pieceSizeRaius = pieceSize:Mul(0.5)
+
+    for floorCount = 1, self.pFloorCount do 
+        local initPos = Vector3.New(terrainData.Building.SideGap.Width, floorCount * terrainData.Building.FloorHeight, terrainData.Building.SideGap.Height ) 
+        
+        for floorPieceCount = 1, self.pFloorPieceCount do
+
+            local pieceData = terrainData.Piece[pieceCount]
+
+            local curPos = initPos:Add(Vector3.New(pieceSizeRaius.x + pieceSize.x * x, 0, pieceSizeRaius.y + pieceSize.y * y ))
+            local piece = self:CreateTerrainPiece(pieceData.Id, curPos, pieceCount, Vector3.New(x, floorCount, y), pieceData.Direction, pieceData.Spcae )
+            self.pTerrainPieces[pieceCount] = piece
+
+            x = x + 1
+            if x % self.pWidth == 0 then
+                x = 0
+                initPos.x = initPos.x + terrainData.Building.PieceSize.SideGap.Width
+            else
+                initPos.x = initPos.x + terrainData.Building.PieceSize.PieceGap.Width
+            end
+
+            y = y + 1
+            if y % self.pHeight == 0 then
+                y = 0
+                initPos.y = initPos.y + terrainData.Building.PieceSize.SideGap.Height
+            else
+                initPos.y = initPos.y + terrainData.Building.PieceSize.PieceGap.Height
+            end
+
+            pieceCount = pieceCount + 1
+        end
+    end
+end
+
+function Terrain:CreateTerrainPiece(id, position, index, spacePosition, direction, spcae)
+    local piece = TerrainPiece.new(id, position, index, spacePosition, direction, spcae)
+    return piece
 end
 
 --得到下一个空间位置
