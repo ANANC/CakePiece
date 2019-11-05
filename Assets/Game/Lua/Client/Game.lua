@@ -10,7 +10,9 @@ require "General/Data/TerrainData"
 require "Client/Terrain/CTerrains"
 
 function Game:Start()
+    print("Game Start")
 
-    local curTerrains = CTerrains.new(TerrainData:GetData())
-
+    local curTerrains = CTerrains.new()
+    curTerrains:Create(TerrainData:GetData())
+    
 end

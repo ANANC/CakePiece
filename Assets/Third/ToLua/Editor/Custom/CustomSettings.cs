@@ -45,7 +45,11 @@ public static class CustomSettings
 
     //在这里添加你要导出注册到lua的类型列表
     public static BindType[] customTypeList =
-    {                
+    {           
+        //------------------------  Game  --------------------------------
+        _GT(typeof(GameUtil)),
+        //----------------------------------------------------------------
+
         //------------------------为例子导出--------------------------------
         //_GT(typeof(TestEventListener)),
         //_GT(typeof(TestProtol)),

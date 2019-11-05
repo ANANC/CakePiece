@@ -9,5 +9,8 @@
 		{
 			"path": "..\\Assets\\Third\\ToLua\\ToLua\\Lua"
 		}
-	]
+	],
+	"settings": {
+		"search.useReplacePreview": false
+	}
 }

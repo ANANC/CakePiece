@@ -10,8 +10,6 @@ TerrainPiece = class(BaseSceneObject)
 --       ↓ y 层级
 
 function TerrainPiece:ctor(id, position, index, spacePosition, direction, space)
-    self[BaseSceneObject]:ctor(id, position)
-
     self.pIndex = index
     self.pSpacePosition = spacePosition
     self.pDirection = direction

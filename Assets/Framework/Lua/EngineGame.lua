@@ -5,7 +5,7 @@
 EngineGame = {}
 
 function EngineGame.Debug ()
-	local  breakInfoFun,xpcallFun = require("LuaDebug")("localhost",7003)
+	local  breakInfoFun,xpcallFun = require("Engine/LuaDebug")("localhost",7003)
 end
 
 function EngineGame:Start()
