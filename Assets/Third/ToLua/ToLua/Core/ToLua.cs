@@ -36,7 +36,7 @@ using System.Reflection;
 
 namespace LuaInterface
 {
-    public static class ToLua
+    public static partial class ToLua
     {
         public delegate object LuaTableToVar(IntPtr L, int pos);
         public delegate void LuaPushVarObject(IntPtr L, object o);
@@ -69,54 +69,54 @@ namespace LuaInterface
             ToVarMap[LuaValueType.Bounds] = ToObjectBounds;
         }
 
-        public static void OpenLibs(IntPtr L)
-        {
-            AddLuaLoader(L);
-            LuaDLL.tolua_atpanic(L, Panic);
-            LuaDLL.tolua_pushcfunction(L, Print);
-            LuaDLL.lua_setglobal(L, "print");
-            LuaDLL.tolua_pushcfunction(L, DoFile);
-            LuaDLL.lua_setglobal(L, "dofile");
-            LuaDLL.tolua_pushcfunction(L, LoadFile);
-            LuaDLL.lua_setglobal(L, "loadfile");
+//        public static void OpenLibs(IntPtr L)
+//        {
+//            AddLuaLoader(L);
+//            LuaDLL.tolua_atpanic(L, Panic);
+//            LuaDLL.tolua_pushcfunction(L, Print);
+//            LuaDLL.lua_setglobal(L, "print");
+//            LuaDLL.tolua_pushcfunction(L, DoFile);
+//            LuaDLL.lua_setglobal(L, "dofile");
+//            LuaDLL.tolua_pushcfunction(L, LoadFile);
+//            LuaDLL.lua_setglobal(L, "loadfile");
 
-            LuaDLL.lua_getglobal(L, "tolua");
+//            LuaDLL.lua_getglobal(L, "tolua");
 
-            LuaDLL.lua_pushstring(L, "isnull");
-            LuaDLL.lua_pushcfunction(L, IsNull);
-            LuaDLL.lua_rawset(L, -3);
+//            LuaDLL.lua_pushstring(L, "isnull");
+//            LuaDLL.lua_pushcfunction(L, IsNull);
+//            LuaDLL.lua_rawset(L, -3);
 
-            LuaDLL.lua_pushstring(L, "typeof");
-            LuaDLL.lua_pushcfunction(L, GetClassType);
-            LuaDLL.lua_rawset(L, -3);
+//            LuaDLL.lua_pushstring(L, "typeof");
+//            LuaDLL.lua_pushcfunction(L, GetClassType);
+//            LuaDLL.lua_rawset(L, -3);
 
-            LuaDLL.lua_pushstring(L, "tolstring");
-            LuaDLL.tolua_pushcfunction(L, BufferToString);
-            LuaDLL.lua_rawset(L, -3);
+//            LuaDLL.lua_pushstring(L, "tolstring");
+//            LuaDLL.tolua_pushcfunction(L, BufferToString);
+//            LuaDLL.lua_rawset(L, -3);
 
-            LuaDLL.lua_pushstring(L, "toarray");
-            LuaDLL.tolua_pushcfunction(L, TableToArray);
-            LuaDLL.lua_rawset(L, -3);
+//            LuaDLL.lua_pushstring(L, "toarray");
+//            LuaDLL.tolua_pushcfunction(L, TableToArray);
+//            LuaDLL.lua_rawset(L, -3);
 
-            //手动模拟gc
-            //LuaDLL.lua_pushstring(L, "collect");
-            //LuaDLL.lua_pushcfunction(L, Collect);
-            //LuaDLL.lua_rawset(L, -3);            
+//            //手动模拟gc
+//            //LuaDLL.lua_pushstring(L, "collect");
+//            //LuaDLL.lua_pushcfunction(L, Collect);
+//            //LuaDLL.lua_rawset(L, -3);            
 
-            int meta = LuaStatic.GetMetaReference(L, typeof(NullObject));
-            LuaDLL.lua_pushstring(L, "null");
-            LuaDLL.tolua_pushnewudata(L, meta, 1);
-            LuaDLL.lua_rawset(L, -3);
-            LuaDLL.lua_pop(L, 1);
+//            int meta = LuaStatic.GetMetaReference(L, typeof(NullObject));
+//            LuaDLL.lua_pushstring(L, "null");
+//            LuaDLL.tolua_pushnewudata(L, meta, 1);
+//            LuaDLL.lua_rawset(L, -3);
+//            LuaDLL.lua_pop(L, 1);
 
-            LuaDLL.tolua_pushudata(L, 1);
-            LuaDLL.lua_setfield(L, LuaIndexes.LUA_GLOBALSINDEX, "null");
+//            LuaDLL.tolua_pushudata(L, 1);
+//            LuaDLL.lua_setfield(L, LuaIndexes.LUA_GLOBALSINDEX, "null");
 
-#if UNITY_EDITOR
-            GetToLuaInstanceID();
-            GetConsoleWindowListView();
-#endif
-        }
+//#if UNITY_EDITOR
+//            GetToLuaInstanceID();
+//            GetConsoleWindowListView();
+//#endif
+//        }
 
         /*--------------------------------对于tolua扩展函数------------------------------------------*/
         #region TOLUA_EXTEND_FUNCTIONS

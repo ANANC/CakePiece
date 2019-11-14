@@ -33,7 +33,7 @@ using UnityEngine;
 
 namespace LuaInterface
 {
-    public class LuaState : LuaStatePtr, IDisposable
+    public partial class LuaState : LuaStatePtr, IDisposable
     {
         public ObjectTranslator translator = new ObjectTranslator();
         public LuaReflection reflection = new LuaReflection();
@@ -682,26 +682,26 @@ namespace LuaInterface
             return o;
         }
 
-        public void InitPackagePath()
-        {
-            LuaGetGlobal("package");
-            LuaGetField(-1, "path");
-            string current = LuaToString(-1);
-            string[] paths = current.Split(';');
+        //public void InitPackagePath()
+        //{
+        //    LuaGetGlobal("package");
+        //    LuaGetField(-1, "path");
+        //    string current = LuaToString(-1);
+        //    string[] paths = current.Split(';');
 
-            for (int i = 0; i < paths.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(paths[i]))
-                {
-                    string path = paths[i].Replace('\\', '/');
-                    LuaFileUtils.Instance.AddSearchPath(path);
-                }
-            }
+        //    for (int i = 0; i < paths.Length; i++)
+        //    {
+        //        if (!string.IsNullOrEmpty(paths[i]))
+        //        {
+        //            string path = paths[i].Replace('\\', '/');
+        //            LuaFileUtils.Instance.AddSearchPath(path);
+        //        }
+        //    }
 
-            LuaPushString("");            
-            LuaSetField(-3, "path");
-            LuaPop(2);
-        }
+        //    LuaPushString("");            
+        //    LuaSetField(-3, "path");
+        //    LuaPop(2);
+        //}
 
         string ToPackagePath(string path)
         {
@@ -721,16 +721,16 @@ namespace LuaInterface
             }
         }
 
-        public void AddSearchPath(string fullPath)
-        {
-            if (!Path.IsPathRooted(fullPath))
-            {
-                throw new LuaException(fullPath + " is not a full path");
-            }
+        //public void AddSearchPath(string fullPath)
+        //{
+        //    if (!Path.IsPathRooted(fullPath))
+        //    {
+        //        throw new LuaException(fullPath + " is not a full path");
+        //    }
 
-            fullPath = ToPackagePath(fullPath);
-            LuaFileUtils.Instance.AddSearchPath(fullPath);        
-        }
+        //    fullPath = ToPackagePath(fullPath);
+        //    LuaFileUtils.Instance.AddSearchPath(fullPath);        
+        //}
 
         public void RemoveSeachPath(string fullPath)
         {
