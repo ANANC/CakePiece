@@ -6,6 +6,14 @@ public class Managers: BaseBehaviour
 {
     private List<BaseBehaviour> m_Managers = new List<BaseBehaviour>();
 
+    private ResourceManager m_ResourceManager = null;
+
+    public ResourceManager Resource
+    {
+        get { return m_ResourceManager; }
+    }
+
+
     private LuaManager m_LuaManager = null;
     public LuaManager Lua
     {
@@ -61,5 +69,8 @@ public class Managers: BaseBehaviour
 
         m_LuaManager = new LuaManager();
         m_Managers.Add(m_LuaManager);
+
+        m_ResourceManager = new ResourceManager();
+        m_Managers.Add(m_ResourceManager);
     }
 }

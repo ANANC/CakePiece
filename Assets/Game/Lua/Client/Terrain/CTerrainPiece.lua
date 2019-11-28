@@ -5,10 +5,12 @@ function CTerrainPiece:ctor(id, position, index, spacePosition, direction, space
 end
 
 function CTerrainPiece:CreateGameObject(parent, pieceSize)
-    self.pGameObject = GameUtil.CreateCube()
+    self.pGameObject = Framework.ResMgr.LoadGameObject(GameDefine.Path.TerrainPiece)
     self.pTransform = self.pGameObject.transform
     self.pTransform.parent = parent
     pieceSize.y = 1
     self.pTransform.localScale = pieceSize
     self.pTransform.localPosition = self:GetPosition()
+    self.pMaterial = self.pGameObject:GetComponent("Material")
+    self.pMaterial.color = 
 end
