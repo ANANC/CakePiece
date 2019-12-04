@@ -1,6 +1,6 @@
 Terrains = class()
 
-require "General/SceneObject/TerrainPiece/TerrainPiece"
+require "General/SceneObject/Terrain/TerrainPiece"
 
 function Terrains:ctor()
     self.pTerrainPieces = {}
@@ -95,6 +95,23 @@ end
 function Terrains:SpacePositionToId(spacePos)
     return spacePos.x + self.pWidth * spacePos.z + self.pFloorPieceCount * spacePos.y 
 end
+
+function Terrains:GetPositionFromId(pieceId)
+    local piece = self.pTerrainPieces[pieceId]
+    if piece == nil then
+        return nil
+    end
+    return piece:GetPosition()
+end
+
+function Terrains:GetSpacePositionFromId(pieceId)
+    local piece = self.pTerrainPieces[pieceId]
+    if piece == nil then
+        return nil
+    end
+    return piece:GetSpacePosition()
+end
+
 
 function Terrains:FloorPositionCorrection(spacePosition)
     local newPos = spacePosition

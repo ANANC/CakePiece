@@ -45,11 +45,20 @@ public static class CustomSettings
 
     //在这里添加你要导出注册到lua的类型列表
     public static BindType[] customTypeList =
-    {           
+    {         
+        //------------------------  UnityEngine  --------------------------------
+        _GT(typeof(UnityEngine.Object)),
+        //----------------------------------------------------------------
+
+        //------------------------  Framework  --------------------------------
+        _GT(typeof(ANFramework.Framework)),
+        _GT(typeof(ANFramework.Managers)),
+        _GT(typeof(ANFramework.BaseBehaviour)),
+        _GT(typeof(ANFramework.ResourceManager)),
+        //----------------------------------------------------------------
+
         //------------------------  Game  --------------------------------
         _GT(typeof(GameUtil)),
-        _GT(typeof(ResourceManager)),
-        _GT(typeof(Material)),
         //----------------------------------------------------------------
 
         //------------------------为例子导出--------------------------------

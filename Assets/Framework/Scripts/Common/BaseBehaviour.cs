@@ -2,14 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseBehaviour
+namespace ANFramework
 {
-    public virtual void Init() { }
-    public virtual void Start() { }
-    public virtual void Update() { }
-
-    public virtual void Destroy()
+    public abstract class BaseBehaviour
     {
-    }
+        public virtual void Init()
+        {
+        }
 
+        public virtual void Start()
+        {
+        }
+
+        public virtual void Update()
+        {
+        }
+
+        public virtual void Destroy()
+        {
+        }
+
+    }
 }

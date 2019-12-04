@@ -7,7 +7,7 @@ public class LuaLoader : LuaFileUtils
     public LuaLoader()
     {
         instance = this;
-        beZip = FrameworkDefine.LUA_BUNDLE_MODE;
+        beZip = ANFramework.FrameworkDefine.LUA_BUNDLE_MODE;
     }
 
     /// <summary>
@@ -15,14 +15,14 @@ public class LuaLoader : LuaFileUtils
     /// </summary>
     public void AddBundle(string bundleName)
     {
-        string url = FrameworkUtil.DataPath + bundleName.ToLower();
+        string url = ANFramework.FrameworkUtil.DataPath + bundleName.ToLower();
         if (File.Exists(url))
         {
             AssetBundle bundle = AssetBundle.LoadFromFile(url);
             if (bundle != null)
             {
-                bundleName = bundleName.Replace(FrameworkDefine.LUA_DIR + "/", "")
-                    .Replace(FrameworkDefine.EXT_NAME, "");
+                bundleName = bundleName.Replace(ANFramework.FrameworkDefine.LUA_DIR + "/", "")
+                    .Replace(ANFramework.FrameworkDefine.EXT_NAME, "");
                 base.AddSearchBundle(bundleName.ToLower(), bundle);
             }
         }

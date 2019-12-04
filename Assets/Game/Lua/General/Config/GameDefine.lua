@@ -46,8 +46,9 @@ GameDefine.Path =
 {
     Prefab = 
     {
-        TerrainPiece = "TerrainPiece",
-        Terrain = "Terrain"
+        TerrainPiece = "Assets/Game/Resource/Prefab/TerrainPiece.prefab",
+        Terrain = "Assets/Game/Resource/Prefab/Terrain.prefab",
+        Character = "Assets/Game/Resource/Prefab/Character.prefab",
     }
 }
 

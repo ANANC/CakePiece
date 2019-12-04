@@ -2,53 +2,57 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class States :BaseBehaviour
+namespace ANFramework
 {
-    private int m_CurState;
-    private int m_StateCount;
-    private List<BaseStates> m_StateList = new List<BaseStates>();
 
-    public override void Init()
+    public class States : BaseBehaviour
     {
-        Reset();
-        m_StateList.Add(new StartState());
-        m_StateCount = m_StateList.Count;
-    }
+        private int m_CurState;
+        private int m_StateCount;
+        private List<BaseStates> m_StateList = new List<BaseStates>();
 
-    public override void Start()
-    {
-        NextState();
-    }
-
-    public override void Update()
-    {
-        if (m_CurState < m_StateCount)
+        public override void Init()
         {
-            if (m_StateList[m_CurState].Update())
+            Reset();
+            m_StateList.Add(new StartState());
+            m_StateCount = m_StateList.Count;
+        }
+
+        public override void Start()
+        {
+            NextState();
+        }
+
+        public override void Update()
+        {
+            if (m_CurState < m_StateCount)
             {
-                NextState();
+                if (m_StateList[m_CurState].Update())
+                {
+                    NextState();
+                }
             }
         }
-    }
 
-    private void Reset()
-    {
-        m_CurState = -1;
-    }
-
-    private void NextState()
-    {
-        if (m_StateCount > 0)
+        private void Reset()
         {
-            if (m_CurState >= 0)
-            {
-                m_StateList[m_CurState].Exit();
-            }
+            m_CurState = -1;
+        }
 
-            m_CurState++;
-            if (m_CurState < m_StateList.Count)
+        private void NextState()
+        {
+            if (m_StateCount > 0)
             {
-                m_StateList[m_CurState].Enter();
+                if (m_CurState >= 0)
+                {
+                    m_StateList[m_CurState].Exit();
+                }
+
+                m_CurState++;
+                if (m_CurState < m_StateList.Count)
+                {
+                    m_StateList[m_CurState].Enter();
+                }
             }
         }
     }

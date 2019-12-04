@@ -4,15 +4,19 @@ require "General/Config/GameDefine"
 
 require "General/SceneObject/BaseSceneObject"
 
-require "General/Terrain/Terrains"
+require "General/SceneObject/Terrain/Terrains"
+require "General/SceneObject/Character/Character"
 require "General/Data/TerrainData"
 
 require "Client/Terrain/CTerrains"
+require "Client/Character/CCharacter"
+
+require "Client/Scene/GameScene"
+
 
 function Game:Start()
     print("Game Start")
 
-    local curTerrains = CTerrains.new()
-    curTerrains:Create(TerrainData:GetData())
+    GameScene:Enter()
     
 end

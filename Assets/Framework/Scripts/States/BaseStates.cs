@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseStates
+namespace ANFramework
 {
-    protected bool m_Result = true;
-
-    public virtual void Enter() { }
-
-    public virtual void Exit() { }
-
-    public virtual bool Update()
+    public abstract class BaseStates
     {
-        return m_Result;
-    }
+        protected bool m_Result = true;
 
+        public virtual void Enter()
+        {
+        }
+
+        public virtual void Exit()
+        {
+        }
+
+        public virtual bool Update()
+        {
+            return m_Result;
+        }
+
+    }
 }

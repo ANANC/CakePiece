@@ -38,7 +38,7 @@ function CTerrains:CreateTerrainUI()
 
         local curPosition = Vector3.New(terrainScale.x / 2, (-floorCount * self.pTerrainData.Building.FloorHeight ) - 0.5, terrainScale.z / 2)
 
-        local ui = Framework.ResMgr.LoadGameObject(GameDefine.Path.Terrain)
+        local ui = Framework.ResMgr:LoadGameObject(GameDefine.Path.Prefab.Terrain)
         ui.transform.localPosition = curPosition
         ui.transform.localScale = terrainScale
         ui.transform.parent = self.pTransform

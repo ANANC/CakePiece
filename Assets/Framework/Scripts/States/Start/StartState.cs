@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartState : BaseStates
+namespace ANFramework
 {
-    public override void Enter()
+
+    public class StartState : BaseStates
     {
-        Framework.Core.Mgr.Lua.CallTableFunc("EngineGame:Start");
+        public override void Enter()
+        {
+            Framework.Core.Mgr.Lua.CallTableFunc("EngineGame:Start");
+        }
     }
 }

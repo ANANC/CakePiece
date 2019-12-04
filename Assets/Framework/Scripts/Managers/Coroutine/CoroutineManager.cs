@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoroutineManager : MonoBehaviour
+namespace ANFramework
 {
-    public Coroutine RunCoroutine(IEnumerator coroutine)
+    public class CoroutineManager : MonoBehaviour
     {
-        return StartCoroutine(coroutine);
+        public Coroutine RunCoroutine(IEnumerator coroutine)
+        {
+            return StartCoroutine(coroutine);
+        }
     }
 }
