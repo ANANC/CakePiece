@@ -1,6 +1,7 @@
 ﻿using LuaInterface;
 using System.Collections;
 using System.Collections.Generic;
+using ANFramework;
 using UnityEngine;
 
 public class Entrance : MonoBehaviour
@@ -13,6 +14,8 @@ public class Entrance : MonoBehaviour
         ToLua.SNG_LUA_DEBUG = true;
 #endif
 
+        Setting();
+
         GameObject framework = new GameObject("FrameworkEntrance");
         framework.AddComponent<FrameworkEntrance>();
         
@@ -20,5 +23,8 @@ public class Entrance : MonoBehaviour
     }
 
 
-
+    private void Setting()
+    {
+        ANF.Core.Mgr.UI.SetUIFolderPath("Assets/Game/Resource/UI");
+    }
 }

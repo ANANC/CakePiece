@@ -7,7 +7,7 @@ function GameScene:Enter()
     local firstId = 1
     local characterPosition = self.pTerrains:GetPositionFromId(firstId)
     local characterSpacePosition = self.pTerrains:GetSpacePositionFromId(firstId)
-    self.pCharacter = CCharacter.new(1, characterPosition, characterSpacePosition)
+    self.pCharacter = CCharacter:new(1, characterPosition, characterSpacePosition)
 
 end
 

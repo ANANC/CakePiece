@@ -48,10 +48,12 @@ public static class CustomSettings
     {         
         //------------------------  UnityEngine  --------------------------------
         _GT(typeof(UnityEngine.Object)),
+        _GT(typeof(UnityEngine.Color)),
+
         //----------------------------------------------------------------
 
         //------------------------  Framework  --------------------------------
-        _GT(typeof(ANFramework.Framework)),
+        _GT(typeof(ANFramework.ANF)),
         _GT(typeof(ANFramework.Managers)),
         _GT(typeof(ANFramework.BaseBehaviour)),
         _GT(typeof(ANFramework.ResourceManager)),

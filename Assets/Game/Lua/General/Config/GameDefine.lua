@@ -35,9 +35,9 @@ GameDefine.Terrain =
 GameDefine.TerrainPieceColor =
 {
     [GameDefine.TerrainPiece.Direction.Not]     = {r = 0, g = 0, b = 0, a = 1},
-    [GameDefine.TerrainPiece.Direction.Flat]    = {r = 1, g = 1, b = 1, a = 1},
+    [GameDefine.TerrainPiece.Direction.Flat]    = {r = 0.1, g = 1, b = 1, a = 1},
     [GameDefine.TerrainPiece.Direction.Up]      = {r = 0.5, g = 1, b = 1, a = 1},
-    [GameDefine.TerrainPiece.Direction.Down]    = {r = 1, g = 0.5, b = 1, a = 1}
+    [GameDefine.TerrainPiece.Direction.Down]    = {r = 1, g = 0.5, b = 0.1, a = 1}
 
 }
 

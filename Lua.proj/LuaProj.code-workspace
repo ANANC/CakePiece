@@ -11,6 +11,8 @@
 		}
 	],
 	"settings": {
-		"search.useReplacePreview": false
+		"editor.fontSize": 16,
+		"search.collapseResults": "alwaysExpand",
+		"search.actionsPosition": "right"
 	}
 }

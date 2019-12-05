@@ -6,7 +6,7 @@ public class ANFramework_FrameworkWrap
 {
 	public static void Register(LuaState L)
 	{
-		L.BeginClass(typeof(ANFramework.Framework), typeof(System.Object));
+		L.BeginClass(typeof(ANFramework.ANF), typeof(System.Object));
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);
@@ -24,7 +24,7 @@ public class ANFramework_FrameworkWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.Framework obj = (ANFramework.Framework)ToLua.CheckObject<ANFramework.Framework>(L, 1);
+			ANFramework.ANF obj = (ANFramework.ANF)ToLua.CheckObject<ANFramework.ANF>(L, 1);
 			obj.Init();
 			return 0;
 		}
@@ -40,7 +40,7 @@ public class ANFramework_FrameworkWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.Framework obj = (ANFramework.Framework)ToLua.CheckObject<ANFramework.Framework>(L, 1);
+			ANFramework.ANF obj = (ANFramework.ANF)ToLua.CheckObject<ANFramework.ANF>(L, 1);
 			obj.Start();
 			return 0;
 		}
@@ -56,7 +56,7 @@ public class ANFramework_FrameworkWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.Framework obj = (ANFramework.Framework)ToLua.CheckObject<ANFramework.Framework>(L, 1);
+			ANFramework.ANF obj = (ANFramework.ANF)ToLua.CheckObject<ANFramework.ANF>(L, 1);
 			obj.Update();
 			return 0;
 		}
@@ -72,7 +72,7 @@ public class ANFramework_FrameworkWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.Framework obj = (ANFramework.Framework)ToLua.CheckObject<ANFramework.Framework>(L, 1);
+			ANFramework.ANF obj = (ANFramework.ANF)ToLua.CheckObject<ANFramework.ANF>(L, 1);
 			obj.Destroy();
 			return 0;
 		}
@@ -87,7 +87,7 @@ public class ANFramework_FrameworkWrap
 	{
 		try
 		{
-			ToLua.PushObject(L, ANFramework.Framework.Core);
+			ToLua.PushObject(L, ANFramework.ANF.Core);
 			return 1;
 		}
 		catch (Exception e)
@@ -101,7 +101,7 @@ public class ANFramework_FrameworkWrap
 	{
 		try
 		{
-			ToLua.PushSealed(L, ANFramework.Framework.RootGameObject);
+			ToLua.PushSealed(L, ANFramework.ANF.RootGameObject);
 			return 1;
 		}
 		catch (Exception e)
@@ -118,7 +118,7 @@ public class ANFramework_FrameworkWrap
 		try
 		{
 			o = ToLua.ToObject(L, 1);
-			ANFramework.Framework obj = (ANFramework.Framework)o;
+			ANFramework.ANF obj = (ANFramework.ANF)o;
 			ANFramework.Managers ret = obj.Mgr;
 			ToLua.PushObject(L, ret);
 			return 1;

@@ -75,7 +75,7 @@ namespace ANFramework
         {
             LuaBinder.Bind(m_LuaState);
             DelegateFactory.Init();
-            LuaCoroutine.Register(m_LuaState, Framework.Core.Mgr.Coroutine);
+            LuaCoroutine.Register(m_LuaState, ANF.Core.Mgr.Coroutine);
         }
 
         protected void OpenLuaSocket()
@@ -111,7 +111,7 @@ namespace ANFramework
 
         private void StartLooper()
         {
-            m_LuaLoop = Framework.RootGameObject.AddComponent<LuaLooper>();
+            m_LuaLoop = ANF.RootGameObject.AddComponent<LuaLooper>();
             m_LuaLoop.luaState = m_LuaState;
         }
 

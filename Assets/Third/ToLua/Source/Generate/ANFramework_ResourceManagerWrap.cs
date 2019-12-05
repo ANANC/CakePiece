@@ -96,7 +96,7 @@ public class ANFramework_ResourceManagerWrap
 			ToLua.CheckArgsCount(L, 2);
 			ANFramework.ResourceManager obj = (ANFramework.ResourceManager)ToLua.CheckObject<ANFramework.ResourceManager>(L, 1);
 			string arg0 = ToLua.CheckString(L, 2);
-			UnityEngine.GameObject o = obj.LoadGameObject(arg0);
+			UnityEngine.GameObject o = obj.Instance(arg0);
 			ToLua.PushSealed(L, o);
 			return 1;
 		}

@@ -9,7 +9,7 @@ namespace ANFramework
     {
         public override void Enter()
         {
-            Framework.Core.Mgr.Lua.CallTableFunc("EngineGame:Start");
+            ANF.Core.Mgr.Lua.CallTableFunc("EngineGame:Start");
         }
     }
 }

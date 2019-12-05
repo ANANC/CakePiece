@@ -6,17 +6,17 @@ using ANFramework;
 namespace ANFramework
 {
 
-    public class Framework
+    public class ANF
     {
-        private static Framework m_Instance;
+        private static ANF m_Instance;
 
-        public static Framework Core
+        public static ANF Core
         {
             get
             {
                 if (m_Instance == null)
                 {
-                    m_Instance = new Framework();
+                    m_Instance = new ANF();
                 }
 
                 return m_Instance;
@@ -47,7 +47,7 @@ namespace ANFramework
 
         private States m_States;
 
-        private Framework()
+        private ANF()
         {
             m_Managers = new Managers();
             m_States = new States();

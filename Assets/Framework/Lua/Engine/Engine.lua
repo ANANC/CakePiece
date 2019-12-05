@@ -1,10 +1,11 @@
 
 require "Engine/class"
 
+ANF = {}
 
-ANFramework = ANFramework.Framework
-
-Framework = {}
-Framework.ResMgr    = ANFramework.Core.Mgr.Resource
+ANF.CSharp  = ANFramework.ANF
+ANF.ResMgr  = ANF.CSharp.Core.Mgr.Resource
+ANF.UIMgr   = UIManager:new()
 
 GameObject			= UnityEngine.GameObject
+MeshRenderer        = UnityEngine.MeshRenderer

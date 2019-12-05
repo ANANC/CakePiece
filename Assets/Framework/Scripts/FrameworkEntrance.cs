@@ -7,21 +7,21 @@ public class FrameworkEntrance : MonoBehaviour
 {
     private void Awake()
     {
-        Framework.Core.Init();
+        ANF.Core.Init();
     }
 
     void Start()
     {
-        Framework.Core.Start();
+        ANF.Core.Start();
     }
 
     void Update()
     {
-        Framework.Core.Update();
+        ANF.Core.Update();
     }
 
     void OnDestroy()
     {
-        Framework.Core.Destroy();
+        ANF.Core.Destroy();
     }
 }

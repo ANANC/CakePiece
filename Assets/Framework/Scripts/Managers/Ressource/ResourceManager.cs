@@ -47,7 +47,7 @@ namespace ANFramework
         // ------------ GameObject加载 ------------
 
 
-        public GameObject LoadGameObject(string path)
+        public GameObject Instance(string path)
         {
             GameObject prefab = LoadResource<GameObject>(path);
             if (prefab != null)

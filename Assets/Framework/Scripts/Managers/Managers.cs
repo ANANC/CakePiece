@@ -15,12 +15,18 @@ namespace ANFramework
             get { return m_ResourceManager; }
         }
 
-
         private LuaManager m_LuaManager = null;
 
         public LuaManager Lua
         {
             get { return m_LuaManager; }
+        }
+
+        private UIManager m_UIManager = null;
+
+        public UIManager UI
+        {
+            get { return m_UIManager; }
         }
 
         private CoroutineManager m_CoroutineManager = null;
@@ -30,9 +36,14 @@ namespace ANFramework
             get { return m_CoroutineManager; }
         }
 
-        public override void Init()
+        public Managers()
         {
             CreateManagers();
+        }
+
+        public override void Init()
+        {
+            m_CoroutineManager = ANF.RootGameObject.AddComponent<CoroutineManager>();
 
             for (int index = 0; index < m_Managers.Count; index++)
             {
@@ -66,13 +77,14 @@ namespace ANFramework
 
         private void CreateManagers()
         {
-            m_CoroutineManager = Framework.RootGameObject.AddComponent<CoroutineManager>();
-
             m_LuaManager = new LuaManager();
             m_Managers.Add(m_LuaManager);
 
             m_ResourceManager = new ResourceManager();
             m_Managers.Add(m_ResourceManager);
+
+            m_UIManager = new UIManager();
+            m_Managers.Add(m_UIManager);
         }
     }
 
