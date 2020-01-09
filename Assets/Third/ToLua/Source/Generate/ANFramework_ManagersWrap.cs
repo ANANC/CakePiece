@@ -15,6 +15,7 @@ public class ANFramework_ManagersWrap
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.RegVar("Resource", get_Resource, null);
 		L.RegVar("Lua", get_Lua, null);
+		L.RegVar("UI", get_UI, null);
 		L.RegVar("Coroutine", get_Coroutine, null);
 		L.EndClass();
 	}
@@ -142,6 +143,25 @@ public class ANFramework_ManagersWrap
 		catch(Exception e)
 		{
 			return LuaDLL.toluaL_exception(L, e, o, "attempt to index Lua on a nil value");
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int get_UI(IntPtr L)
+	{
+		object o = null;
+
+		try
+		{
+			o = ToLua.ToObject(L, 1);
+			ANFramework.Managers obj = (ANFramework.Managers)o;
+			ANFramework.UIManager ret = obj.UI;
+			ToLua.PushObject(L, ret);
+			return 1;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e, o, "attempt to index UI on a nil value");
 		}
 	}
 

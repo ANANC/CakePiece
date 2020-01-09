@@ -9,11 +9,16 @@ namespace ANFramework
     {
         private string UIFolderPath = string.Empty;
 
+        private GameObject m_Canvas;
+
         private Dictionary<string,BaseUIObject> m_UIObjectDict;
         private Dictionary<string, int> m_UINameDict;
 
+
         public override void Init()
         {
+            m_Canvas = GameObject.Instantiate(Resources.Load<GameObject>("UICanvas"));
+
             m_UIObjectDict = new Dictionary<string, BaseUIObject>();
             m_UINameDict = new Dictionary<string, int>();
         }
@@ -32,6 +37,10 @@ namespace ANFramework
                 return null;
             }
 
+            gameObject.transform.SetParent(m_Canvas.transform);
+            gameObject.transform.localPosition = Vector3.zero;
+            gameObject.name = resourceName;
+
             string uiName = resourceName;
             if (m_UINameDict.ContainsKey(uiName))
             {
@@ -43,7 +52,7 @@ namespace ANFramework
             ui.SetRoot(gameObject);
 
             m_UIObjectDict.Add(uiName,ui);
-            ANF.Core.Mgr.Lua.CallTableFunc("ANF.UIMgr.__CreateUIFromCS", ui);
+            ANF.Core.Mgr.Lua.CallTableFunc("ANF.UIMgr:__CreateUIFromCS", ui);
 
             return ui;
         }

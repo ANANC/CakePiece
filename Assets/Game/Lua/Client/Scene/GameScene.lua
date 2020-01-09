@@ -9,5 +9,6 @@ function GameScene:Enter()
     local characterSpacePosition = self.pTerrains:GetSpacePositionFromId(firstId)
     self.pCharacter = CCharacter:new(1, characterPosition, characterSpacePosition)
 
+    ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
 end
 

@@ -45,7 +45,7 @@ namespace ANFramework
 
         private void CallLuaFunction(string funName)
         {
-            ANF.Core.Mgr.Lua.CallTableFunc("ANF.UIMgr.__CallUIFunction", UIName, funName);
+            ANF.Core.Mgr.Lua.CallTableFunc("ANF.UIMgr:__CallUIFunction", UIName, funName);
         }
 
         public bool IsOpen()

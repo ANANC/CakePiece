@@ -12,17 +12,13 @@ function BaseUIOject:UIName()
 end
 
 function BaseUIOject:Init()
-
 end
 
 function BaseUIOject:Start()
-
 end
 
 function BaseUIOject:Close()
-
 end
 
 function BaseUIOject:Destroy()
-
 end

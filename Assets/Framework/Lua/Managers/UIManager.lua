@@ -1,14 +1,9 @@
 UIManager = class()
 
-local csUIMgr = ANF.CSharp.core.Mgr.UI
+local csUIMgr = ANF.CSharp.Core.Mgr.UI
 
 function UIManager:ctor()
     self.pUIObject = {}
-    self.pUIClass = {}
-end
-
-function UIManager:Register(uiName,instance)
-    self.pUIClass[uiName] = instance
 end
 
 function UIManager:OpenUI(uiName)
@@ -24,12 +19,12 @@ function UIManager:DestroyUI(uiName)
 end
 
 function UIManager:__CreateUIFromCS(csBaseUIObject)
-    local instance = self.pUIClass[csBaseUIObject.ResourceName]
+    local instance = ANF.Util:GetClass(csBaseUIObject.ResourceName)
     if instance == nil then
         print("UI"..csBaseUIObject.ResourceName.."找不到类")
         return
     end
-    local ui = instance(csBaseUIObject.UIName, csBaseUIObject.ResourceName, csBaseUIObject.GameObject)
+    local ui = instance:new(csBaseUIObject.UIName, csBaseUIObject.ResourceName, csBaseUIObject.GameObject)
     self.pUIObject[csBaseUIObject.UIName] = ui
 end
 
@@ -40,5 +35,5 @@ end
 function UIManager:__CallUIFunction(uiName,functionName)
     local ui = self.pUIObject[uiName]
     local uiFun = ui[functionName]
-    uiFun()
+    uiFun(ui)
 end

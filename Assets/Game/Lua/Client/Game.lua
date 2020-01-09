@@ -16,7 +16,10 @@ require "Client/Scene/GameScene"
 
 function Game:Start()
     print("Game Start")
-
+    self:InitUI()
     GameScene:Enter()
-    
+end
+
+function Game:InitUI()
+    require "Client/UI/MainUI"
 end

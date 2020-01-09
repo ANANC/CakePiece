@@ -10,7 +10,7 @@ public class ANFramework_ResourceManagerWrap
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);
-		L.RegFunction("LoadGameObject", LoadGameObject);
+		L.RegFunction("Instance", Instance);
 		L.RegFunction("New", _CreateANFramework_ResourceManager);
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.EndClass();
@@ -89,7 +89,7 @@ public class ANFramework_ResourceManagerWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int LoadGameObject(IntPtr L)
+	static int Instance(IntPtr L)
 	{
 		try
 		{

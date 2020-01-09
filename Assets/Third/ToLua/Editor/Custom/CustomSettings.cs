@@ -49,7 +49,9 @@ public static class CustomSettings
         //------------------------  UnityEngine  --------------------------------
         _GT(typeof(UnityEngine.Object)),
         _GT(typeof(UnityEngine.Color)),
-
+        _GT(typeof(UnityEngine.RectTransform)),
+        _GT(typeof(UnityEngine.Events.UnityEvent)),
+        _GT(typeof(UnityEngine.UI.Button.ButtonClickedEvent)),
         //----------------------------------------------------------------
 
         //------------------------  Framework  --------------------------------
@@ -57,6 +59,9 @@ public static class CustomSettings
         _GT(typeof(ANFramework.Managers)),
         _GT(typeof(ANFramework.BaseBehaviour)),
         _GT(typeof(ANFramework.ResourceManager)),
+        _GT(typeof(ANFramework.UIManager)),
+        _GT(typeof(ANFramework.BaseUIObject)),
+
         //----------------------------------------------------------------
 
         //------------------------  Game  --------------------------------

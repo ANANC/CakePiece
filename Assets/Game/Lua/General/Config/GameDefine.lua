@@ -52,3 +52,9 @@ GameDefine.Path =
     }
 }
 
+
+--UI
+GameDefine.UI = 
+{
+    MainUI = "MainUI"
+}
