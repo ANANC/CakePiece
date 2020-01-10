@@ -16,10 +16,16 @@ require "Client/Scene/GameScene"
 
 function Game:Start()
     print("Game Start")
+
+    --加载UI
     self:InitUI()
+
     GameScene:Enter()
 end
 
 function Game:InitUI()
-    require "Client/UI/MainUI"
+    local uiPath = "Client/UI"
+    for _,uiName in pairs(GameDefine.UI) do
+        require(uiPath.."/"..uiName)
+    end
 end

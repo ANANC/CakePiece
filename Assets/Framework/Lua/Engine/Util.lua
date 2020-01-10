@@ -38,3 +38,7 @@ function Util:GetClass(strClassName)
 	
 	return nil
 end
+
+function Util:DebugVector3(v3,outputStr)
+	print(outputStr.."x:"..v3.x.." y:"..v3.y.." z:"..v3.z)
+end

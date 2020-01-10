@@ -25,11 +25,6 @@ local Data =
     Piece       =           --地块
     {
         {
-            Id          = 0,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
-        },
-        {
             Id          = 1,
             Direction   = GameDefine.TerrainPiece.Direction.Flat,
             Spcae       = GameDefine.TerrainPiece.Space.Once
@@ -40,33 +35,33 @@ local Data =
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
         {
-            Id          = 0,
+            Id          = 3,
+            Direction   = GameDefine.TerrainPiece.Direction.Down,
+            Spcae       = GameDefine.TerrainPiece.Space.Once
+        },
+        {
+            Id          = 4,
             Direction   = GameDefine.TerrainPiece.Direction.Flat,
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
         {
-            Id          = 0,
+            Id          = 5,
             Direction   = GameDefine.TerrainPiece.Direction.Flat,
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
         {
-            Id          = 0,
+            Id          = 6,
             Direction   = GameDefine.TerrainPiece.Direction.Flat,
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
         {
-            Id          = 0,
+            Id          = 7,
             Direction   = GameDefine.TerrainPiece.Direction.Flat,
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
         {
-            Id          = 0,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
-        },
-        {
-            Id          = 0,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
+            Id          = 8,
+            Direction   = GameDefine.TerrainPiece.Direction.Up,
             Spcae       = GameDefine.TerrainPiece.Space.Once
         },
     }

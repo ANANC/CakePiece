@@ -5,10 +5,10 @@ end
 
 function MainUI:Init()
     local root = self.pTransform
-    root:Find("ForwardButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(self, "ForwardButtonOnClick"))
-    root:Find("BackButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(self, "BackButtonOnClick"))
-    root:Find("LeftButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(self, "LeftButtonOnClick"))
-    root:Find("RightButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(self, "RightButtonOnClick"))
+    root:Find("ForwardButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"ForwardButtonOnClick"))
+    root:Find("BackButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"BackButtonOnClick"))
+    root:Find("LeftButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"LeftButtonOnClick"))
+    root:Find("RightButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"RightButtonOnClick"))
 end
 
 function MainUI:Start()
@@ -23,21 +23,3 @@ function MainUI:Destroy()
 
 end
 
-function MainUI:ForwardButtonOnClick()
-print("ForwardButtonOnClick")
-end
-
-function MainUI:BackButtonOnClick()
-    print("BackButtonOnClick")
-
-end
-
-function MainUI:LeftButtonOnClick()
-    print("LeftButtonOnClick")
-
-end
-
-function MainUI:RightButtonOnClick()
-    print("RightButtonOnClick")
-
-end

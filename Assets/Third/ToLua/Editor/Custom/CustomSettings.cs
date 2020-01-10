@@ -52,6 +52,7 @@ public static class CustomSettings
         _GT(typeof(UnityEngine.RectTransform)),
         _GT(typeof(UnityEngine.Events.UnityEvent)),
         _GT(typeof(UnityEngine.UI.Button.ButtonClickedEvent)),
+        _GT(typeof(UnityEngine.UI.Button)),
         //----------------------------------------------------------------
 
         //------------------------  Framework  --------------------------------

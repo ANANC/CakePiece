@@ -6,6 +6,7 @@ end
 
 function CTerrainPiece:CreateGameObject(parent, pieceSize)
     self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
+    self.pGameObject.name = self:GetIndex()
     self.pTransform = self.pGameObject.transform
     self.pTransform.parent = parent
     pieceSize.y = 1

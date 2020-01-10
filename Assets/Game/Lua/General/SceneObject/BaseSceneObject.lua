@@ -12,3 +12,7 @@ end
 function BaseSceneObject:GetPosition()
     return self.pPosition
 end
+
+function BaseSceneObject:DebugPosition()
+    print("对象("..self.pId..")当前位置 x:"..self.pPosition.x.." y:"..self.pPosition.y.." z:"..self.pPosition.z)
+end
