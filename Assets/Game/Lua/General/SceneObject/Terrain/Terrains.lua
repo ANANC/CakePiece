@@ -18,11 +18,11 @@ function Terrains:Create(terrainData)
     local pieceSize = Vector3.New(terrainData.Building.PieceSize.Width, 0, terrainData.Building.PieceSize.Height) 
     local pieceSizeRaius = pieceSize * 0.5
 
-    for floorCount = 0, self.pFloorCount - 1 do 
+    for floorCount = 1, self.pFloorCount do 
         local x = 1
         local z = 1
 
-        local initPos = Vector3.New(terrainData.Building.SideGap.Width, -floorCount * terrainData.Building.FloorHeight, terrainData.Building.SideGap.Height ) 
+        local initPos = Vector3.New(terrainData.Building.SideGap.Width, (floorCount - 1) * -terrainData.Building.FloorHeight, terrainData.Building.SideGap.Height ) 
         
         for floorPieceCount = 1, self.pFloorPieceCount do
 
@@ -91,7 +91,7 @@ function Terrains:GetNextSpacePosition(curSpacePos, direction)
 end
 
 function Terrains:SpacePositionToId(spacePos)
-    return spacePos.x + self.pWidth * ( spacePos.z - 1) + self.pFloorPieceCount * spacePos.y 
+    return spacePos.x + self.pWidth * ( spacePos.z - 1) + self.pFloorPieceCount * ( spacePos.y - 1)
 end
 
 function Terrains:GetPositionFromId(pieceId)
@@ -146,12 +146,12 @@ function Terrains:SpaceDirectionCorrection(axial, spacePosition)
 
     if update then
         local newSpacePos = spacePosition
-        self:UpdateSpaceValue(axial, newSpacePos, value)
+        newSpacePos = self:UpdateSpaceValue(axial, newSpacePos, value)
 
         local pieceId = self:SpacePositionToId(newSpacePos)
         local curPiece = self.pTerrainPieces[pieceId]
         if curPiece:GetSpace() == GameDefine.TerrainPiece.Space.Loop then
-            self:UpdateSpaceValue(axial, newSpacePos, value)
+            newSpacePos = self:UpdateSpaceValue(axial, newSpacePos, value)
         end
     end
 
