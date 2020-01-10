@@ -136,10 +136,10 @@ function Terrains:SpaceDirectionCorrection(axial, spacePosition)
     end
 
     local update = false
-    if value < 0 then
-        value = 0
+    if value < 1 then
+        value = 1
         update = true
-    elseif value >= round then
+    elseif value > round then
         value = round
         update = true
     end

@@ -3,6 +3,7 @@ CCharacter = class(Character)
 function CCharacter:ctor(id, position, spacePosition)
     self:CreateGameobject()
     self:Move(position)
+    self:DebugPosition()
 end
 
 function CCharacter:CreateGameobject()
