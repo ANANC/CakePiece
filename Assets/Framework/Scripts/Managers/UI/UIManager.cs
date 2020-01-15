@@ -82,7 +82,7 @@ namespace ANFramework
         }
 
 
-        public void CleseUI(string uiName)
+        public void CloseUI(string uiName)
         {
             BaseUIObject ui;
             if (m_UIObjectDict.TryGetValue(uiName, out ui))

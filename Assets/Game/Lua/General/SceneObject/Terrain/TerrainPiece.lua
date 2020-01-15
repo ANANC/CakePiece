@@ -16,6 +16,13 @@ function TerrainPiece:ctor(id, position, index, spacePosition, direction, space)
     self.pSpace = space
 end
 
+function TerrainPiece:Destroy()
+    self.pIndex = nil
+    self.pSpacePosition = nil
+    self.pDirection = nil
+    self.pSpace = nil
+end
+
 function TerrainPiece:GetIndex()
     return self.pIndex
 end

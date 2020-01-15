@@ -4,6 +4,13 @@ function CTerrainPiece:ctor(id, position, index, spacePosition, direction, space
     self:CreateGameObject(parent, pieceSize)
 end
 
+function CTerrainPiece:Destroy()
+    ANF.ResMgr:DestroyGameObject(self.pGameObject)
+    self.pGameObject = nil
+    self.pTransform = nil
+    self[TerrainPiece]:Destroy()
+end
+
 function CTerrainPiece:CreateGameObject(parent, pieceSize)
     self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
     self.pGameObject.name = self:GetIndex()
@@ -15,3 +22,4 @@ function CTerrainPiece:CreateGameObject(parent, pieceSize)
     self.pMaterial = self.pGameObject:GetComponent("MeshRenderer").material
     self.pMaterial.color = GameDefine.TerrainPieceColor[self:GetDirection()]
 end
+

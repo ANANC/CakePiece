@@ -56,5 +56,6 @@ GameDefine.Path =
 --UI
 GameDefine.UI = 
 {
-    MainUI = "MainUI"
+    MainUI  = "MainUI",
+    WinUI   = "WinUI", 
 }

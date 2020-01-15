@@ -11,6 +11,7 @@ public class ANFramework_ResourceManagerWrap
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);
 		L.RegFunction("Instance", Instance);
+		L.RegFunction("DestroyGameObject", DestroyGameObject);
 		L.RegFunction("New", _CreateANFramework_ResourceManager);
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.EndClass();
@@ -99,6 +100,23 @@ public class ANFramework_ResourceManagerWrap
 			UnityEngine.GameObject o = obj.Instance(arg0);
 			ToLua.PushSealed(L, o);
 			return 1;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int DestroyGameObject(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 2);
+			ANFramework.ResourceManager obj = (ANFramework.ResourceManager)ToLua.CheckObject<ANFramework.ResourceManager>(L, 1);
+			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 2, typeof(UnityEngine.GameObject));
+			obj.DestroyGameObject(arg0);
+			return 0;
 		}
 		catch (Exception e)
 		{

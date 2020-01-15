@@ -12,21 +12,37 @@ function Terrains:Create(terrainData)
     self.pHeight = terrainData.Height
     self.pFloorCount = terrainData.FloorCount
     self.pFloorPieceCount = self.pWidth * self.pHeight
+    self:Init()
+end
 
+function Terrains:Destroy()
+    for _,piece in pairs(self.pTerrainPieces) do 
+        piece:Destroy()
+    end
+
+    self.pTerrainPieces = {}
+    self.pTerrainData = nil
+    self.pWidth = 0
+    self.pHeight = 0
+    self.pFloorCount = 0
+    self.pFloorPieceCount = 0
+end
+
+function Terrains:Init()
     local pieceCount = 1
 
-    local pieceSize = Vector3.New(terrainData.Building.PieceSize.Width, 0, terrainData.Building.PieceSize.Height) 
+    local pieceSize = Vector3.New(self.pTerrainData.Building.PieceSize.Width, 0, self.pTerrainData.Building.PieceSize.Height) 
     local pieceSizeRaius = pieceSize * 0.5
 
     for floorCount = 1, self.pFloorCount do 
         local x = 1
         local z = 1
 
-        local initPos = Vector3.New(terrainData.Building.SideGap.Width, (floorCount - 1) * -terrainData.Building.FloorHeight, terrainData.Building.SideGap.Height ) 
+        local initPos = Vector3.New(self.pTerrainData.Building.SideGap.Width, (floorCount - 1) * -self.pTerrainData.Building.FloorHeight, self.pTerrainData.Building.SideGap.Height ) 
         
         for floorPieceCount = 1, self.pFloorPieceCount do
 
-            local pieceData = terrainData.Piece[pieceCount]
+            local pieceData = self.pTerrainData.Piece[pieceCount]
 
             local curPos = initPos + Vector3.New(pieceSizeRaius.x + pieceSize.x * (x - 1), 0, pieceSizeRaius.z )
             local piece = self:CreateTerrainPiece(pieceData.Id, curPos, pieceCount, Vector3.New(x, floorCount, z), pieceData.Direction, pieceData.Spcae )
@@ -34,12 +50,12 @@ function Terrains:Create(terrainData)
             
             if x % self.pWidth == 0 then
                 x = 1
-                initPos.x = terrainData.Building.SideGap.Width
-                initPos.z = initPos.z + pieceSize.z * z + terrainData.Building.PieceGap.Height 
+                initPos.x = self.pTerrainData.Building.SideGap.Width
+                initPos.z = initPos.z + pieceSize.z * z + self.pTerrainData.Building.PieceGap.Height 
                 z = z + 1
             else            
                 x = x + 1
-                initPos.x = initPos.x + terrainData.Building.PieceGap.Width
+                initPos.x = initPos.x + self.pTerrainData.Building.PieceGap.Width
             end
 
             pieceCount = pieceCount + 1

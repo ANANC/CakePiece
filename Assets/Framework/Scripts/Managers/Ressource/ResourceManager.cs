@@ -85,6 +85,18 @@ namespace ANFramework
             T resObject = Resources.Load<T>(path);
             return resObject;
         }
+
+        // ------------ 安全销毁 ------------
+
+        public void DestroyGameObject(GameObject go)
+        {
+            if ( go == null)
+            {
+                Debug.LogError("资源失败失败！因为资源为空");
+                return;
+            }
+            GameObject.Destroy(go);
+        }
     }
 
 }

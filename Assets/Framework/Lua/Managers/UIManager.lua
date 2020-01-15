@@ -10,8 +10,8 @@ function UIManager:OpenUI(uiName)
     csUIMgr:OpenUI(uiName)
 end
 
-function UIManager:CleseUI(uiName)
-    csUIMgr:CleseUI(uiName)
+function UIManager:CloseUI(uiName)
+    csUIMgr:CloseUI(uiName)
 end
 
 function UIManager:DestroyUI(uiName)

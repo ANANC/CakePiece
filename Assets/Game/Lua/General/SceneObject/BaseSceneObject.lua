@@ -5,6 +5,11 @@ function BaseSceneObject:ctor(id, position)
     self.pPosition = position
 end
 
+function BaseSceneObject:Destroy()
+    self.pId = nil
+    self.pPosition = nil
+end
+
 function BaseSceneObject:GetId()
     return self.pId
 end

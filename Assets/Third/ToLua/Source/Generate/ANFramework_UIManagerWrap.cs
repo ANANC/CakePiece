@@ -10,7 +10,7 @@ public class ANFramework_UIManagerWrap
 		L.RegFunction("Init", Init);
 		L.RegFunction("SetUIFolderPath", SetUIFolderPath);
 		L.RegFunction("OpenUI", OpenUI);
-		L.RegFunction("CleseUI", CleseUI);
+		L.RegFunction("CloseUI", CloseUI);
 		L.RegFunction("DestroyUI", DestroyUI);
 		L.RegFunction("New", _CreateANFramework_UIManager);
 		L.RegFunction("__tostring", ToLua.op_ToString);
@@ -92,14 +92,14 @@ public class ANFramework_UIManagerWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int CleseUI(IntPtr L)
+	static int CloseUI(IntPtr L)
 	{
 		try
 		{
 			ToLua.CheckArgsCount(L, 2);
 			ANFramework.UIManager obj = (ANFramework.UIManager)ToLua.CheckObject<ANFramework.UIManager>(L, 1);
 			string arg0 = ToLua.CheckString(L, 2);
-			obj.CleseUI(arg0);
+			obj.CloseUI(arg0);
 			return 0;
 		}
 		catch (Exception e)

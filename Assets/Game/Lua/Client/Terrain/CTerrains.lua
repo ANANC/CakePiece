@@ -12,12 +12,19 @@ function CTerrains:Create(terrainData)
     self:CreateTerrainUI()
 end
 
+function CTerrains:Destroy()
+    ANF.ResMgr:DestroyGameObject(self.pGameObject)
+    self.pGameObject = nil
+    self.pTransform = nil
+
+    self[Terrains]:Destroy()
+end
+
 function CTerrains:CreateGameObject()
     self.pGameObject = GameObject.New()
     self.pTransform = self.pGameObject.transform
     self.pGameObject.name = "Terrains"
 end
-
 
 function CTerrains:CreateTerrainPiece(...)
     local arms = {...}
