@@ -1,5 +1,36 @@
 GameDefine = {}
 
+
+--动向
+GameDefine.Motion = 
+{
+    Not     = 0,        --不可移动
+    Flat    = 1,        --平面
+    Forwark = 2,        --前
+    Back    = 3,        --后
+    Left    = 4,        --左
+    Right   = 5,        --右
+    Up      = 6,        --上升
+    Down    = 7,        --下沉
+}
+   
+--空间
+GameDefine.Space = 
+{
+    Once    = 0,    --单一
+    Loop    = 1,    --循环   
+}
+
+-- 轴向
+GameDefine.Axial =
+{
+    X = 0,  --x轴
+    Y = 1,  --y轴
+    Z = 2,  --z轴
+}
+
+
+
 --地块
 GameDefine.TerrainPiece =
 {
