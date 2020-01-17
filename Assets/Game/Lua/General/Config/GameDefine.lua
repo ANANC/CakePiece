@@ -1,7 +1,7 @@
 GameDefine = {}
 
 
---动向
+--动向  （常量）
 GameDefine.Motion = 
 {
     Not     = 0,        --不可移动
@@ -13,7 +13,31 @@ GameDefine.Motion =
     Up      = 6,        --上升
     Down    = 7,        --下沉
 }
+
+--方向 （向量）
+GameDefine.Direction = 
+{
+    Forwark = Vector3.forwark,  --前
+    Back    = Vector3.back,     --后
+    Left    = Vector3.left,     --左
+    Right   = Vector3.right,    --右
+    Up      = Vector3.Up,       --上
+    Down    = Vector3.Down,     --下
+}
    
+--方向
+GameDefine.DirectionToMotion = 
+{
+    [GameDefine.Direction.Forwark] = GameDefine.Motion.Forwark,     --前
+    [GameDefine.Direction.Back] = GameDefine.Motion.Back,           --后
+    [GameDefine.Direction.Left] = GameDefine.Motion.Left,           --左
+    [GameDefine.Direction.Right] = GameDefine.Motion.Right,         --右
+    [GameDefine.Direction.Up] = GameDefine.Motion.Up,               --上
+    [GameDefine.Direction.Down] = GameDefine.Motion.Down,           --下
+
+}
+
+
 --空间
 GameDefine.Space = 
 {
