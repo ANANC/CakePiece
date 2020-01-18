@@ -1,21 +1,13 @@
 local Data = 
 {
-    FloorCount  = 2,        --层级
-    Width       = 2,        --x轴地块数量
-    Height      = 2,        --z轴地块数量
     Building    =           --建筑
     {
-        PieceSize   =           --地块大小
+        Size   =           --地块大小
         {
             Width   = 12,
             Height  = 12,
         },
-        SideGap     =           --边缘间隙
-        {
-            Width   = 5,
-            Height  = 5,
-        },
-        PieceGap    =           --地块间隙
+        Gap    =           --地块间隙
         {
             Width   = 10,
             Height  = 10, 
@@ -25,44 +17,60 @@ local Data =
     Piece       =           --地块
     {
         {
-            Id          = 1,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 0, y = 0, z = 0,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 2,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 1, y = 0, z = 0,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 3,
-            Direction   = GameDefine.TerrainPiece.Direction.Down,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 1, y = 0, z = 1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 4,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 1, y = 1, z = 1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 5,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 2, y = 1, z = 1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 6,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = -2, y = 1, z = -1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 7,
-            Direction   = GameDefine.TerrainPiece.Direction.Flat,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 0, y = 2, z = -1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
         {
-            Id          = 8,
-            Direction   = GameDefine.TerrainPiece.Direction.Up,
-            Spcae       = GameDefine.TerrainPiece.Space.Once
+            Position    = { x = 3, y = 2, z = -1,},
+            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
         },
     }
 }

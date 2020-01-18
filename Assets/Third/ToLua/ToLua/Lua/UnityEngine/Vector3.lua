@@ -420,6 +420,13 @@ function Vector3.Debug(self)
 	print("x:"..self.x.." y:"..self.y.." z:"..self.z)
 end
 
+function Vector3.Equal(left,right)
+	if left.x == right.x and left.y == right.y and left.z == right.z then
+		return true
+	end
+	return false
+end
+
 
 Vector3.__tostring = function(self)
 	return "["..self.x..","..self.y..","..self.z.."]"

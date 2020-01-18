@@ -13,7 +13,7 @@ function EngineGame:Start()
     require "Engine/Engine"
 
     -- 業務入口
-    require "Client/Game"
+    require "Game/Game"
     Game:Start()
 
 end

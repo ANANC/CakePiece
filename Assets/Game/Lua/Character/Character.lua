@@ -26,6 +26,9 @@ end
 function Character:Move(logicPosition,worldPosition)
     self:__SetLogicPosition(logicPosition)
     self:__SetWorldPosition(worldPosition)
+    print("逻辑位置："..logicPosition:Debug())
+    print("世界位置："..worldPosition:Debug())
+
 end
 
 function Character:GetLogicPosition()
