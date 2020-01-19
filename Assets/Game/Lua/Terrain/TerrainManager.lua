@@ -12,11 +12,11 @@ function TerrainManager:Enter()
     self.pFirstPosition = Vector3.New(0,0,0)
     self.pEndPosition = Vector3.New(0,2,-1)
 
-    self.pTerrain = Terrain.new(TerrainData:GetData())
+    self.pTerrain = Terrain:new(TerrainData:GetData())
 
     local characterId = 1
     local worldPosition = self.pTerrain:LogicPositionToWorldPosition(self.pFirstPosition)
-    self.pCharacter = Character.new(characterId)
+    self.pCharacter = Character:new(characterId)
     self.pCharacter:Move(self.pFirstPosition, worldPosition)
 
 end
