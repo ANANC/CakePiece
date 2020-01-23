@@ -416,8 +416,12 @@ function Vector3.AngleAroundAxis (from, to, axis)
 	return angle * (Vector3.Dot (axis, Vector3.Cross (from, to)) < 0 and -1 or 1)
 end
 
-function Vector3.Debug(self)
-	print("x:"..self.x.." y:"..self.y.." z:"..self.z)
+function Vector3:Debug()
+	print(self:DebugStr())
+end
+
+function Vector3:DebugStr()
+	return "x:"..self.x.." y:"..self.y.." z:"..self.z
 end
 
 function Vector3.Equal(left,right)

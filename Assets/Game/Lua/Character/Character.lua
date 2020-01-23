@@ -2,6 +2,7 @@ Character = class()
 
 function Character:ctor(id)
     self.pId = id
+    self:__CreateGameobject()
 end
 
 function Character:Destroy()
@@ -26,8 +27,8 @@ end
 function Character:Move(logicPosition,worldPosition)
     self:__SetLogicPosition(logicPosition)
     self:__SetWorldPosition(worldPosition)
-    print("逻辑位置："..logicPosition:Debug())
-    print("世界位置："..worldPosition:Debug())
+    print("逻辑位置："..logicPosition:DebugStr())
+    print("世界位置："..worldPosition:DebugStr())
 
 end
 

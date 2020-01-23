@@ -28,13 +28,14 @@ end
 function Terrain:__CreateTerrain()
     self.pFloorCount = 0
     local building = self.pTerrainData.Building
-    self.pGap = Vector3.New(building.Size.width + building.Gap.Width, building.FloorHeight, self.pTerrainData.Building.Size.Height)
+    self.pGap = Vector3.New(building.Size.Width + building.Gap.Width, building.FloorHeight, building.Size.Height + building.Gap.Height)
+    self.pPieceSize = Vector3.New(building.Size.Width, 1, building.Size.Height)
 
     for _,data in pairs(self.pTerrainData.Piece) do
         local logicPosition = data.Position
         local id = self:LogicPositionToId(logicPosition)
         local worldPosition = self:LogicPositionToWorldPosition(logicPosition)
-        local piece = self:CreatePiece(data, id, logicPosition, worldPosition)
+        local piece = self:__CreatePiece(data, id, logicPosition, worldPosition)
         self.pPieces[id] = piece
 
         if self.pFloorCount < logicPosition.y then
@@ -109,7 +110,7 @@ end
 
 
 function Terrain:LogicPositionToWorldPosition(logicPosition)
-    local position = Vector3.New(logicPosition.x * self.pGap.x , logicPosition.y * self.pGap.y, logicPosition.z * self.pGap.z)
+    local position = Vector3.New(logicPosition.x * self.pGap.x , logicPosition.y * -self.pGap.y, logicPosition.z * self.pGap.z)
     return position
 end
 
@@ -132,6 +133,8 @@ end
 
 function Terrain:__CreatePieceGameObject()
     local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
-    gameObject.transform:SetParent(self.pTransform)
+    local transform = gameObject.transform
+    transform:SetParent(self.pTransform)
+    transform.localScale = self.pPieceSize
     return gameObject
 end
