@@ -1,4 +1,4 @@
-TerrainManager = class()
+TerrainManager = {}
 
 require "Terrain/Terrain"
 
@@ -9,7 +9,7 @@ end
 function TerrainManager:Enter()
     print("开局")
 
-    self.pFirstPosition = Vector3.New(0,0,0)
+    self.pFirstPosition = Vector3.New(0,1,0)
     self.pEndPosition = Vector3.New(0,2,-1)
 
     self.pTerrain = Terrain:new(TerrainData:GetData())
@@ -28,6 +28,8 @@ function TerrainManager:Out()
     self.pCharacter:Destroy()
 end
 
+
+--- logic --- 
 function TerrainManager:CharacterMove(direction)
     local logicPosition = self.pCharacter:GetLogicPosition()
     local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
@@ -43,4 +45,18 @@ function TerrainManager:JudgeSucces()
     if curLogicPosition:Equal(self.pEndPosition) then
         ANF.UIMgr:OpenUI(GameDefine.UI.WinUI)
     end
+end
+
+--- art ---
+function TerrainManager:__CreateRoot()
+    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Terrain)
+    self.pTransform = self.pGameObject.transform
+end
+
+function TerrainManager:__CreatePieceGameObject()
+    local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
+    local transform = gameObject.transform
+    transform:SetParent(self.pTransform)
+    transform.localScale = self.pPieceSize
+    return gameObject
 end

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Character
+  m_Name: SidePiece
   m_Shader: {fileID: 4800000, guid: 282e4319b329a054a8ccab165f982c10, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -74,5 +74,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.8962264, g: 0.2240566, b: 0.2240566, a: 1}
+    - _Color: {r: 0.3490566, g: 0.34411713, b: 0.34411713, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
