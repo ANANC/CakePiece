@@ -11,7 +11,7 @@ function Terrain:ctor(terrainData)
 end
 
 function Terrain:Destroy()
-    for _,piece in pairs(self.pTerrainPieces) do 
+    for _,piece in pairs(self.pPieces) do 
         piece:Destroy()
     end
 
@@ -29,7 +29,7 @@ function Terrain:__CreateTerrain()
     self.pFloorCount = 0
     local building = self.pTerrainData.Building
     self.pGap = Vector3.New(building.Size.Width + building.Gap.Width, building.FloorHeight, building.Size.Height + building.Gap.Height)
-    self.pPieceSize = Vector3.New(building.Size.Width, 1, building.Size.Height)
+    self.pPieceSize = Vector3.New(building.Size.Width, building.Size.Thickness, building.Size.Height)
 
     for _,data in pairs(self.pTerrainData.Piece) do
         local logicPosition = data.Position
@@ -54,45 +54,47 @@ end
 
 function Terrain:GetNextLogixPosition(curLogicPos, direction)
 
-    local nextLogicPos = curLogicPos:Add(direction)
     local lastLogicPos = curLogicPos
+    local nextLogicPos = curLogicPos + direction
 
-    while ( true )
-    do
-        -- 当前块能否移动新方向
-        local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
-        if curPiece:ContainDirection(direction) == false then
-            break
-        end
+    -- 当前块能否移动新方向
+    local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
+    if curPiece:ContainDirection(direction) == true then
+        while ( true )
+        do
 
-        -- 是否存在下一块
-        local nextPiece = self:GetPieceByLogicPosition(nextLogicPos)
-        if nextPiece == nil or nextPiece:CanStand() == false then
-            break
-        end
+            -- 是否存在下一块
+            local nextPiece = self:GetPieceByLogicPosition(nextLogicPos)
+            if nextPiece == nil or nextPiece:CanStand() == false then
+                break
+            end
 
-        lastLogicPos = nextLogicPos
+            lastLogicPos = lastLogicPos:Copy(nextLogicPos)
 
-        if nextPiece:IsUp() then
-            if nextLogicPos.y == 0 then
-                if nextPiece:IsLoop() then
-                    nextLogicPos.y = self.pFloorCount
+            if nextPiece:IsUp() then
+                if nextLogicPos.y == 0 then
+                    if nextPiece:IsLoop() then
+                        nextLogicPos.y = self.pFloorCount
+                    else
+                        break
+                    end
                 else
-                    break
+                    nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Down)
+                end
+            elseif nextPiece:IsDown() then
+                if nextLogicPos.y == self.pFloorCount then
+                    if nextPiece:IsLoop() then
+                        nextLogicPos.y = 0
+                    else
+                        break
+                    end
+                else
+                    nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Up * nextPiece:GetMeasure())
                 end
             else
-                nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Up)
+                break
             end
-        elseif nextPiece:IsDown() then
-            if nextLogicPos.y == self.pFloorCount then
-                if nextPiece:IsLoop() then
-                    nextLogicPos.y = 0
-                else
-                    break
-                end
-            else
-                nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Down * self:GetMeasure())
-            end
+
         end
 
     end
@@ -126,9 +128,8 @@ end
 
 --- art ---
 function Terrain:__CreateRoot()
-    self.pGameObject = GameObject.New()
+    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Terrain)
     self.pTransform = self.pGameObject.transform
-    self.pGameObject.name = "Terrain"
 end
 
 function Terrain:__CreatePieceGameObject()

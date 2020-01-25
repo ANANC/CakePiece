@@ -56,9 +56,9 @@ end
 --- art ---
 function TerrainPiece:__SetGameObject(gameObject)
     self.pGameObject = gameObject
-    self.pGameObject.name = self.pId
+    self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z
     self.pTransform = self.pGameObject.transform
     self.pTransform.localPosition = self.pWorldPosition
-    self.pMaterial = self.pGameObject:GetComponent("MeshRenderer").material
+    --self.pMaterial = self.pGameObject:GetComponent("MeshRenderer").material
     --self.pMaterial.color = GameDefine.TerrainPieceColor[self:GetDirection()]
 end

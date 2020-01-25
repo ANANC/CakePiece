@@ -24,15 +24,16 @@ end
 function TerrainManager:Out()
     print("结束")
 
-    self.pTerrains:Destroy()
+    self.pTerrain:Destroy()
     self.pCharacter:Destroy()
 end
 
 function TerrainManager:CharacterMove(direction)
     local logicPosition = self.pCharacter:GetLogicPosition()
-    local nextLogicPosition = self.pTerrains:GetNextLogixPosition(logicPosition,direction)
-    local worldPosition = self.pTerrains:LogicPositionToWorldPosition(nextLogicPosition)
-    self.pCharacter:Move(logicPosition,worldPosition)
+    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
+    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(nextLogicPosition)
+    worldPosition = worldPosition + Vector3.up
+    self.pCharacter:Move(nextLogicPosition,worldPosition)
     self:JudgeSucces()
 end
 

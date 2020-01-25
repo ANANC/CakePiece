@@ -431,6 +431,13 @@ function Vector3.Equal(left,right)
 	return false
 end
 
+function Vector3:Copy(oldV3)
+	self.x = oldV3.x
+	self.y = oldV3.y
+	self.z = oldV3.z
+	return self
+end
+
 
 Vector3.__tostring = function(self)
 	return "["..self.x..","..self.y..","..self.z.."]"

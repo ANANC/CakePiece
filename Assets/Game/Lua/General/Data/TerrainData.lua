@@ -4,15 +4,16 @@ local Data =
     {
         Size   =           --地块大小
         {
-            Width   = 12,
-            Height  = 12,
+            Width       = 4,    --宽
+            Height      = 4,    --高
+            Thickness   = 0.1,  --厚
         },
         Gap    =           --地块间隙
         {
-            Width   = 10,
-            Height  = 10, 
+            Width   = 1,
+            Height  = 1, 
         },
-        FloorHeight = 10,       --层高
+        FloorHeight = 2,       --层高
     },
     Piece       =           --地块
     {
@@ -32,7 +33,7 @@ local Data =
         },
         {
             Position    = { x = 1, y = 0, z = 1,},
-            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Motion      = { [GameDefine.Motion.Down] = 1 },
             Space       = GameDefine.Space.Once,
             Measure     = 1,
             Loop        = false,
@@ -88,7 +89,7 @@ local Data =
         },
         {
             Position    = { x = 0, y = 1, z = -1,},
-            Motion      = { [GameDefine.Motion.Flat] = 1 },
+            Motion      = { [GameDefine.Motion.Down] = 1 },
             Space       = GameDefine.Space.Once,
             Measure     = 1,
             Loop        = false,
