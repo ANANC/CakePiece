@@ -5,7 +5,6 @@ require "Terrain/TerrainPiece"
 function Terrain:ctor(terrainData)
     self.pPieces = {}
     self.pTerrainData = terrainData
-    self:__CreateRoot()
 
     self:__CreateTerrain()
 end
@@ -14,10 +13,6 @@ function Terrain:Destroy()
     for _,piece in pairs(self.pPieces) do 
         piece:Destroy()
     end
-
-    ANF.ResMgr:DestroyGameObject(self.pGameObject)
-    self.pGameObject = nil
-    self.pTransform = nil
 
     self.pPieces = {}
 end
@@ -46,7 +41,7 @@ end
 
 function Terrain:__CreatePiece(pieceData, id, logicPosition, worldPosition)
     local piece = TerrainPiece:new(pieceData, id, logicPosition, worldPosition)
-    piece:__SetGameObject(self:__CreatePieceGameObject())
+    piece:__SetGameObject(TerrainManager.Model.Art:CreatePieceGameObject(self.pPieceSize))
     return piece
 end
 
@@ -124,18 +119,4 @@ end
 function Terrain:GetPieceByLogicPosition(logicPosition)
     local id = self:LogicPositionToId(logicPosition)
     return self:GetPieceById(id)
-end
-
---- art ---
-function Terrain:__CreateRoot()
-    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Terrain)
-    self.pTransform = self.pGameObject.transform
-end
-
-function Terrain:__CreatePieceGameObject()
-    local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
-    local transform = gameObject.transform
-    transform:SetParent(self.pTransform)
-    transform.localScale = self.pPieceSize
-    return gameObject
 end

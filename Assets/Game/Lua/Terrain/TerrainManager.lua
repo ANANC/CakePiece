@@ -1,13 +1,23 @@
 TerrainManager = {}
 
+function TerrainManager:AddModel(name,model)
+    if self.Model == nil then
+        self.Model = {}
+    end
+    self.Model[name] = model
+end
+
+require "Terrain/TerrainArtModel"
 require "Terrain/Terrain"
 
-function TerrainManager:ctor()
-
+function TerrainManager:Init()
+    self:ModelsControl("Init")
 end
 
 function TerrainManager:Enter()
     print("开局")
+
+    self:ModelsControl("Enter")
 
     self.pFirstPosition = Vector3.New(0,1,0)
     self.pEndPosition = Vector3.New(0,2,-1)
@@ -26,6 +36,8 @@ function TerrainManager:Out()
 
     self.pTerrain:Destroy()
     self.pCharacter:Destroy()
+    
+    self:ModelsControl("Out")
 end
 
 
@@ -47,16 +59,14 @@ function TerrainManager:JudgeSucces()
     end
 end
 
---- art ---
-function TerrainManager:__CreateRoot()
-    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Terrain)
-    self.pTransform = self.pGameObject.transform
-end
-
-function TerrainManager:__CreatePieceGameObject()
-    local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
-    local transform = gameObject.transform
-    transform:SetParent(self.pTransform)
-    transform.localScale = self.pPieceSize
-    return gameObject
+--- model ---
+function TerrainManager:ModelsControl(funcName)
+    if self.Model ~= nil then
+        for _,model in pairs(self.Model) do
+            local func = model[funcName]
+            if func ~= nil then
+                func(model)
+            end
+        end
+    end
 end

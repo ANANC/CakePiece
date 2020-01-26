@@ -22,14 +22,20 @@ function TerrainPiece:ContainDirection(direction)
     if motion == nil then
         return false
     end
-    --平面
-    if self.pMotion[GameDefine.Motion.Flat] then
-        if  motion == GameDefine.Motion.Forward or motion == GameDefine.Motion.Back or 
-            motion == GameDefine.Motion.Left or motion == GameDefine.Motion.Right then
-            return true
+    local exist = self:ContainMotion(motion)
+    return exist
+end
+
+function TerrainPiece:ContainMotion(motion)
+    local exist = self.pMotion[motion] ~= nil
+    if exist == false then
+        if self.pMotion[GameDefine.Motion.Flat] then
+            if  motion == GameDefine.Motion.Forward or motion == GameDefine.Motion.Back or 
+                motion == GameDefine.Motion.Left or motion == GameDefine.Motion.Right then
+                return true
+            end
         end
     end
-    local exist = self.pMotion[motion] ~= nil
     return exist
 end
 
@@ -54,6 +60,11 @@ function TerrainPiece:GetMeasure()
 end
 
 --- art ---
+function TerrainPiece:GetTransform()
+    return self.pTransform
+end
+
+
 function TerrainPiece:__SetGameObject(gameObject)
     self.pGameObject = gameObject
     self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z

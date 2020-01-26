@@ -2,6 +2,7 @@ Game = {}
 
 require "General/Config/GameDefine"
 require "General/Data/TerrainData"
+require "Game/GameUtil"
 
 require "Terrain/TerrainManager"
 require "Character/Character"
@@ -15,6 +16,9 @@ function Game:Start()
     --加载UI
     self:InitUI()
 
+    --初始化模块
+    self:InitManagers()
+
     GameScene:Enter()
 end
 
@@ -23,4 +27,8 @@ function Game:InitUI()
     for _,uiName in pairs(GameDefine.UI) do
         require(uiPath.."/"..uiName)
     end
+end
+
+function Game:InitManagers()
+    TerrainManager:Init()
 end
