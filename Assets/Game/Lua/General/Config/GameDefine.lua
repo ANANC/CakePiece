@@ -34,7 +34,16 @@ GameDefine.DirectionToMotion =
     [GameDefine.Direction.Right] = GameDefine.Motion.Right,         --右
     [GameDefine.Direction.Up] = GameDefine.Motion.Up,               --上
     [GameDefine.Direction.Down] = GameDefine.Motion.Down,           --下
+}
 
+GameDefine.MotionToDirection = 
+{
+    [GameDefine.Motion.Forward] = GameDefine.Direction.Forward,     --前
+    [GameDefine.Motion.Back] = GameDefine.Direction.Back,           --后
+    [GameDefine.Motion.Left] = GameDefine.Direction.Left,           --左
+    [GameDefine.Motion.Right] = GameDefine.Direction.Right,         --右
+    [GameDefine.Motion.Up] = GameDefine.Direction.Up,               --上
+    [GameDefine.Motion.Down] = GameDefine.Direction.Down,           --下
 }
 
 --空间
@@ -66,6 +75,7 @@ GameDefine.Path =
     Prefab = 
     {
         TerrainPiece = "Assets/Game/Resource/Prefab/TerrainPiece.prefab",
+        SidePiece = "Assets/Game/Resource/Prefab/SidePiece.prefab",
         Terrain = "Assets/Game/Resource/Prefab/Terrain.prefab",
         Character = "Assets/Game/Resource/Prefab/Character.prefab",
     }

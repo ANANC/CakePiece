@@ -19,7 +19,7 @@ function TerrainManager:Enter()
 
     self:ModelsControl("Enter")
 
-    self.pFirstPosition = Vector3.New(0,1,0)
+    self.pFirstPosition = Vector3.New(0,0,0)
     self.pEndPosition = Vector3.New(0,2,-1)
 
     self.pTerrain = Terrain:new(TerrainData:GetData())
