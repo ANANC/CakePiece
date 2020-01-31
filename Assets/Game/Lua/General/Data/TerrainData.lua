@@ -13,7 +13,7 @@ local Data =
             Width   = 1,
             Height  = 1, 
         },
-        FloorHeight = 2,       --层高
+        FloorHeight = 1.3,       --层高
     },
     Piece       =           --地块
     {
@@ -48,6 +48,13 @@ local Data =
         {
             Position    = { x = 1, y = 1, z = 1,},
             Motion      = { [GameDefine.Motion.Flat] = true },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+            Loop        = false,
+        },
+        {
+            Position    = { x = 1, y = 1, z = 0,},
+            Motion      = { [GameDefine.Motion.Up] = true },
             Space       = GameDefine.Space.Once,
             Measure     = 1,
             Loop        = false,

@@ -37,8 +37,17 @@ namespace ANFramework
                 return null;
             }
 
-            gameObject.transform.SetParent(m_Canvas.transform);
-            gameObject.transform.localPosition = Vector3.zero;
+            Transform transform = gameObject.transform;
+            transform.SetParent(m_Canvas.transform);
+            if (transform as RectTransform)
+            {
+                ((RectTransform)transform).anchoredPosition = Vector3.zero;
+            }
+            else
+            {
+                transform.localPosition = Vector3.zero;
+            }
+            transform.localScale = Vector3.one;
             gameObject.name = resourceName;
 
             string uiName = resourceName;

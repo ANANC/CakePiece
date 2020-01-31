@@ -61,12 +61,21 @@ GameDefine.Axial =
     Z = 2,  --z轴
 }
 
-GameDefine.TerrainPieceColor =
+--颜色
+GameDefine.Color =
 {
-    [GameDefine.Motion.Not]     = {r = 0, g = 0, b = 0, a = 1},
-    [GameDefine.Motion.Flat]    = {r = 0.1, g = 1, b = 1, a = 1},
-    [GameDefine.Motion.Up]      = {r = 1, g = 0.1, b = 1, a = 1},
-    [GameDefine.Motion.Down]    = {r = 1, g = 1, b = 0.1, a = 1}
+    --层
+    Floor = 
+    {
+        Current = 
+        {
+            Color = Color.New(1,1,1,1),
+        },
+        Other = 
+        {
+            Color = Color.New(0.8,0.8,0.8,0.7),
+        }
+    }
 }
 
 --地址

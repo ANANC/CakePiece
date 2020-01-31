@@ -1,9 +1,7 @@
 ﻿Shader "Custom/Color"
 {
 Properties {
-        _Color ("Color Tint", Color) = (1, 1, 1, 1)
-        _MainTex ("Main Tex", 2D) = "white" {}
-        _AlphaScale ("Alpha Scale", Range(0, 1)) = 1
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
     SubShader {
         Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
@@ -22,9 +20,6 @@ Properties {
             #include "Lighting.cginc"
 
             fixed4 _Color;
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            fixed _AlphaScale;
 
             struct a2v {
                 float4 vertex : POSITION;
@@ -46,9 +41,6 @@ Properties {
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
 
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-
-                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
-
                 return o;
             }
 
@@ -56,15 +48,14 @@ Properties {
                 fixed3 worldNormal = normalize(i.worldNormal);
                 fixed3 worldLightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
 
-                fixed4 texColor = tex2D(_MainTex, i.uv);
-
-                fixed3 albedo = texColor.rgb * _Color.rgb;
+                fixed3 albedo = _Color.rgb;
 
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
 
                 fixed3 diffuse = _LightColor0.rgb * albedo * max(0, dot(worldNormal, worldLightDir));
                 // 其实就是在最后的alpha位乘算了一个透明度
-                return fixed4(ambient + diffuse, texColor.a * _AlphaScale);
+                return fixed4(ambient + diffuse, _Color.a);
+
             }
 
             ENDCG

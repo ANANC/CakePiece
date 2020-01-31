@@ -16,20 +16,14 @@ function Character:__CreateGameobject()
     self.pTransform = self.pGameObject.transform
 end
 
-function Character:__SetLogicPosition(logicPosition)
+function Character:SetLogicPosition(logicPosition)
     self.pLogicPosition = logicPosition
-end
-
-function Character:__SetWorldPosition(worldPosition)
-    self.pTransform.localPosition = worldPosition
-end
-
-function Character:Move(logicPosition,worldPosition)
-    self:__SetLogicPosition(logicPosition)
-    self:__SetWorldPosition(worldPosition)
     print("逻辑位置："..logicPosition:DebugStr())
-    print("世界位置："..worldPosition:DebugStr())
+end
 
+function Character:SetWorldPosition(worldPosition)
+    self.pTransform.localPosition = worldPosition
+    print("世界位置："..worldPosition:DebugStr())
 end
 
 function Character:GetLogicPosition()

@@ -4,6 +4,7 @@ require "Terrain/TerrainPiece"
 
 function Terrain:ctor(terrainData)
     self.pPieces = {}
+    self.pPieceFloors = {}
     self.pTerrainData = terrainData
 
     self:__CreateTerrain()
@@ -16,6 +17,16 @@ function Terrain:Destroy()
 
     self.pPieces = {}
 end
+
+--- get ---
+function Terrain:GetFloor(floor)
+    return self.pPieceFloors[floor]
+end
+
+function Terrain:GetFloorCount()
+    return self.pFloorCount
+end
+
 
 --- logic ---
 
@@ -33,8 +44,14 @@ function Terrain:__CreateTerrain()
         local piece = self:__CreatePiece(data, id, logicPosition, worldPosition)
         self.pPieces[id] = piece
 
-        if self.pFloorCount < logicPosition.y then
-            self.pFloorCount = logicPosition.y
+        local curFloor = logicPosition.y
+        if self.pPieceFloors[curFloor] == nil then
+            self.pPieceFloors[curFloor] = {}
+        end
+        table.insert( self.pPieceFloors[curFloor], piece )
+
+        if self.pFloorCount < curFloor then
+            self.pFloorCount = curFloor
         end
     end
 end

@@ -82,7 +82,7 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
     end
 
     local size = pieceTransform:Find(PiecePath.Cube).transform.localScale
-    local positionY = size.y * 2
+    local positionY = 0.3
     size = size * 0.5
     for index = 0,updateCount - 1 do
         if index < sideDataCount then
@@ -91,7 +91,7 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
                 gameObject.transform:SetParent(sideTransform)
             end
             local direction = GameDefine.MotionToDirection[sides[index + 1]]
-            local position = Vector3.Scale(size,direction) - direction * positionY
+            local position = Vector3.Scale(size,direction) - direction * 0.5
             position.y = positionY
             sideTransform:GetChild(index).localPosition = position
         elseif index < sideCellCount then
@@ -99,4 +99,22 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
         end
     end
     
+end
+
+--- floor ---
+
+function TerrainArtModel:UpdateSingleFloorArt(floorPieces,isPresent)
+    local color = GameDefine.Color.Floor.Current.Color
+    if isPresent == false then
+        color = GameDefine.Color.Floor.Other.Color
+    end
+    for _,piece in pairs(floorPieces) do
+        self:UpdateSiglePieceColor(piece,color)
+    end
+end
+
+function TerrainManager:UpdateSiglePieceColor(piece,color)
+    local pieceTransform = piece:GetTransform()
+    local material = pieceTransform:Find(PiecePath.Cube):GetComponent("MeshRenderer").material
+    material.color = color
 end

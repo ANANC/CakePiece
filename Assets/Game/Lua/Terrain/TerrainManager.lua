@@ -8,6 +8,7 @@ function TerrainManager:AddModel(name,model)
 end
 
 require "Terrain/TerrainArtModel"
+require "Terrain/TerrainAnimationModel"
 require "Terrain/Terrain"
 
 function TerrainManager:Init()
@@ -27,8 +28,11 @@ function TerrainManager:Enter()
     local characterId = 1
     local worldPosition = self.pTerrain:LogicPositionToWorldPosition(self.pFirstPosition)
     self.pCharacter = Character:new(characterId)
-    self.pCharacter:Move(self.pFirstPosition, worldPosition)
 
+    self:__SetCharacterLogicPosition(self.pFirstPosition)
+    self:__SetCharacterWorldPosition(worldPosition)
+
+    self:__UpdateAllFloorArt()
 end
 
 function TerrainManager:Out()
@@ -38,25 +42,6 @@ function TerrainManager:Out()
     self.pCharacter:Destroy()
     
     self:ModelsControl("Out")
-end
-
-
---- logic --- 
-function TerrainManager:CharacterMove(direction)
-    local logicPosition = self.pCharacter:GetLogicPosition()
-    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
-    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(nextLogicPosition)
-    worldPosition = worldPosition + Vector3.up
-    self.pCharacter:Move(nextLogicPosition,worldPosition)
-    self:JudgeSucces()
-end
-
-function TerrainManager:JudgeSucces()
-    local curLogicPosition = self.pCharacter:GetLogicPosition()
-
-    if curLogicPosition:Equal(self.pEndPosition) then
-        ANF.UIMgr:OpenUI(GameDefine.UI.WinUI)
-    end
 end
 
 --- model ---
@@ -70,3 +55,60 @@ function TerrainManager:ModelsControl(funcName)
         end
     end
 end
+
+--- logic --- 
+function TerrainManager:CharacterMove(direction)
+    self:__UpdateCharacterPosition(direction)
+    self:__UpdateCurFloorArt()
+    self:__JudgeSucces()
+end
+
+function TerrainManager:__JudgeSucces()
+    local curLogicPosition = self.pCharacter:GetLogicPosition()
+
+    if curLogicPosition:Equal(self.pEndPosition) then
+        ANF.UIMgr:OpenUI(GameDefine.UI.WinUI)
+    end
+end
+
+--- character ---
+function TerrainManager:__UpdateCharacterPosition(direction)
+    local logicPosition = self.pCharacter:GetLogicPosition()
+    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
+    self:__SetCharacterLogicPosition(nextLogicPosition)
+
+    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(nextLogicPosition)
+    self:__SetCharacterWorldPosition(worldPosition)
+end
+
+function TerrainManager:__SetCharacterLogicPosition(logicPosition)
+    self.pCharacter:SetLogicPosition(logicPosition)
+    self:__UpdateCurFloor()
+end
+
+function TerrainManager:__SetCharacterWorldPosition(worldPosition)
+    worldPosition = worldPosition + Vector3.up 
+    self.pCharacter:SetWorldPosition(worldPosition)
+end
+
+--- floor ---
+function TerrainManager:__UpdateCurFloor()
+    self.pOldFloor = self.pCurFloor
+    self.pCurFloor = self.pCharacter:GetLogicPosition().y
+end
+
+function TerrainManager:__UpdateCurFloorArt()
+    if self.pOldFloor ~= nil and self.pOldFloor ~= self.pCurFloor then
+        self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(self.pOldFloor),false)
+    end
+    self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(self.pCurFloor),true)
+end
+
+function TerrainManager:__UpdateAllFloorArt()
+    for index = 0,self.pTerrain:GetFloorCount() do
+        self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(index),self.pCurFloor == index)
+    end
+end
+
+
+
