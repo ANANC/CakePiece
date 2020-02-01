@@ -3,7 +3,6 @@ GameScene = {}
 
 function GameScene:Enter()
     TerrainManager:Enter()
-    ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
 end
 
 function GameScene:Out()

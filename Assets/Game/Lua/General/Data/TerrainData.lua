@@ -1,20 +1,5 @@
 local Data = 
 {
-    Building    =           --建筑
-    {
-        Size   =           --地块大小
-        {
-            Width       = 4,    --宽
-            Height      = 4,    --高
-            Thickness   = 0.1,  --厚
-        },
-        Gap    =           --地块间隙
-        {
-            Width   = 1,
-            Height  = 1, 
-        },
-        FloorHeight = 1.3,       --层高
-    },
     Piece       =           --地块
     {
         {

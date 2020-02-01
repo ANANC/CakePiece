@@ -40,6 +40,7 @@ function TerrainArtModel:CreatePieceGameObject(pieceSize)
     local transform = gameObject.transform
     transform:SetParent(self.pTransform)
     self:SetPieceSize(transform,pieceSize)
+    transform.localScale = Vector3.zero
     return gameObject
 end
 
@@ -109,12 +110,29 @@ function TerrainArtModel:UpdateSingleFloorArt(floorPieces,isPresent)
         color = GameDefine.Color.Floor.Other.Color
     end
     for _,piece in pairs(floorPieces) do
-        self:UpdateSiglePieceColor(piece,color)
+        self:UpdateSiglePieceAndAlpha(piece,color)
     end
 end
 
-function TerrainManager:UpdateSiglePieceColor(piece,color)
+function TerrainArtModel:UpdateSiglePieceAndAlpha(piece,color)
     local pieceTransform = piece:GetTransform()
     local material = pieceTransform:Find(PiecePath.Cube):GetComponent("MeshRenderer").material
     material.color = color
+end
+
+function TerrainArtModel:UpdateSiglePieceColor(piece,color)
+    local pieceTransform = piece:GetTransform()
+    local material = pieceTransform:Find(PiecePath.Cube):GetComponent("MeshRenderer").material
+    color.a = material.color.a
+    material.color = color
+end
+
+function TerrainArtModel:UpdateSiglePieceSideColor(piece,color)
+    local pieceTransform = piece:GetTransform()
+    local sideTransform = pieceTransform:Find(PiecePath.Side).transform
+    local sideCellCount = sideTransform.childCount
+    for index = 0,sideCellCount - 1 do
+        local materail = sideTransform:GetChild(index):Find(PiecePath.Cube):GetComponent("MeshRenderer").material
+        materail.color = color
+    end
 end

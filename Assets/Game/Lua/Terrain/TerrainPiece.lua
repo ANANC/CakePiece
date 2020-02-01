@@ -64,11 +64,14 @@ function TerrainPiece:GetTransform()
     return self.pTransform
 end
 
-
 function TerrainPiece:__SetGameObject(gameObject)
     self.pGameObject = gameObject
     self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z
     self.pTransform = self.pGameObject.transform
     self.pTransform.localPosition = self.pWorldPosition
     TerrainManager.Model.Art:SetPieceDirectionArt(self)
+end
+
+function TerrainPiece:GetWorldPosition()
+    return self.pWorldPosition
 end

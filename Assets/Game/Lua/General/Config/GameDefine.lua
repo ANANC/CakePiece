@@ -1,5 +1,6 @@
 GameDefine = {}
 
+GameDefine.Framerate = 30 --帧率
 
 --动向  （常量）
 GameDefine.Motion = 
@@ -61,22 +62,6 @@ GameDefine.Axial =
     Z = 2,  --z轴
 }
 
---颜色
-GameDefine.Color =
-{
-    --层
-    Floor = 
-    {
-        Current = 
-        {
-            Color = Color.New(1,1,1,1),
-        },
-        Other = 
-        {
-            Color = Color.New(0.8,0.8,0.8,0.7),
-        }
-    }
-}
 
 --地址
 GameDefine.Path = 
@@ -97,3 +82,60 @@ GameDefine.UI =
     MainUI  = "MainUI",
     WinUI   = "WinUI", 
 }
+
+
+--颜色
+GameDefine.Color =
+{
+    --层
+    Floor = 
+    {
+        Current = 
+        {
+            Color = Color.New(1,1,1,1),
+        },
+        Other = 
+        {
+            Color = Color.New(0.8,0.8,0.8,0.7),
+        }
+    },
+
+    --终点
+    End = Color.New(0.82,0.3,0.3,1),    
+
+    --指向片
+    Side = 
+    {
+        Current = Color.New(1,1,0.2,1),   
+        Other   = Color.New(0.3,0.3,0.3,1),
+    }
+}
+
+--建筑
+GameDefine.Building = 
+{
+    --地块大小
+    Size   =           
+    {
+        Width       = 4,    --宽
+        Height      = 4,    --高
+        Thickness   = 0.1,  --厚
+    },
+    --地块大小
+    Gap    =           
+    {
+        Width   = 1,
+        Height  = 1, 
+    },
+    --层高
+    FloorHeight = 1.3,       
+}
+
+--动画
+GameDefine.Tween = 
+{
+    Originate       = 5,    --起始高度
+    DisplayTimer    = 2,    --显示时间（S）
+}
+--显示速度
+GameDefine.Tween.DisplaySpeed = GameDefine.Tween.DisplayTimer / GameDefine.Framerate    

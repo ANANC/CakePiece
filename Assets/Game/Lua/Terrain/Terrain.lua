@@ -19,6 +19,16 @@ function Terrain:Destroy()
 end
 
 --- get ---
+function Terrain:GetPieceById(id)
+    local piece = self.pPieces[id]
+    return piece
+end
+
+function Terrain:GetPieceByLogicPosition(logicPosition)
+    local id = self:LogicPositionToId(logicPosition)
+    return self:GetPieceById(id)
+end
+
 function Terrain:GetFloor(floor)
     return self.pPieceFloors[floor]
 end
@@ -33,7 +43,7 @@ end
 -- 创建 --
 function Terrain:__CreateTerrain()
     self.pFloorCount = 0
-    local building = self.pTerrainData.Building
+    local building = GameDefine.Building
     self.pGap = Vector3.New(building.Size.Width + building.Gap.Width, building.FloorHeight, building.Size.Height + building.Gap.Height)
     self.pPieceSize = Vector3.New(building.Size.Width, building.Size.Thickness, building.Size.Height)
 
@@ -128,12 +138,3 @@ function Terrain:LogicPositionToWorldPosition(logicPosition)
     return position
 end
 
-function Terrain:GetPieceById(id)
-    local piece = self.pPieces[id]
-    return piece
-end
-
-function Terrain:GetPieceByLogicPosition(logicPosition)
-    local id = self:LogicPositionToId(logicPosition)
-    return self:GetPieceById(id)
-end
