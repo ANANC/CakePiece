@@ -64,12 +64,10 @@ function TerrainManager:__InitArts()
     self.pStartTimers = {count = floorCount + 1 , timers = {}, index = {}}
     local index = 0
     for floor = floorCount,0,-1 do
-        local time = index * GameDefine.Tween.DisplayTimer * GameDefine.Framerate
+        local time = index * GameDefine.Tween.DisplayTimer
         local timer = FrameTimer.New(function() 
             local floorPieces = self.pTerrain:GetFloor(floor)
-            for _,piece in pairs(floorPieces) do
-                self.Model.Animation:ShowPieceDisplayAnimation(piece)
-            end
+            self.Model.Animation:PlayFloorDisplayAnimation(floorPieces)
             self:__FloorAnimationFinish(floor)
         end,time,1)
         index = index + 1
@@ -88,7 +86,7 @@ function TerrainManager:__FloorAnimationFinish(floor)
         if self.pStartTimers.index[floor] == 0 then
             self.pStartTimers.index[floor] = self.pStartTimers.index[floor] + 1
             timer = FrameTimer.New(function () self:__FloorAnimationFinish(floor) 
-            end,(GameDefine.Tween.DisplayTimer + 1) * GameDefine.Framerate,1)
+            end,GameDefine.Tween.DisplayTimer,1)
             timer:Start()
             return
         end
@@ -104,7 +102,7 @@ end
 
 function TerrainManager:__EnterAnimationFinish()
     print("开始动画结束")
-    
+
     self:__CreateCharacter()
     local piece = self.pTerrain:GetPieceByLogicPosition(self.pFirstPosition)
     self.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Current)
@@ -167,11 +165,25 @@ function TerrainManager:__UpdateCurFloor(floor)
 end
 
 function TerrainManager:__UpdateCurFloorArt()
+    -- art
     if self.pOldFloor ~= nil and self.pOldFloor ~= self.pCurFloor then
-        local oldPiece = self.pTerrain:GetFloor(self.pOldFloor)
-        self.Model.Art:UpdateSingleFloorArt(oldPiece,false)
+        local oldFloor = self.pTerrain:GetFloor(self.pOldFloor)
+        self.Model.Art:UpdateSingleFloorArt(oldFloor,false)
     end
     self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(self.pCurFloor),true)
+
+    -- animation
+    if self.pOldFloor ~= nil then
+        if self.pOldFloor < self.pCurFloor then
+            local oldFloor = self.pTerrain:GetFloor(self.pOldFloor)
+            self.Model.Animation:PlayFloorHideAnimation(oldFloor)
+        end
+
+        if self.pCurFloor < self.pOldFloor then
+            local curFloor = self.pTerrain:GetFloor(self.pCurFloor)
+            self.Model.Animation:PlayFloorDisplayAnimation(curFloor)
+        end
+    end
 
     self:__UpdateEndPieceArt()
 end
@@ -179,4 +191,3 @@ end
 function TerrainManager:__UpdateEndPieceArt()
     self.Model.Art:UpdateSiglePieceColor(self.pEndPiece,GameDefine.Color.End)
 end
-

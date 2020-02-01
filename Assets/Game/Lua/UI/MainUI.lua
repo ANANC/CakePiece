@@ -6,7 +6,6 @@ end
 function MainUI:Init()
     local root = self.pTransform
     self.pTransform.sizeDelta = Vector2.zero
-
     root:Find("RightButtom/ForwardButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"ForwardButtonOnClick"))
     root:Find("RightButtom/BackButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"BackButtonOnClick"))
     root:Find("RightButtom/LeftButton"):GetComponent("Button").onClick:AddListener(ANF.Util:GenUnityAction(GameScene,"LeftButtonOnClick"))

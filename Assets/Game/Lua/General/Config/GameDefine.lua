@@ -135,7 +135,5 @@ GameDefine.Building =
 GameDefine.Tween = 
 {
     Originate       = 5,    --起始高度
-    DisplayTimer    = 2,    --显示时间（S）
+    DisplayTimer    = 1 * GameDefine.Framerate,    --显示时间（S）
 }
---显示速度
-GameDefine.Tween.DisplaySpeed = GameDefine.Tween.DisplayTimer / GameDefine.Framerate    
