@@ -114,7 +114,7 @@ function TerrainManager:__FloorAnimationFinish(floor)
             timer = FrameTimer.New(function () 
                 self:__FloorAnimationFinish(floor) 
                 self:__UpdateTimer(TimerNames.FloorAnimation..floor,nil)
-            end,GameDefine.Tween.Move,1)
+            end,GameDefine.Tween.Move * 3,1)
             timer:Start()
             self:__UpdateTimer(TimerNames.FloorAnimation..floor,timer)
             return
@@ -134,7 +134,7 @@ function TerrainManager:__EnterAnimationFinish()
 
     self:__CreateCharacter()
     local piece = self.pTerrain:GetPieceByLogicPosition(self.pFirstPosition)
-    self.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Current)
+    self.Model.Animation:PlayPieceDownAnimation(piece)
 
     ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
     self.pFloorUI = ANF.UIMgr:GetUI(GameDefine.UI.FloorUI)
@@ -152,7 +152,14 @@ end
 
 --- logic --- 
 function TerrainManager:CharacterMove(direction)
-    self:__UpdateCharacterLogicPosition(direction)
+    -- 移动逻辑
+    local logicPosition = self.pCharacter:GetLogicPosition()
+    self.Model.Animation:PlayPieceNormalAnimation(self.pTerrain:GetPieceByLogicPosition(logicPosition))
+
+    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
+    self:__SetCharacterLogicPosition(nextLogicPosition)
+
+    -- 表现
     self:__UpdateCurFloorArt()
 end
 
@@ -162,7 +169,7 @@ function TerrainManager:__CharacterMoveAnimationFinish()
     self:__SetCharacterWorldPosition(worldPosition)
     self.pCharacter:SetActive(true)
 
-    self.Model.Art:UpdateSiglePieceSideColor(self.pTerrain:GetPieceByLogicPosition(logicPosition),GameDefine.Color.Side.Current)
+    self.Model.Animation:PlayPieceDownAnimation(self.pTerrain:GetPieceByLogicPosition(logicPosition))
 
     self:__JudgeSucces()
 end
@@ -176,14 +183,6 @@ function TerrainManager:__JudgeSucces()
 end
 
 --- character ---
-function TerrainManager:__UpdateCharacterLogicPosition(direction)
-    local logicPosition = self.pCharacter:GetLogicPosition()
-    self.Model.Art:UpdateSiglePieceSideColor(self.pTerrain:GetPieceByLogicPosition(logicPosition),GameDefine.Color.Side.Other)
-
-    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
-    self:__SetCharacterLogicPosition(nextLogicPosition)
-end
-
 function TerrainManager:__SetCharacterLogicPosition(logicPosition)
     self.pCharacter:SetLogicPosition(logicPosition)
     self:__UpdateCurFloor(logicPosition.y)
@@ -217,16 +216,16 @@ function TerrainManager:__UpdateCurFloorArt()
         if self.pOldFloor < self.pCurFloor then
             apartCount = self.pCurFloor - self.pOldFloor
             for index = self.pOldFloor,self.pCurFloor - 1 do
-                local oldFloor = self.pTerrain:GetFloor(index)
-                self.Model.Animation:PlayFloorHideAnimation(oldFloor)
+                local floor = self.pTerrain:GetFloor(index)
+                self.Model.Animation:PlayFloorHideAnimation(floor)
             end
         end
 
         if self.pCurFloor < self.pOldFloor then
             apartCount = self.pOldFloor - self.pCurFloor
-            for index = self.pCurFloor,self.pOldFloor - 1 do
-                local curFloor = self.pTerrain:GetFloor(index)
-                self.Model.Animation:PlayFloorDisplayAnimation(curFloor)
+            for index = self.pOldFloor - 1,self.pCurFloor,-1 do
+                local floor = self.pTerrain:GetFloor(index)
+                self.Model.Animation:PlayFloorDisplayAnimation(floor)
             end
         end
     end
@@ -241,14 +240,14 @@ function TerrainManager:__UpdateCurFloorArt()
         local timer = FrameTimer.New(function () 
             self:__CharacterMoveAnimationFinish() 
             self:__UpdateTimer(TimerNames.MoveAnimation,nil)
-        end,GameDefine.Tween.Move,1)
+        end,GameDefine.Tween.Move * 3,1)
         timer:Start()
         self:__UpdateTimer(TimerNames.MoveAnimation,self.pMoveAnimationTimer)
     end
 end
 
 function TerrainManager:__UpdateEndPieceArt()
-    self.Model.Art:UpdateSiglePieceColor(self.pEndPiece,GameDefine.Color.End)
+    self.Model.Art:UpdateSiglePieceColor(self.pEndPiece,GameDefine.Color.Piece.End)
 end
 
 --- timer ---

@@ -105,9 +105,9 @@ end
 --- floor ---
 
 function TerrainArtModel:UpdateSingleFloorArt(floorPieces,isPresent)
-    local color = GameDefine.Color.Floor.Current.Color
+    local color = GameDefine.Color.Floor.Current
     if isPresent == false then
-        color = GameDefine.Color.Floor.Other.Color
+        color = GameDefine.Color.Floor.Other
     end
     for _,piece in pairs(floorPieces) do
         self:UpdateSiglePieceAndAlpha(piece,color)

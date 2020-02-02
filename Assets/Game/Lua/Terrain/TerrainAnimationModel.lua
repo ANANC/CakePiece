@@ -46,13 +46,13 @@ function TerrainAnimationModel:__UpdatePieceDisplayAnimation(piece)
     local worldPosition = piece:GetWorldPosition()
     local localPosition = pieceTransform.localPosition
     local position = (localPosition.y-worldPosition.y) / GameDefine.Tween.Move
-    if position < 0.05 then
-        position = 0.05
+    if position < 0.1 then
+        position = 0.1
     end
     position = localPosition + Vector3.down * position
 
     local arrivals = false
-    if position.y - worldPosition.y <= 0.04 then
+    if position.y - worldPosition.y <= 0.05 then
         position.y = worldPosition.y
         arrivals = true
     end
@@ -83,13 +83,13 @@ function TerrainAnimationModel:__UpdatePieceHideAnimation(piece)
     local worldPosition = piece:GetWorldPosition()
     local localPosition = pieceTransform.localPosition
     local position = (GameDefine.Tween.Originate-localPosition.y) / GameDefine.Tween.Move
-    if position < 0.05 then
-        position = 0.05
+    if position < 0.1 then
+        position = 0.1
     end
     position = localPosition + Vector3.up * position
 
     local arrivals = false
-    if GameDefine.Tween.Originate - position.y <= 0.04 then
+    if GameDefine.Tween.Originate - position.y <= 0.05 then
         position.y = GameDefine.Tween.Originate
         arrivals = true
     end
@@ -100,6 +100,28 @@ function TerrainAnimationModel:__UpdatePieceHideAnimation(piece)
         pieceTransform.localScale = Vector3.zero
         self:StopTimer(piece:GetId())
     end
+end
+
+-- 当前站立
+function TerrainAnimationModel:PlayPieceDownAnimation(piece)
+    -- piece
+    local pieceTransform = piece:GetTransform()
+    pieceTransform.localPosition = pieceTransform.localPosition + Vector3.down * 0.5
+    TerrainManager.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Piece.Current)
+
+    -- side
+    TerrainManager.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Current)
+end
+
+-- 非当前站立
+function TerrainAnimationModel:PlayPieceNormalAnimation(piece)
+    -- piece
+    local pieceTransform = piece:GetTransform()
+    pieceTransform.localPosition = piece:GetWorldPosition()
+    TerrainManager.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Floor.Current)
+
+    -- side
+    TerrainManager.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Other)
 end
 
 --== timer ==--

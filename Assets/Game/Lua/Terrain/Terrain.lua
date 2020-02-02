@@ -77,15 +77,15 @@ end
 function Terrain:GetNextLogixPosition(curLogicPos, direction)
 
     local lastLogicPos = curLogicPos
-    local nextLogicPos = curLogicPos + direction
+    local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
+
+    local nextLogicPos = curLogicPos + direction * curPiece:GetMeasure()
     local recordLogicPos = {lastLogicPos}
 
     -- 当前块能否移动新方向
-    local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
     if curPiece:ContainDirection(direction) == true then
         while ( true )
         do
-
             -- 是否存在下一块
             local nextPiece = self:GetPieceByLogicPosition(nextLogicPos)
             if nextPiece == nil or nextPiece:CanStand() == false then
@@ -110,7 +110,7 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
                         break
                     end
                 else
-                    nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Down)
+                    nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Down * nextPiece:GetMeasure())
                 end
             elseif nextPiece:IsDown() then
                 if nextLogicPos.y == self.pFloorCount then

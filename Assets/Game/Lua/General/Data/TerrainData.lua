@@ -1,28 +1,16 @@
 local Data = 
 {
-    FirstPosition   = Vector3.New(0,0,0),   --初始
+    FirstPosition   = Vector3.New(0,0,-1),   --初始
     EndPosition     = Vector3.New(2,2,0),  --终点
 
     --地块
     Piece       =
     {
         {
-            Position    = { x = -1, y = 0, z = 2,},
-            Motion      = { [GameDefine.Motion.Flat] = true },
-            Space       = GameDefine.Space.Once,
-            Measure     = 1,
-        },
-        {
             Position    = { x = -1, y = 0, z = 1,},
-            Motion      = { [GameDefine.Motion.Forward] = true,[GameDefine.Motion.Back] = true },
+            Motion      = { [GameDefine.Motion.Right] = true },
             Space       = GameDefine.Space.Once,
-            Measure     = 1,
-        },
-        {
-            Position    = { x = 0, y = 0, z = 1,},
-            Motion      = { [GameDefine.Motion.Left] = true,[GameDefine.Motion.Right] = true },
-            Space       = GameDefine.Space.Once,
-            Measure     = 1,
+            Measure     = 2,
         },
         {
             Position    = { x = 1, y = 0, z = 1,},
@@ -37,16 +25,10 @@ local Data =
             Measure     = 1,
         },
         {
-            Position    = { x = 0, y = 0, z = 0,},
-            Motion      = { [GameDefine.Motion.Flat] = true },
-            Space       = GameDefine.Space.Once,
-            Measure     = 1,
-        },
-        {
             Position    = { x = 1, y = 0, z = 0,},
-            Motion      = { [GameDefine.Motion.Forward] = true, [GameDefine.Motion.Back] = true },
+            Motion      = { [GameDefine.Motion.Left] = true },
             Space       = GameDefine.Space.Once,
-            Measure     = 1,
+            Measure     = 2,
         },
         {
             Position    = { x = 0, y = 0, z = -1,},
@@ -105,6 +87,12 @@ local Data =
         {
             Position    = { x = -1, y = 1, z = -1,},
             Motion      = { [GameDefine.Motion.Flat] = true },
+            Space       = GameDefine.Space.Once,
+            Measure     = 1,
+        },
+        {
+            Position    = { x = 0, y = 1, z = -1,},
+            Motion      = { [GameDefine.Motion.Up] = true },
             Space       = GameDefine.Space.Once,
             Measure     = 1,
         },

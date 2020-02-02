@@ -91,18 +91,17 @@ GameDefine.Color =
     --层
     Floor = 
     {
-        Current = 
-        {
-            Color = Color.New(1,1,1,1),
-        },
-        Other = 
-        {
-            Color = Color.New(0.8,0.8,0.8,0.5),
-        }
+        Current = Color.New(1,1,1,1),
+        Other = Color.New(0.8,0.8,0.8,0.4),
     },
 
-    --终点
-    End = Color.New(0.82,0.3,0.3,1),    
+    --地块
+    Piece = 
+    {
+        Current = Color.New(0.8,0.8,0.8,1),
+        End = Color.New(0.82,0.3,0.3,1),   --终点 
+    },
+    
 
     --指向片
     Side = 
@@ -138,7 +137,7 @@ GameDefine.Building =
         Height  = 1, 
     },
     --层高
-    FloorHeight = 1.3,       
+    FloorHeight = 1.6,       
 }
 
 --动画
