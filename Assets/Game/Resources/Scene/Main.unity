@@ -317,7 +317,7 @@ GameObject:
   - component: {fileID: 1945802115}
   - component: {fileID: 1945802114}
   m_Layer: 0
-  m_Name: "Dord\xE1n - Sir Arthur Shaen"
+  m_Name: BackgroundBg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

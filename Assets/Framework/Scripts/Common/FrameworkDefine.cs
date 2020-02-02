@@ -24,6 +24,7 @@ namespace ANFramework
         /// </summary>
         public const string LUA_DIR = "lua";
 
+
         /// <summary>
         /// Bundle扩展名
         /// </summary>
@@ -33,6 +34,7 @@ namespace ANFramework
         /// 框架的Lua路徑
         /// </summary>
         public const string LUAPATHCONFIG_DEFAULT = "Framework/Lua";
+
 
         /// <summary>
         /// 框架的Lua路徑

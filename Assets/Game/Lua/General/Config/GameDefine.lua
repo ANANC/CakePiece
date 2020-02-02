@@ -66,12 +66,21 @@ GameDefine.Axial =
 --地址
 GameDefine.Path = 
 {
+    --[[
     Prefab = 
     {
-        TerrainPiece = "Assets/Game/Resource/Prefab/TerrainPiece.prefab",
-        SidePiece = "Assets/Game/Resource/Prefab/SidePiece.prefab",
-        Terrain = "Assets/Game/Resource/Prefab/Terrain.prefab",
-        Character = "Assets/Game/Resource/Prefab/Character.prefab",
+        TerrainPiece = "Prefab/TerrainPiece.prefab",
+        SidePiece = "Prefab/SidePiece.prefab",
+        Terrain = "Prefab/Terrain.prefab",
+        Character = "Prefab/Character.prefab",
+    }
+    --]]
+    Prefab = 
+    {
+        TerrainPiece = "Prefab/TerrainPiece",
+        SidePiece = "Prefab/SidePiece",
+        Terrain = "Prefab/Terrain",
+        Character = "Prefab/Character",
     }
 }
 

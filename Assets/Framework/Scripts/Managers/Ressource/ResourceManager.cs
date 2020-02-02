@@ -15,33 +15,39 @@ namespace ANFramework
 
         public override void Init()
         {
-            Object loader = null;
 
-#if UNITY_EDITOR
-            string path = Application.dataPath + "/Core/Scripts/Engine/Source/Editor/FrameworkEditor.dll";
-            if (!System.IO.File.Exists(path))
-            {
-                path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
-            }
-            Assembly assembly = Assembly.LoadFile(path);
-            Type type = assembly.GetType("ANFramework.EditorReousrceLoader");
-            loader = Activator.CreateInstance(type, null);
-#endif
+//#if UNITY_EDITOR
+//            Object loader = null;
+//            string path = Application.dataPath + "/Core/Scripts/Engine/Source/Editor/FrameworkEditor.dll";
+//            if (!System.IO.File.Exists(path))
+//            {
+//                path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
+//            }
+//            Assembly assembly = Assembly.LoadFile(path);
+//            Type type = assembly.GetType("ANFramework.EditorReousrceLoader");
+//            loader = Activator.CreateInstance(type, null);
 
-            m_Loader = loader as IReousrceLoader;
-            m_LoadBehaviour = loader as BaseBehaviour;
-            
-            m_LoadBehaviour.Init();
+//            m_Loader = loader as IReousrceLoader;
+//            m_LoadBehaviour = loader as BaseBehaviour;
+
+//            m_LoadBehaviour.Init();
+//#endif
+
+
         }
 
         public override void Start()
         {
-            m_LoadBehaviour.Start();
+//#if UNITY_EDITOR
+//            m_LoadBehaviour.Start();
+//#endif
         }
 
         public override void Update()
         {
-            m_LoadBehaviour.Update();
+//#if UNITY_EDITOR
+//            m_LoadBehaviour.Update();
+//#endif
         }
 
         // ------------ GameObject加载 ------------
@@ -65,8 +71,10 @@ namespace ANFramework
         {
             T resObject = null;
 
-            resObject = m_Loader.LoadResource<T>(path);
-            
+//#if UNITY_EDITOR
+//            resObject = m_Loader.LoadResource<T>(path);
+//#endif
+
             if (resObject == null)
             {
                 resObject = LoadFromResources<T>(path);

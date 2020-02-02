@@ -25,7 +25,8 @@ public class Entrance : MonoBehaviour
 
     private void Setting()
     {
-        ANF.Core.Mgr.UI.SetUIFolderPath("Assets/Game/Resource/UI");
+        //ANF.Core.Mgr.UI.SetUIFolderPath("Assets/Game/Resource/UI");
+        ANF.Core.Mgr.UI.SetUIFolderPath("UI");
 
         ANF.Core.Mgr.AddManager(new InputManager());
     }

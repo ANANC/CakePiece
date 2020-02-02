@@ -30,7 +30,9 @@ namespace ANFramework
 
         private BaseUIObject _CreateUI(string resourceName,Transform parent)
         {
-            string path = string.Format("{0}/{1}.prefab", UIFolderPath, resourceName);
+            //string path = string.Format("{0}/{1}.prefab", UIFolderPath, resourceName);
+            string path = string.Format("{0}/{1}", UIFolderPath, resourceName);
+
             GameObject gameObject = ANF.Core.Mgr.Resource.Instance(path);
             if (gameObject == null)
             {
