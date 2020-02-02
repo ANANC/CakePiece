@@ -44,6 +44,10 @@ function Vector3.New(x, y, z)
 	return t
 end
 
+function Vector3.NewByV3(vec3)
+	return Vector3.New(vec3.x,vec3.y,vec3.z)
+end
+
 local _new = Vector3.New
 
 Vector3.__call = function(t,x,y,z)

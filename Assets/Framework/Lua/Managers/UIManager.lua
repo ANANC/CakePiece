@@ -10,12 +10,20 @@ function UIManager:OpenUI(uiName)
     csUIMgr:OpenUI(uiName)
 end
 
+function UIManager:OpenSubUI(parentUIName,uiName,parentTransform)
+    csUIMgr:OpenSubUI(parentUIName,uiName,parentTransform)
+end
+
 function UIManager:CloseUI(uiName)
     csUIMgr:CloseUI(uiName)
 end
 
 function UIManager:DestroyUI(uiName)
     csUIMgr:DestroyUI(uiName)
+end
+
+function UIManager:GetUI(uiName)
+    return self.pUIObject[uiName]
 end
 
 function UIManager:__CreateUIFromCS(csBaseUIObject)

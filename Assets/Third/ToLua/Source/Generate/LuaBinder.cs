@@ -61,7 +61,10 @@ public static class LuaBinder
 		L.EndModule();
 		L.BeginModule("UI");
 		UnityEngine_UI_ButtonWrap.Register(L);
+		UnityEngine_UI_TextWrap.Register(L);
 		UnityEngine_UI_SelectableWrap.Register(L);
+		UnityEngine_UI_MaskableGraphicWrap.Register(L);
+		UnityEngine_UI_GraphicWrap.Register(L);
 		L.BeginModule("Button");
 		UnityEngine_UI_Button_ButtonClickedEventWrap.Register(L);
 		L.EndModule();

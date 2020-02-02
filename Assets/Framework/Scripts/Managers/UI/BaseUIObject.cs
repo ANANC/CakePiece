@@ -11,6 +11,8 @@ namespace ANFramework
         public GameObject GameObject;
         public Transform Transform;
 
+        private List<string> m_ChildUIName = null;
+
         public BaseUIObject(string uiName, string resourceName)
         {
             UIName = uiName;
@@ -21,6 +23,20 @@ namespace ANFramework
         {
             GameObject = gameObject;
             Transform = gameObject.transform;
+        }
+
+        public void AddSubUI(string uiName)
+        {
+            if(m_ChildUIName ==  null)
+            {
+                m_ChildUIName = new List<string>(1);
+            }
+            m_ChildUIName.Add(uiName);
+        }
+
+        public List<string> GetSubUI()
+        {
+            return m_ChildUIName;
         }
 
         public override void Init()

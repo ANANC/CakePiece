@@ -1,6 +1,10 @@
 local Data = 
 {
-    Piece       =           --地块
+    FirstPosition   = Vector3.New(0,0,0),   --初始
+    EndPosition     = Vector3.New(1,2,-1),  --终点
+
+    --地块
+    Piece       =
     {
         {
             Position    = { x = 0, y = 0, z = 0,},
@@ -11,7 +15,7 @@ local Data =
         },
         {
             Position    = { x = 1, y = 0, z = 0,},
-            Motion      = { [GameDefine.Motion.Flat] = true },
+            Motion      = { [GameDefine.Motion.Back] = true },
             Space       = GameDefine.Space.Once,
             Measure     = 1,
             Loop        = false,

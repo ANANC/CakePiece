@@ -81,6 +81,7 @@ GameDefine.UI =
 {
     MainUI  = "MainUI",
     WinUI   = "WinUI", 
+    FloorUI = "FloorUI",
 }
 
 
@@ -108,6 +109,15 @@ GameDefine.Color =
     {
         Current = Color.New(1,1,0.2,1),   
         Other   = Color.New(0.3,0.3,0.3,1),
+    },
+
+    UI = 
+    {
+        Floor = 
+        {
+            Current = Color.New(0.82,0.3,0.3,0.5),   
+            Other   = Color.New(1,1,1,0.5),
+        }
     }
 }
 
@@ -135,5 +145,5 @@ GameDefine.Building =
 GameDefine.Tween = 
 {
     Originate       = 5,    --起始高度
-    DisplayTimer    = 1 * GameDefine.Framerate,    --显示时间（S）
+    Move            = 0.6 * GameDefine.Framerate,    --显示时间（S）
 }

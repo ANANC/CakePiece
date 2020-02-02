@@ -10,8 +10,10 @@ public class ANFramework_UIManagerWrap
 		L.RegFunction("Init", Init);
 		L.RegFunction("SetUIFolderPath", SetUIFolderPath);
 		L.RegFunction("OpenUI", OpenUI);
+		L.RegFunction("OpenSubUI", OpenSubUI);
 		L.RegFunction("CloseUI", CloseUI);
 		L.RegFunction("DestroyUI", DestroyUI);
+		L.RegFunction("GetUI", GetUI);
 		L.RegFunction("New", _CreateANFramework_UIManager);
 		L.RegFunction("__tostring", ToLua.op_ToString);
 		L.EndClass();
@@ -92,6 +94,25 @@ public class ANFramework_UIManagerWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int OpenSubUI(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 4);
+			ANFramework.UIManager obj = (ANFramework.UIManager)ToLua.CheckObject<ANFramework.UIManager>(L, 1);
+			string arg0 = ToLua.CheckString(L, 2);
+			string arg1 = ToLua.CheckString(L, 3);
+			UnityEngine.Transform arg2 = (UnityEngine.Transform)ToLua.CheckObject<UnityEngine.Transform>(L, 4);
+			obj.OpenSubUI(arg0, arg1, arg2);
+			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	static int CloseUI(IntPtr L)
 	{
 		try
@@ -118,6 +139,24 @@ public class ANFramework_UIManagerWrap
 			string arg0 = ToLua.CheckString(L, 2);
 			obj.DestroyUI(arg0);
 			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int GetUI(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 2);
+			ANFramework.UIManager obj = (ANFramework.UIManager)ToLua.CheckObject<ANFramework.UIManager>(L, 1);
+			string arg0 = ToLua.CheckString(L, 2);
+			ANFramework.BaseUIObject o = obj.GetUI(arg0);
+			ToLua.PushObject(L, o);
+			return 1;
 		}
 		catch (Exception e)
 		{

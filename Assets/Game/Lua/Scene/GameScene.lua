@@ -30,8 +30,7 @@ end
 
 function GameScene:AgainButtonOnClick()
     ANF.UIMgr:CloseUI(GameDefine.UI.WinUI)
-    TerrainManager:Out()
-    TerrainManager:Enter()
+    TerrainManager:Again()
 end
 
 -- UI End --

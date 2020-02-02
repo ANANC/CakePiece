@@ -78,6 +78,7 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
 
     local lastLogicPos = curLogicPos
     local nextLogicPos = curLogicPos + direction
+    local recordLogicPos = {lastLogicPos}
 
     -- 当前块能否移动新方向
     local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
@@ -91,7 +92,15 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
                 break
             end
 
-            lastLogicPos = lastLogicPos:Copy(nextLogicPos)
+            for _,record in pairs(recordLogicPos) do
+                --存在死循环，不可移动
+                if record == nextLogicPos then
+                    lastLogicPos = curLogicPos
+                    break
+                end
+            end
+
+            table.insert( recordLogicPos, nextLogicPos )
 
             if nextPiece:IsUp() then
                 if nextLogicPos.y == 0 then
@@ -114,6 +123,7 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
                     nextLogicPos = nextLogicPos:Add(GameDefine.Direction.Up * nextPiece:GetMeasure())
                 end
             else
+                lastLogicPos = lastLogicPos:Copy(nextLogicPos)
                 break
             end
 

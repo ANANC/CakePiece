@@ -29,3 +29,11 @@ end
 function Character:GetLogicPosition()
     return self.pLogicPosition
 end
+
+function Character:SetActive(active)
+    local scale = Vector3.zero
+    if active == true then
+        scale = Vector3.one
+    end
+    self.pTransform.localScale = scale
+end

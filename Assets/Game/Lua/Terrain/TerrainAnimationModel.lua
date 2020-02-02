@@ -44,11 +44,15 @@ function TerrainAnimationModel:__UpdatePieceDisplayAnimation(piece)
     local pieceTransform = piece:GetTransform()
     
     local worldPosition = piece:GetWorldPosition()
-    local position = pieceTransform.localPosition
-    position = position + Vector3.down * (position.y-worldPosition.y) / GameDefine.Tween.DisplayTimer
+    local localPosition = pieceTransform.localPosition
+    local position = (localPosition.y-worldPosition.y) / GameDefine.Tween.Move
+    if position < 0.05 then
+        position = 0.05
+    end
+    position = localPosition + Vector3.down * position
 
     local arrivals = false
-    if position.y - worldPosition.y <= 0.02 then
+    if position.y - worldPosition.y <= 0.04 then
         position.y = worldPosition.y
         arrivals = true
     end
@@ -77,11 +81,15 @@ function TerrainAnimationModel:__UpdatePieceHideAnimation(piece)
     local pieceTransform = piece:GetTransform()
 
     local worldPosition = piece:GetWorldPosition()
-    local position = pieceTransform.localPosition
-    position = position + Vector3.up * (GameDefine.Tween.Originate-position.y) / GameDefine.Tween.DisplayTimer
+    local localPosition = pieceTransform.localPosition
+    local position = (GameDefine.Tween.Originate-localPosition.y) / GameDefine.Tween.Move
+    if position < 0.05 then
+        position = 0.05
+    end
+    position = localPosition + Vector3.up * position
 
     local arrivals = false
-    if GameDefine.Tween.Originate - position.y <= 0.02 then
+    if GameDefine.Tween.Originate - position.y <= 0.04 then
         position.y = GameDefine.Tween.Originate
         arrivals = true
     end

@@ -28,7 +28,7 @@ namespace ANFramework
             UIFolderPath = path;
         }
 
-        private BaseUIObject _CreateUI(string resourceName)
+        private BaseUIObject _CreateUI(string resourceName,Transform parent)
         {
             string path = string.Format("{0}/{1}.prefab", UIFolderPath, resourceName);
             GameObject gameObject = ANF.Core.Mgr.Resource.Instance(path);
@@ -38,15 +38,12 @@ namespace ANFramework
             }
 
             Transform transform = gameObject.transform;
-            transform.SetParent(m_Canvas.transform);
+            transform.SetParent(parent);
             if (transform as RectTransform)
             {
-                ((RectTransform)transform).anchoredPosition = Vector3.zero;
+                ((RectTransform)transform).sizeDelta = Vector3.zero;
             }
-            else
-            {
-                transform.localPosition = Vector3.zero;
-            }
+            transform.localPosition = Vector3.zero;
             transform.localScale = Vector3.one;
             gameObject.name = resourceName;
 
@@ -68,26 +65,48 @@ namespace ANFramework
 
         public void OpenUI(string uiName)
         {
+            _OpenUI(uiName, m_Canvas.transform);
+        }
+
+        private BaseUIObject _OpenUI(string uiName,Transform parent)
+        {
             BaseUIObject ui;
             if (m_UIObjectDict.TryGetValue(uiName, out ui))
             {
                 if (ui.IsOpen())
                 {
-                    return;
+                    return ui;
                 }
             }
             else
             {
-                ui = _CreateUI(uiName);
-                if (ui == null)
+                ui = _CreateUI(uiName, parent);
+                if (ui != null)
                 {
-                    return;
+                    ui.Init();
                 }
-                ui.Init();
             }
 
             ui.Start();
             ui.GameObject.SetActive(true);
+
+            return ui;
+        }
+
+        public void OpenSubUI(string parentName, string uiName, Transform parent)
+        {
+            BaseUIObject parentUI;
+            if (!m_UIObjectDict.TryGetValue(parentName, out parentUI))
+            {
+                Debug.LogError(string.Format("【UI】打开子界面({0})失败，主界面({1})并未打开。", uiName, parentName));
+                return;
+            }
+            if (parent == null)
+            {
+                parent = parentUI.Transform;
+            }
+            BaseUIObject ui = _OpenUI(uiName, parent);
+            parentUI.AddSubUI(uiName);
         }
 
 
@@ -96,18 +115,33 @@ namespace ANFramework
             BaseUIObject ui;
             if (m_UIObjectDict.TryGetValue(uiName, out ui))
             {
-                if (!ui.IsOpen())
+                List<string> childs = ui.GetSubUI();
+                if(childs != null)
                 {
-                    return;
+                    for(int index = 0;index<childs.Count;index++)
+                    {
+                        CloseUI(childs[index]);
+                    }
                 }
 
-                ui.Close();
-                ui.GameObject.SetActive(false);
+                _CloseUI(ui);
             }
             else
             {
                 return;
             }
+        }
+
+        private void _CloseUI(BaseUIObject ui)
+        {
+            if (!ui.IsOpen())
+            {
+                return;
+            }
+
+            ui.Close();
+            ui.GameObject.SetActive(false);
+
         }
 
         public void DestroyUI(string uiName)
@@ -115,13 +149,15 @@ namespace ANFramework
             BaseUIObject ui;
             if (m_UIObjectDict.TryGetValue(uiName, out ui))
             {
-                if (ui.IsOpen())
+                List<string> childs = ui.GetSubUI();
+                if (childs != null)
                 {
-                    ui.Close();
+                    for (int index = 0; index < childs.Count; index++)
+                    {
+                        DestroyUI(childs[index]);
+                    }
                 }
-                ui.Destroy();
-                GameObject.Destroy(ui.GameObject);
-                m_UIObjectDict.Remove(uiName);
+                _DestroyUI(ui, uiName);
             }
             else
             {
@@ -129,7 +165,25 @@ namespace ANFramework
             }
         }
 
-
+        private void _DestroyUI(BaseUIObject ui,string uiName)
+        {
+            if (ui.IsOpen())
+            {
+                ui.Close();
+            }
+            ui.Destroy();
+            GameObject.Destroy(ui.GameObject);
+            m_UIObjectDict.Remove(uiName);
+        }
         
+        public BaseUIObject GetUI(string uiName)
+        {
+            BaseUIObject ui;
+            if (!m_UIObjectDict.TryGetValue(uiName, out ui))
+            {
+                Debug.LogError("【UI】获取UI（{0}）失败，当前并没有打开该界面");
+            }
+            return ui;
+        }
     }
 }

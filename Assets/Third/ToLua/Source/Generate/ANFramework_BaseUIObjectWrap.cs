@@ -8,6 +8,8 @@ public class ANFramework_BaseUIObjectWrap
 	{
 		L.BeginClass(typeof(ANFramework.BaseUIObject), typeof(ANFramework.BaseBehaviour));
 		L.RegFunction("SetRoot", SetRoot);
+		L.RegFunction("AddSubUI", AddSubUI);
+		L.RegFunction("GetSubUI", GetSubUI);
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Close", Close);
@@ -58,6 +60,40 @@ public class ANFramework_BaseUIObjectWrap
 			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 2, typeof(UnityEngine.GameObject));
 			obj.SetRoot(arg0);
 			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int AddSubUI(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 2);
+			ANFramework.BaseUIObject obj = (ANFramework.BaseUIObject)ToLua.CheckObject<ANFramework.BaseUIObject>(L, 1);
+			string arg0 = ToLua.CheckString(L, 2);
+			obj.AddSubUI(arg0);
+			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int GetSubUI(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 1);
+			ANFramework.BaseUIObject obj = (ANFramework.BaseUIObject)ToLua.CheckObject<ANFramework.BaseUIObject>(L, 1);
+			System.Collections.Generic.List<string> o = obj.GetSubUI();
+			ToLua.PushSealed(L, o);
+			return 1;
 		}
 		catch (Exception e)
 		{
