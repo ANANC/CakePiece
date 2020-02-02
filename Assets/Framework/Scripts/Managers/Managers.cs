@@ -41,6 +41,11 @@ namespace ANFramework
             CreateManagers();
         }
 
+        public void AddManager(BaseBehaviour baseBehaviour)
+        {
+            m_Managers.Add(baseBehaviour);
+        }
+
         public override void Init()
         {
             m_CoroutineManager = ANF.RootGameObject.AddComponent<CoroutineManager>();

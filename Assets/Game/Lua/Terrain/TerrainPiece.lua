@@ -6,7 +6,7 @@ function TerrainPiece:ctor(pieceData, id, logicPosition, worldPosition)
     self.pLogicPosition = logicPosition
     self.pWorldPosition = worldPosition
     self.pMotion = self.pPieceData.Motion
-    self.pLoop = self.pPieceData.Loop
+    self.pLoop = self.pPieceData.Space == GameDefine.Space.Loop
 end
 
 function TerrainPiece:Destroy()

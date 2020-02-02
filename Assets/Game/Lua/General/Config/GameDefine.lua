@@ -97,7 +97,7 @@ GameDefine.Color =
         },
         Other = 
         {
-            Color = Color.New(0.8,0.8,0.8,0.7),
+            Color = Color.New(0.8,0.8,0.8,0.5),
         }
     },
 
