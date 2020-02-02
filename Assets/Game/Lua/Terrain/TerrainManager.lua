@@ -212,18 +212,22 @@ function TerrainManager:__UpdateCurFloorArt()
     self:__UpdateEndPieceArt()
 
     -- animation
-    local isTween = false
+    local apartCount = 0
     if self.pOldFloor ~= nil then
         if self.pOldFloor < self.pCurFloor then
-            local oldFloor = self.pTerrain:GetFloor(self.pOldFloor)
-            self.Model.Animation:PlayFloorHideAnimation(oldFloor)
-            isTween = true
+            apartCount = self.pCurFloor - self.pOldFloor
+            for index = self.pOldFloor,self.pCurFloor - 1 do
+                local oldFloor = self.pTerrain:GetFloor(index)
+                self.Model.Animation:PlayFloorHideAnimation(oldFloor)
+            end
         end
 
         if self.pCurFloor < self.pOldFloor then
-            local curFloor = self.pTerrain:GetFloor(self.pCurFloor)
-            self.Model.Animation:PlayFloorDisplayAnimation(curFloor)
-            isTween = true
+            apartCount = self.pOldFloor - self.pCurFloor
+            for index = self.pCurFloor,self.pOldFloor - 1 do
+                local curFloor = self.pTerrain:GetFloor(index)
+                self.Model.Animation:PlayFloorDisplayAnimation(curFloor)
+            end
         end
     end
 
@@ -231,7 +235,7 @@ function TerrainManager:__UpdateCurFloorArt()
     self.pFloorUI:SetCurFloorText(self.pOldFloor,self.pCurFloor)
 
     -- callback
-    if isTween == false then
+    if apartCount == 0 then
         self:__CharacterMoveAnimationFinish()
     else
         local timer = FrameTimer.New(function () 

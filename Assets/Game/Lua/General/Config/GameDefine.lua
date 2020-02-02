@@ -144,6 +144,6 @@ GameDefine.Building =
 --动画
 GameDefine.Tween = 
 {
-    Originate       = 5,    --起始高度
+    Originate       = 8,    --起始高度
     Move            = 0.6 * GameDefine.Framerate,    --显示时间（S）
 }
