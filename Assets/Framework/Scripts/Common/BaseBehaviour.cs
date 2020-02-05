@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ANFramework
 {
-    public abstract class BaseBehaviour
+    public abstract class BaseManager
     {
         public virtual void Init()
         {

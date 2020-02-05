@@ -12,7 +12,7 @@ function Character:Destroy()
 end
 
 function Character:__CreateGameobject()
-    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Character)
+    self.pGameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.Character)
     self.pTransform = self.pGameObject.transform
 end
 

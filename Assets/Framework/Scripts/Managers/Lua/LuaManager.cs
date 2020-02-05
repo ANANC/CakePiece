@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ANFramework
 {
-    public class LuaManager : BaseBehaviour
+    public class LuaManager : BaseManager
     {
         protected LuaState m_LuaState = null;
         protected LuaLooper m_LuaLoop = null;

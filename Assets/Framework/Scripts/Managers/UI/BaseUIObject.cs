@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ANFramework
 {
-    public class BaseUIObject : BaseBehaviour
+    public class BaseUIObject
     {
         public string UIName;
         public string ResourceName;
@@ -39,12 +39,12 @@ namespace ANFramework
             return m_ChildUIName;
         }
 
-        public override void Init()
+        public void Init()
         {
             CallLuaFunction("Init");
         }
 
-        public override void Start()
+        public void Start()
         {
             CallLuaFunction("Start");
         }
@@ -54,7 +54,7 @@ namespace ANFramework
             CallLuaFunction("Close");
         }
 
-        public override void Destroy()
+        public void Destroy()
         {
             CallLuaFunction("Destroy");
         }

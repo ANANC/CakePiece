@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ANFramework
 {
-    public class UIManager :  BaseBehaviour
+    public class UIManager :  BaseManager
     {
         private string UIFolderPath = string.Empty;
 
@@ -30,8 +30,7 @@ namespace ANFramework
 
         private BaseUIObject _CreateUI(string resourceName,Transform parent)
         {
-            //string path = string.Format("{0}/{1}.prefab", UIFolderPath, resourceName);
-            string path = string.Format("{0}/{1}", UIFolderPath, resourceName);
+            string path = string.Format("{0}/{1}.prefab", UIFolderPath, resourceName);
 
             GameObject gameObject = ANF.Core.Mgr.Resource.Instance(path);
             if (gameObject == null)

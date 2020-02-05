@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace ANFramework
 {
-    public class Managers : BaseBehaviour
+    public class Managers : BaseManager
     {
-        private List<BaseBehaviour> m_Managers = new List<BaseBehaviour>();
+        private List<BaseManager> m_Managers = new List<BaseManager>();
 
         private ResourceManager m_ResourceManager = null;
 
@@ -41,7 +41,7 @@ namespace ANFramework
             CreateManagers();
         }
 
-        public void AddManager(BaseBehaviour baseBehaviour)
+        public void AddManager(BaseManager baseBehaviour)
         {
             m_Managers.Add(baseBehaviour);
         }

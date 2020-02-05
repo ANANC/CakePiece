@@ -6,7 +6,7 @@ public class ANFramework_BaseBehaviourWrap
 {
 	public static void Register(LuaState L)
 	{
-		L.BeginClass(typeof(ANFramework.BaseBehaviour), typeof(System.Object));
+		L.BeginClass(typeof(ANFramework.BaseManager), typeof(System.Object));
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);
@@ -21,7 +21,7 @@ public class ANFramework_BaseBehaviourWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.BaseBehaviour obj = (ANFramework.BaseBehaviour)ToLua.CheckObject<ANFramework.BaseBehaviour>(L, 1);
+			ANFramework.BaseManager obj = (ANFramework.BaseManager)ToLua.CheckObject<ANFramework.BaseManager>(L, 1);
 			obj.Init();
 			return 0;
 		}
@@ -37,7 +37,7 @@ public class ANFramework_BaseBehaviourWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.BaseBehaviour obj = (ANFramework.BaseBehaviour)ToLua.CheckObject<ANFramework.BaseBehaviour>(L, 1);
+			ANFramework.BaseManager obj = (ANFramework.BaseManager)ToLua.CheckObject<ANFramework.BaseManager>(L, 1);
 			obj.Start();
 			return 0;
 		}
@@ -53,7 +53,7 @@ public class ANFramework_BaseBehaviourWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.BaseBehaviour obj = (ANFramework.BaseBehaviour)ToLua.CheckObject<ANFramework.BaseBehaviour>(L, 1);
+			ANFramework.BaseManager obj = (ANFramework.BaseManager)ToLua.CheckObject<ANFramework.BaseManager>(L, 1);
 			obj.Update();
 			return 0;
 		}
@@ -69,7 +69,7 @@ public class ANFramework_BaseBehaviourWrap
 		try
 		{
 			ToLua.CheckArgsCount(L, 1);
-			ANFramework.BaseBehaviour obj = (ANFramework.BaseBehaviour)ToLua.CheckObject<ANFramework.BaseBehaviour>(L, 1);
+			ANFramework.BaseManager obj = (ANFramework.BaseManager)ToLua.CheckObject<ANFramework.BaseManager>(L, 1);
 			obj.Destroy();
 			return 0;
 		}

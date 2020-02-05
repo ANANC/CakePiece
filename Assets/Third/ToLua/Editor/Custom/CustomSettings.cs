@@ -59,7 +59,7 @@ public static class CustomSettings
         //------------------------  Framework  --------------------------------
         _GT(typeof(ANFramework.ANF)),
         _GT(typeof(ANFramework.Managers)),
-        _GT(typeof(ANFramework.BaseBehaviour)),
+        _GT(typeof(ANFramework.BaseManager)),
         _GT(typeof(ANFramework.ResourceManager)),
         _GT(typeof(ANFramework.UIManager)),
         _GT(typeof(ANFramework.BaseUIObject)),

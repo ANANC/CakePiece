@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : BaseBehaviour
+public class InputManager : BaseManager
 {
     private Camera m_MainCamera;
     private Vector3 m_DefaulePosition;

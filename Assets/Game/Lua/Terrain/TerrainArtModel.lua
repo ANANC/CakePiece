@@ -16,7 +16,7 @@ end
 
 --- Terrain ---
 function TerrainArtModel:CreateTerrainRoot()
-    self.pGameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.Terrain)
+    self.pGameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.Terrain)
     self.pTransform = self.pGameObject.transform
 end
 
@@ -36,7 +36,7 @@ local PiecePath =
 }
 
 function TerrainArtModel:CreatePieceGameObject(pieceSize)
-    local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.TerrainPiece)
+    local gameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.TerrainPiece)
     local transform = gameObject.transform
     transform:SetParent(self.pTransform)
     self:SetPieceSize(transform,pieceSize)
@@ -88,7 +88,7 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
     for index = 0,updateCount - 1 do
         if index < sideDataCount then
             if index >= sideCellCount then
-                local gameObject = ANF.ResMgr:Instance(GameDefine.Path.Prefab.SidePiece)
+                local gameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.SidePiece)
                 gameObject.transform:SetParent(sideTransform)
             end
             local direction = GameDefine.MotionToDirection[sides[index + 1]]

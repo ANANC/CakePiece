@@ -6,7 +6,7 @@ public class ANFramework_ResourceManagerWrap
 {
 	public static void Register(LuaState L)
 	{
-		L.BeginClass(typeof(ANFramework.ResourceManager), typeof(ANFramework.BaseBehaviour));
+		L.BeginClass(typeof(ANFramework.ResourceManager), typeof(ANFramework.BaseManager));
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);

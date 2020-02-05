@@ -6,7 +6,7 @@ public class ANFramework_BaseUIObjectWrap
 {
 	public static void Register(LuaState L)
 	{
-		L.BeginClass(typeof(ANFramework.BaseUIObject), typeof(ANFramework.BaseBehaviour));
+		L.BeginClass(typeof(ANFramework.BaseUIObject), typeof(ANFramework.BaseManager));
 		L.RegFunction("SetRoot", SetRoot);
 		L.RegFunction("AddSubUI", AddSubUI);
 		L.RegFunction("GetSubUI", GetSubUI);

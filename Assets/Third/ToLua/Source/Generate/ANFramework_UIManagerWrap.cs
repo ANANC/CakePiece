@@ -6,7 +6,7 @@ public class ANFramework_UIManagerWrap
 {
 	public static void Register(LuaState L)
 	{
-		L.BeginClass(typeof(ANFramework.UIManager), typeof(ANFramework.BaseBehaviour));
+		L.BeginClass(typeof(ANFramework.UIManager), typeof(ANFramework.BaseManager));
 		L.RegFunction("Init", Init);
 		L.RegFunction("SetUIFolderPath", SetUIFolderPath);
 		L.RegFunction("OpenUI", OpenUI);

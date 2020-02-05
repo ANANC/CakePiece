@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ANFramework
 {
 
-    public class States : BaseBehaviour
+    public class States : BaseManager
     {
         private int m_CurState;
         private int m_StateCount;
