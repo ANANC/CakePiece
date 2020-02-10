@@ -1,0 +1,47 @@
+ManifestFileVersion: 0
+CRC: 1863936680
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shader
+      Dependencies: {}
+    Info_1:
+      Name: material
+      Dependencies:
+        Dependency_0: shader
+    Info_2:
+      Name: font
+      Dependencies: {}
+    Info_3:
+      Name: sprite
+      Dependencies: {}
+    Info_4:
+      Name: ui/floorui.prefab
+      Dependencies:
+        Dependency_0: font
+        Dependency_1: sprite
+    Info_5:
+      Name: ui/mainui.prefab
+      Dependencies: {}
+    Info_6:
+      Name: ui/winui.prefab
+      Dependencies: {}
+    Info_7:
+      Name: prefab/character.prefab
+      Dependencies:
+        Dependency_0: material
+    Info_8:
+      Name: prefab/sidepiece.prefab
+      Dependencies:
+        Dependency_0: material
+    Info_9:
+      Name: prefab/terrain.prefab
+      Dependencies: {}
+    Info_10:
+      Name: prefab/terrainpiece.prefab
+      Dependencies:
+        Dependency_0: material
+        Dependency_1: prefab/sidepiece.prefab
+    Info_11:
+      Name: music
+      Dependencies: {}

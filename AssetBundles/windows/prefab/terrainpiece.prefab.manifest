@@ -1,0 +1,30 @@
+ManifestFileVersion: 0
+CRC: 4127866303
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e8ae9bc9c0d17fa87da03f3a6c36ac92
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 43917c7e82ed3ae0a408b3ea37ec80f7
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+Assets:
+- Assets/Game/Resource/Prefab/TerrainPiece.prefab
+Dependencies:
+- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/material
+- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/prefab/sidepiece.prefab

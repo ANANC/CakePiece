@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+CRC: 3830202728
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 850cd16558284c7221dbbbf327263899
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 51a16e16d5113854a16091e54ae5bb0d
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+Assets:
+- Assets/Game/Resource/Material/Terrain.mat
+- Assets/Game/Resource/Material/TerrainPiece.mat
+- Assets/Game/Resource/Material/SidePiece.mat
+- Assets/Game/Resource/Material/Character.mat
+- Assets/Game/Resource/Material/Tip.mat
+Dependencies:
+- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/shader
