@@ -44,6 +44,7 @@ public class AssetBundleBuilder
 
     private string m_StartPath;
     private string m_OutputPath;
+    private string m_TargetName;
     private Dictionary<string, BuildInfo> m_BuildInfoDict = new Dictionary<string, BuildInfo>();
     private BuildTarget m_BuildTarget;
     private BuildAssetBundleOptions m_BuildAssetBundleOptions;
@@ -62,13 +63,13 @@ public class AssetBundleBuilder
         m_BuildTarget = buildTarget;
         m_BuildAssetBundleOptions = buildOptions;
 
-        string targetName = GetBuildTargetName(buildTarget);
+        m_TargetName = GetBuildTargetName(buildTarget);
 
-        m_OutputPath = Application.dataPath + "/../" + AssetBundleDirectory + "/" + targetName;
+        m_OutputPath = Application.dataPath + "/../" + AssetBundleDirectory + "/" + m_TargetName;
         TryCreateDirectory(m_OutputPath);
 
         Debug.Log(string.Format("【打AB】平台({2}) \nResStartPath:{0} \nOutputPath:{1}", m_StartPath, m_OutputPath,
-            targetName));
+            m_TargetName));
     }
 
     public void AddConfigure(ConfigureType type, string resourcePath, string assetBundlePath = null,
@@ -117,8 +118,31 @@ public class AssetBundleBuilder
         AssetBundleManifest manifest =
             BuildPipeline.BuildAssetBundles(m_OutputPath, builds, m_BuildAssetBundleOptions, m_BuildTarget);
 
+        string mainManifest = m_OutputPath + "/Main";
+        string curManifest = m_OutputPath + "/" + m_TargetName;
+        if (File.Exists(mainManifest))
+        {
+            File.Delete(mainManifest);
+        }
+        if (File.Exists(curManifest))
+        {
+            //清理旧资源
+            DeleteUnusedAssets();
+
+            // Manifest改名为"Main"
+            File.Move(curManifest,mainManifest);
+
+            //更新StreamingAssets
+            if (Directory.Exists(Application.streamingAssetsPath))
+            {
+                Directory.Delete(Application.streamingAssetsPath, true);
+            }
+            DirectoryCopy(m_OutputPath, Application.streamingAssetsPath);
+        }
 
         Debug.Log("【打AB】Build AssetBundle Success");
+
+        AssetDatabase.Refresh();
     }
 
     // -- build Configure --
@@ -275,13 +299,14 @@ public class AssetBundleBuilder
             return;
         }
 
-        string assetBundleName = fileName;
+        string extension = Path.GetExtension(fileName);
+        string assetBundleName = fileName.Replace(extension,string.Empty);
 
         BuildInfo assetBundleBuild;
         if (!m_BuildInfoDict.TryGetValue(assetBundleName, out assetBundleBuild))
         {
             assetBundleBuild = new BuildInfo(filePath, fileName);
-            assetBundleBuild.AssetBundleBuild.assetBundleName = assetBundleName;
+            assetBundleBuild.AssetBundleBuild.assetBundleName = assetBundleName + ".unity3d";
             assetBundleBuild.AssetBundleBuild.assetNames = new string[]
                 {filePath.Replace(ProjectPath, string.Empty)};
             m_BuildInfoDict.Add(assetBundleName, assetBundleBuild);
@@ -314,7 +339,7 @@ public class AssetBundleBuilder
             GetDirectoryFiles(fileList, ProjectPath, directoryPath, new[] {"*"}, SearchOption.AllDirectories);
 
             assetBundleBuild = new BuildInfo(directoryPath, directoryName);
-            assetBundleBuild.AssetBundleBuild.assetBundleName = assetBundleName;
+            assetBundleBuild.AssetBundleBuild.assetBundleName = assetBundleName + ".unity3d";
             assetBundleBuild.AssetBundleBuild.assetNames = fileList.ToArray();
             m_BuildInfoDict.Add(assetBundleName, assetBundleBuild);
         }
@@ -385,14 +410,13 @@ public class AssetBundleBuilder
         string[] files = Directory.GetFiles(directoryPath);
         for (int index = 0; index < files.Length; index++)
         {
-            string fileName = files[index];
+            string fileName = files[index].Replace("\\", "/");
+            fileName = fileName.Replace(directoryPath + "/", string.Empty);
             if (fileName.StartsWith("."))
             {
                 continue;
             }
-
-            string ext = Path.GetExtension(fileName);
-            if (ext.Equals(".meta"))
+            if (fileName.EndsWith(".meta"))
             {
                 continue;
             }
@@ -403,7 +427,9 @@ public class AssetBundleBuilder
         string[] directories = Directory.GetDirectories(directoryPath);
         for (int index = 0; index < directories.Length; index++)
         {
-            DirectoryCopy(directoryPath + "/" + directories[index], newDirectoryPath + "/" + directories[index]);
+            string directoryName = directories[index].Replace("\\", "/");
+            directoryName = directoryName.Replace(directoryPath + "/", string.Empty);
+            DirectoryCopy(directoryPath + "/" + directoryName, newDirectoryPath + "/" + directoryName);
         }
     }
 
@@ -436,4 +462,35 @@ public class AssetBundleBuilder
             }
         }
     }
+
+    private void DeleteUnusedAssets()
+    {
+        string[] originBundleList = Directory.GetFiles(m_OutputPath, "*.unity3d");
+        if (originBundleList.Length > 0)
+        {
+            string path = m_OutputPath + "/" + m_TargetName;
+            AssetBundle assetbundle = AssetBundle.LoadFromFile(path);
+            AssetBundleManifest assetBundleManifest = assetbundle.LoadAsset("AssetBundleManifest") as AssetBundleManifest;
+
+            string[] files = assetBundleManifest.GetAllAssetBundles();
+            HashSet<string> newFileHash = new HashSet<string>();
+            foreach (string file in files)
+            {
+                newFileHash.Add(file);
+            }
+
+            foreach (string file in originBundleList)
+            {
+                string fileName = Path.GetFileName(file);
+                if (!newFileHash.Contains(fileName))
+                {
+                    UnityEngine.Debug.Log("delete an unused assset , " + file);
+                    File.Delete(file);
+                    File.Delete(file + ".manifest");
+                }
+            }
+            assetbundle.Unload(true);
+        }
+    }
+
 }

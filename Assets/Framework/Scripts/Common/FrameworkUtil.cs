@@ -79,6 +79,59 @@ namespace ANFramework
             return m_LuaPathConfig;
         }
 
+        /// <summary>
+        /// 应用程序内容路径
+        /// </summary>
+        private static string m_AppContentPath = string.Empty;
+        public static string AppContentPath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(m_AppContentPath))
+                {
+                    return m_AppContentPath;
+                }
+                else
+                {
+                    m_AppContentPath = Application.streamingAssetsPath + "/";
+                    return m_AppContentPath;
+                }
+            }
+        }
+
+        public static bool DoublePath
+        {
+            get
+            {
+                return false;
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public static string GetRealPath(string filename)
+        {
+            if (DoublePath)
+            {
+                string persistentPath = DataPath + filename;
+                if (File.Exists(persistentPath))
+                {
+                    return persistentPath;
+                }
+                else
+                {
+                    return AppContentPath + filename;
+                }
+            }
+            else
+            {
+                return DataPath + filename;
+            }
+        }
+
     }
 
 }

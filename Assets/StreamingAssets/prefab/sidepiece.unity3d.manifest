@@ -1,0 +1,29 @@
+ManifestFileVersion: 0
+CRC: 1473431256
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 79a6a82f802a2d8347cc3c1f1d5a4944
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 43917c7e82ed3ae0a408b3ea37ec80f7
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+Assets:
+- Assets/Game/Resource/Prefab/SidePiece.prefab
+Dependencies:
+- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/material.unity3d

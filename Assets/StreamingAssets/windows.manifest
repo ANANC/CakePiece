@@ -1,0 +1,47 @@
+ManifestFileVersion: 0
+CRC: 3787699569
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shader.unity3d
+      Dependencies: {}
+    Info_1:
+      Name: material.unity3d
+      Dependencies:
+        Dependency_0: shader.unity3d
+    Info_2:
+      Name: font.unity3d
+      Dependencies: {}
+    Info_3:
+      Name: sprite.unity3d
+      Dependencies: {}
+    Info_4:
+      Name: ui/floorui.unity3d
+      Dependencies:
+        Dependency_0: font.unity3d
+        Dependency_1: sprite.unity3d
+    Info_5:
+      Name: ui/mainui.unity3d
+      Dependencies: {}
+    Info_6:
+      Name: ui/winui.unity3d
+      Dependencies: {}
+    Info_7:
+      Name: prefab/character.unity3d
+      Dependencies:
+        Dependency_0: material.unity3d
+    Info_8:
+      Name: prefab/sidepiece.unity3d
+      Dependencies:
+        Dependency_0: material.unity3d
+    Info_9:
+      Name: prefab/terrain.unity3d
+      Dependencies: {}
+    Info_10:
+      Name: prefab/terrainpiece.unity3d
+      Dependencies:
+        Dependency_0: material.unity3d
+        Dependency_1: prefab/sidepiece.unity3d
+    Info_11:
+      Name: music.unity3d
+      Dependencies: {}

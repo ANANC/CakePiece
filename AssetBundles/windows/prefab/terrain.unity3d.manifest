@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 1535230976
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 043feb749c6826f9e67f0c4ed9372a38
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 27295f96fcdc2b917bd061e8817c7e02
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+Assets:
+- Assets/Game/Resource/Prefab/Terrain.prefab
+Dependencies: []
