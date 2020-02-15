@@ -8,13 +8,12 @@ public class AssetBundleResourceLoader : IReousrceLoader
     private AssetBundleManifest m_AssetBundleManifest;
 
     private Dictionary<string, AssetBundle> m_LoadAssetBundleDict = new Dictionary<string, AssetBundle>();
-    private Dictionary<string,Object> m_LoadObjectDict = new Dictionary<string, Object>();
+
 
     public void Init()
     {
-        AssetBundle assetbundle = AssetBundle.LoadFromFile(FrameworkUtil.DataPath+"Main");
+        AssetBundle assetbundle = AssetBundle.LoadFromFile(FrameworkUtil.GetRealPath("Main"));
         m_AssetBundleManifest = assetbundle.LoadAsset("AssetBundleManifest") as AssetBundleManifest;
-
     }
 
     public void Start()
@@ -36,13 +35,6 @@ public class AssetBundleResourceLoader : IReousrceLoader
     public T LoadResource<T>(string resourceName) where T : Object
     {
         string assetBundleName = resourceName + ".unity3d";
-
-        //判断是否已经加载
-        Object resource;
-        if (m_LoadObjectDict.TryGetValue(assetBundleName, out resource))
-        {
-            return resource as T;
-        }
         
         //加载依赖
         string[] dependences = m_AssetBundleManifest.GetAllDependencies(assetBundleName);
@@ -57,7 +49,19 @@ public class AssetBundleResourceLoader : IReousrceLoader
         }
 
         //加载ab
-        //实例化
+        AssetBundle resAssetBundle = null;
+        if (!m_LoadAssetBundleDict.TryGetValue(resourceName, out resAssetBundle))
+        {
+            resAssetBundle = AssetBundle.LoadFromFile(FrameworkUtil.GetRealPath(assetBundleName));
+            m_LoadAssetBundleDict.Add(assetBundleName, resAssetBundle);
+        }
+
+        if(resAssetBundle != null)
+        {
+            //实例化
+            T instance = resAssetBundle.LoadAsset<T>(resourceName);
+            return instance;
+        }
 
         return null;
     }

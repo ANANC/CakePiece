@@ -25,6 +25,15 @@ public class AssetBundleBuilder
         ED2O, //目录下每个文件夹达成一个AB 不递归
     }
 
+    public class ConfigureInfo
+    {
+        public ConfigureType Type;
+        public string ResourcePath;
+        public string AssetBundlePath = null;
+        public bool Dependent = true;
+    }
+
+
     public class BuildInfo
     {
         public AssetBundleBuild AssetBundleBuild;
@@ -39,12 +48,14 @@ public class AssetBundleBuilder
         }
     }
 
+
     private readonly string AssetBundleDirectory = "AssetBundles";
     private readonly string ProjectPath = Application.dataPath.Replace("Assets", string.Empty);
 
     private string m_StartPath;
     private string m_OutputPath;
     private string m_TargetName;
+    private List<ConfigureInfo> m_ConfigureInfoList = new List<ConfigureInfo>();
     private Dictionary<string, BuildInfo> m_BuildInfoDict = new Dictionary<string, BuildInfo>();
     private BuildTarget m_BuildTarget;
     private BuildAssetBundleOptions m_BuildAssetBundleOptions;
@@ -76,35 +87,39 @@ public class AssetBundleBuilder
         bool dependent = true)
     {
         Debug.Log(string.Format("【打AB】configure type:{0} resPath:{1}", Enum.GetName(typeof(ConfigureType), type),
-            resourcePath));
+    resourcePath));
 
-        resourcePath = m_StartPath + "/" + resourcePath;
+        ConfigureInfo info = new ConfigureInfo();
+        info.Type = type;
+        info.ResourcePath = resourcePath;
+        info.AssetBundlePath = assetBundlePath;
+        info.Dependent = dependent;
 
-        switch (type)
-        {
-            case ConfigureType.File:
-                BuildConfigure_File(resourcePath, assetBundlePath);
-                break;
-            case ConfigureType.Directory:
-                BuildConfigure_Directory(resourcePath, assetBundlePath);
-                break;
-            case ConfigureType.F2O:
-                BuildConfigure_FileToAB(dependent, resourcePath, assetBundlePath);
-                break;
-            case ConfigureType.EF2O:
-                BuildConfigure_DirectoryEventFileToAB(resourcePath, assetBundlePath);
-                break;
-            case ConfigureType.D2O:
-                BuildConfigure_DirectoryToAB(resourcePath, assetBundlePath);
-                break;
-            case ConfigureType.ED2O:
-                BuildConfigure_EventDirectoryToAB(resourcePath, assetBundlePath);
-                break;
-        }
+        m_ConfigureInfoList.Add(info);
     }
 
     public void Build()
     {
+        //AssetBundle Build
+        try
+        {
+            for (int i = 0; i < m_ConfigureInfoList.Count; i++)
+            {
+                EditorUtility.DisplayProgressBar("Build AssetBundle", m_ConfigureInfoList[i].ResourcePath, (i) / m_ConfigureInfoList.Count);
+
+                ConfigureControl(m_ConfigureInfoList[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("【打AB】 生成异常！ message:" + e.Message);
+            return;
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
+        }
+
         AssetBundleBuild[] builds = new AssetBundleBuild[m_BuildInfoDict.Count];
         int index = 0;
         foreach (KeyValuePair<string, BuildInfo> keyValuePair in m_BuildInfoDict)
@@ -143,6 +158,33 @@ public class AssetBundleBuilder
         Debug.Log("【打AB】Build AssetBundle Success");
 
         AssetDatabase.Refresh();
+    }
+
+    private void ConfigureControl(ConfigureInfo info)
+    {
+        string resourcePath = m_StartPath + "/" + info.ResourcePath;
+
+        switch (info.Type)
+        {
+            case ConfigureType.File:
+                BuildConfigure_File(resourcePath, info.AssetBundlePath);
+                break;
+            case ConfigureType.Directory:
+                BuildConfigure_Directory(resourcePath, info.AssetBundlePath);
+                break;
+            case ConfigureType.F2O:
+                BuildConfigure_FileToAB(info.Dependent, resourcePath, info.AssetBundlePath);
+                break;
+            case ConfigureType.EF2O:
+                BuildConfigure_DirectoryEventFileToAB(resourcePath, info.AssetBundlePath);
+                break;
+            case ConfigureType.D2O:
+                BuildConfigure_DirectoryToAB(resourcePath, info.AssetBundlePath);
+                break;
+            case ConfigureType.ED2O:
+                BuildConfigure_EventDirectoryToAB(resourcePath, info.AssetBundlePath);
+                break;
+        }
     }
 
     // -- build Configure --
@@ -491,6 +533,12 @@ public class AssetBundleBuilder
             }
             assetbundle.Unload(true);
         }
+    }
+
+    // -- GET --
+    public ConfigureInfo[] GetBuildConfigures()
+    {
+        return m_ConfigureInfoList.ToArray();
     }
 
 }

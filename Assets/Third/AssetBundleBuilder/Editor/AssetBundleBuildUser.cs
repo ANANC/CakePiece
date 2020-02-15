@@ -26,6 +26,7 @@ public class AssetBundleBuildUser
         m_Builder.Init(startPath, target);
         BuildConfigure();
         m_Builder.Build();
+        m_Builder = null;
     }
 
     private static void BuildConfigure()
@@ -37,5 +38,22 @@ public class AssetBundleBuildUser
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.EF2O, resourcePath + "/UI", "UI");
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.EF2O, resourcePath + "/Prefab", "Prefab");
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.D2O, resourcePath + "/Music", "Music");
+    }
+
+    // -- Editor ResourceLoader --
+
+    public static AssetBundleBuilder.ConfigureInfo[] GetBuildConfigures()
+    {
+        m_Builder = new AssetBundleBuilder();
+        m_Builder.Init(startPath, BuildTarget.StandaloneWindows);
+        BuildConfigure();
+        AssetBundleBuilder.ConfigureInfo[] infos = m_Builder.GetBuildConfigures();
+        m_Builder = null;
+        return infos;
+    }
+
+    public static string GetStartPath()
+    {
+        return startPath;
     }
 }

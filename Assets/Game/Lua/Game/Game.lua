@@ -30,6 +30,6 @@ function Game:InitUI()
 end
 
 function Game:InitManagers()
-    ANF.CSharp.Core.Mgr.UI:SetUIFolderPath(GameDefine.Path.Resource.."/UI")
+    ANF.CSharp.Core.Mgr.UI:SetUIFolderPath("UI")
     TerrainManager:Init()
 end

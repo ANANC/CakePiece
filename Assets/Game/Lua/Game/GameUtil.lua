@@ -5,5 +5,5 @@ function GameUtil:GetFlatMotionTable()
 end
 
 function GameUtil:InstanceResource(strPath)
-    return ANF.ResMgr:Instance(GameDefine.Path.Resource.."/"..strPath)
+    return ANF.ResMgr:Instance(strPath)
 end

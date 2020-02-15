@@ -11,26 +11,32 @@ namespace ANFramework
     public class ResourceManager : BaseManager
     {
         private IReousrceLoader m_Loader;
+        private Dictionary<string, Object> m_LoadObjectDict = new Dictionary<string, Object>();
 
         public override void Init()
         {
-
-#if UNITY_EDITOR
             Object loader = null;
-            string path = Application.dataPath + "/Core/Scripts/Engine/Source/Editor/FrameworkEditor.dll";
-            if (!System.IO.File.Exists(path))
-            {
-                path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
-            }
-            Assembly assembly = Assembly.LoadFile(path);
-            Type type = assembly.GetType("ANFramework.EditorReousrceLoader");
-            loader = Activator.CreateInstance(type, null);
 
-            m_Loader = loader as IReousrceLoader;
-#endif
+            if (Application.isEditor)
+            {
+                string path = Application.dataPath + "/Core/Scripts/Engine/Source/Editor/FrameworkEditor.dll";
+                if (!System.IO.File.Exists(path))
+                {
+                    path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
+                }
+                Assembly assembly = Assembly.LoadFile(path);
+                Type type = assembly.GetType("ANFramework.EditorReousrceLoader");
+                loader = Activator.CreateInstance(type, null);
+
+                m_Loader = loader as IReousrceLoader;
+            }
+            else
+            {
+                m_Loader = new AssetBundleResourceLoader();
+
+            }
 
             m_Loader.Init();
-
         }
 
         public override void Start()
@@ -62,16 +68,26 @@ namespace ANFramework
         
         public T LoadResource<T>(string path) where T : UnityEngine.Object
         {
-            T resObject = null;
+            Object resObject = null;
+
+            //判断是否已经加载
+            if (m_LoadObjectDict.TryGetValue(path, out resObject))
+            {
+                return resObject as T;
+            }
 
             resObject = m_Loader.LoadResource<T>(path);
 
             if (resObject == null)
             {
                 Debug.LogError(string.Format("资源（{0}）加载失败", path));
+                return null;
+            }else
+            {
+                m_LoadObjectDict.Add(path, resObject);
             }
 
-            return resObject;
+            return resObject as T;
         }
 
         public T ResourcesLoad<T>(string path) where T : UnityEngine.Object
