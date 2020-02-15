@@ -13,27 +13,26 @@ namespace ANFramework
         private IReousrceLoader m_Loader;
         private Dictionary<string, Object> m_LoadObjectDict = new Dictionary<string, Object>();
 
+        private bool m_UseAssetBundle = true;
+        public bool UseAssetBundle
+        {
+            set { m_UseAssetBundle = value; }
+        }
+
         public override void Init()
         {
-            Object loader = null;
-
-            if (Application.isEditor)
+            if (!m_UseAssetBundle && Application.isEditor)
             {
-                string path = Application.dataPath + "/Core/Scripts/Engine/Source/Editor/FrameworkEditor.dll";
-                if (!System.IO.File.Exists(path))
-                {
-                    path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
-                }
+                string path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp-Editor.dll";
                 Assembly assembly = Assembly.LoadFile(path);
                 Type type = assembly.GetType("ANFramework.EditorReousrceLoader");
-                loader = Activator.CreateInstance(type, null);
+                Object loader = Activator.CreateInstance(type, null);
 
                 m_Loader = loader as IReousrceLoader;
             }
             else
             {
                 m_Loader = new AssetBundleResourceLoader();
-
             }
 
             m_Loader.Init();

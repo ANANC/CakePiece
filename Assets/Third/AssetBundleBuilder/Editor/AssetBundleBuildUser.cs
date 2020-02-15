@@ -20,6 +20,14 @@ public class AssetBundleBuildUser
         Build(BuildTarget.Android);
     }
 
+    [MenuItem("ANF/Clear Bundle", false, 200)]
+    public static void Clear()
+    {
+        m_Builder = new AssetBundleBuilder();
+        m_Builder.ClearAssetBundle();
+        m_Builder = null;
+    }
+
     private static void Build(BuildTarget target)
     {
         m_Builder = new AssetBundleBuilder();

@@ -103,7 +103,6 @@ namespace ANFramework
         {
             get
             {
-                return false;
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     return false;

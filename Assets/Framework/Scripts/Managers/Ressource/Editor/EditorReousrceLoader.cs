@@ -97,7 +97,7 @@ namespace ANFramework
                         string filePath = files[index].Replace("\\", "/");
                         fullPathList.Add(filePath);
 
-                        int extensionIndex = filePath.LastIndexOf(".");
+                        int extensionIndex = filePath.LastIndexOf('.');
                         if (extensionIndex != -1)
                         {
                             filePath = filePath.Substring(0, extensionIndex);

@@ -20,4 +20,4 @@ Assets:
 - Assets/Game/Resource/Material/Character.mat
 - Assets/Game/Resource/Material/Tip.mat
 Dependencies:
-- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/shader.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/shader.unity3d

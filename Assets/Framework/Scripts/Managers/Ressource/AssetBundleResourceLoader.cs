@@ -9,7 +9,6 @@ public class AssetBundleResourceLoader : IReousrceLoader
 
     private Dictionary<string, AssetBundle> m_LoadAssetBundleDict = new Dictionary<string, AssetBundle>();
 
-
     public void Init()
     {
         AssetBundle assetbundle = AssetBundle.LoadFromFile(FrameworkUtil.GetRealPath("Main"));
@@ -35,44 +34,67 @@ public class AssetBundleResourceLoader : IReousrceLoader
     public T LoadResource<T>(string resourceName) where T : Object
     {
         string assetBundleName = resourceName + ".unity3d";
-        
-        //加载依赖
-        string[] dependences = m_AssetBundleManifest.GetAllDependencies(assetBundleName);
-        for (int i = 0; i < dependences.Length; i++)
-        {
-            string dependenceName = dependences[i] + ".unity3d";
-            if (!m_LoadAssetBundleDict.ContainsKey(dependenceName))
-            {
-                AssetBundle assetBundle = AssetBundle.LoadFromFile(FrameworkUtil.GetRealPath(dependenceName));
-                m_LoadAssetBundleDict.Add(dependenceName, assetBundle);
-            }
-        }
 
-        //加载ab
         AssetBundle resAssetBundle = null;
-        if (!m_LoadAssetBundleDict.TryGetValue(resourceName, out resAssetBundle))
+        if (!m_LoadAssetBundleDict.TryGetValue(assetBundleName, out resAssetBundle))
         {
-            resAssetBundle = AssetBundle.LoadFromFile(FrameworkUtil.GetRealPath(assetBundleName));
-            m_LoadAssetBundleDict.Add(assetBundleName, resAssetBundle);
+            //加载依赖
+            string[] dependences = m_AssetBundleManifest.GetAllDependencies(assetBundleName);
+            for (int i = 0; i < dependences.Length; i++)
+            {
+                string dependenceName = dependences[i];
+
+                LoadAssetBundle(dependenceName);
+            }
+
+            //加载ab
+            resAssetBundle = LoadAssetBundle(assetBundleName);
         }
 
         if(resAssetBundle != null)
         {
-            //实例化
-            T instance = resAssetBundle.LoadAsset<T>(resourceName);
-            return instance;
+            resourceName = resourceName.ToLower();
+
+            string[] assetBundleNames = resAssetBundle.GetAllAssetNames();
+            for(int index = 0;index< assetBundleNames.Length;index++)
+            {
+                string assetBunldNameWithoutExtension = assetBundleNames[index];
+                int extensionIndex = assetBunldNameWithoutExtension.LastIndexOf('.');
+                if(extensionIndex!=-1)
+                {
+                    assetBunldNameWithoutExtension = assetBunldNameWithoutExtension.Substring(0, extensionIndex);
+                }
+
+                if (assetBunldNameWithoutExtension.EndsWith(resourceName))
+                {
+                    //实例化
+                    T instance = resAssetBundle.LoadAsset<T>(assetBundleNames[index]);
+                    return instance;
+                }
+            }
         }
 
         return null;
     }
 
-    private bool LoadAssetBundle()
+    private AssetBundle LoadAssetBundle(string assetBundleName)
     {
-        bool isSuccess = true;
-        
+        AssetBundle resAssetBundle = null;
+        if (!m_LoadAssetBundleDict.TryGetValue(assetBundleName, out resAssetBundle))
+        {
+            string fullPath = FrameworkUtil.GetRealPath(assetBundleName);
+            resAssetBundle = AssetBundle.LoadFromFile(fullPath);
+            if (resAssetBundle != null)
+            {
+                m_LoadAssetBundleDict.Add(assetBundleName, resAssetBundle);
+            }
+            else
+            {
+                Debug.Log("【assetbundle load】 fail! path:" + fullPath);
+            }
+        }
 
-
-        return isSuccess;
+        return resAssetBundle;
     }
 
 

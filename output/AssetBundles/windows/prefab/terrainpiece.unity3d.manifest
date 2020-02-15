@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1473431256
+CRC: 2822605831
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 79a6a82f802a2d8347cc3c1f1d5a4944
+    Hash: 42e50e5e0565adfc9f71e551b1aa4366
   TypeTreeHash:
     serializedVersion: 2
     Hash: 43917c7e82ed3ae0a408b3ea37ec80f7
@@ -24,6 +24,7 @@ ClassTypes:
 - Class: 65
   Script: {instanceID: 0}
 Assets:
-- Assets/Game/Resource/Prefab/SidePiece.prefab
+- Assets/Game/Resource/Prefab/TerrainPiece.prefab
 Dependencies:
-- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/material.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/material.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/prefab/sidepiece.unity3d

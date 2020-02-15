@@ -28,5 +28,5 @@ ClassTypes:
 Assets:
 - Assets/Game/Resource/UI/FloorUI.prefab
 Dependencies:
-- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/font.unity3d
-- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/sprite.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/font.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/sprite.unity3d

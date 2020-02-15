@@ -49,7 +49,7 @@ public class AssetBundleBuilder
     }
 
 
-    private readonly string AssetBundleDirectory = "AssetBundles";
+    private readonly string AssetBundleDirectory = "../output/AssetBundles";
     private readonly string ProjectPath = Application.dataPath.Replace("Assets", string.Empty);
 
     private string m_StartPath;
@@ -66,7 +66,7 @@ public class AssetBundleBuilder
                                                BuildAssetBundleOptions.DisableLoadAssetByFileName
     )
     {
-        Debug.Log("【打AB】Build AssetBundle Init");
+        Debug.Log("【Build AssetBundle】Build AssetBundle Init");
 
         m_BuildInfoDict.Clear();
 
@@ -76,17 +76,17 @@ public class AssetBundleBuilder
 
         m_TargetName = GetBuildTargetName(buildTarget);
 
-        m_OutputPath = Application.dataPath + "/../" + AssetBundleDirectory + "/" + m_TargetName;
+        m_OutputPath = Application.dataPath + "/" + AssetBundleDirectory + "/" + m_TargetName;
         TryCreateDirectory(m_OutputPath);
 
-        Debug.Log(string.Format("【打AB】平台({2}) \nResStartPath:{0} \nOutputPath:{1}", m_StartPath, m_OutputPath,
+        Debug.Log(string.Format("【Build AssetBundle】平台({2}) \nResStartPath:{0} \nOutputPath:{1}", m_StartPath, m_OutputPath,
             m_TargetName));
     }
 
     public void AddConfigure(ConfigureType type, string resourcePath, string assetBundlePath = null,
         bool dependent = true)
     {
-        Debug.Log(string.Format("【打AB】configure type:{0} resPath:{1}", Enum.GetName(typeof(ConfigureType), type),
+        Debug.Log(string.Format("【Build AssetBundle】configure type:{0} resPath:{1}", Enum.GetName(typeof(ConfigureType), type),
     resourcePath));
 
         ConfigureInfo info = new ConfigureInfo();
@@ -98,8 +98,14 @@ public class AssetBundleBuilder
         m_ConfigureInfoList.Add(info);
     }
 
-    public void Build()
+    public void Build(bool clear = false)
     {
+        //清理旧资源
+        if(clear)
+        {
+            ClearAssetBundle();
+        }
+
         //AssetBundle Build
         try
         {
@@ -112,7 +118,7 @@ public class AssetBundleBuilder
         }
         catch (Exception e)
         {
-            Debug.Log("【打AB】 生成异常！ message:" + e.Message);
+            Debug.Log("【Build AssetBundle】 生成异常！ message:" + e.Message);
             return;
         }
         finally
@@ -155,7 +161,7 @@ public class AssetBundleBuilder
             DirectoryCopy(m_OutputPath, Application.streamingAssetsPath);
         }
 
-        Debug.Log("【打AB】Build AssetBundle Success");
+        Debug.Log("【Build AssetBundle】Build AssetBundle Success");
 
         AssetDatabase.Refresh();
     }
@@ -185,6 +191,24 @@ public class AssetBundleBuilder
                 BuildConfigure_EventDirectoryToAB(resourcePath, info.AssetBundlePath);
                 break;
         }
+    }
+
+    public void ClearAssetBundle()
+    {
+        string fullOutputAssetBundlePath = Application.dataPath + "/" + AssetBundleDirectory;
+        if(Directory.Exists(fullOutputAssetBundlePath))
+        {
+            Directory.Delete(fullOutputAssetBundlePath, true);
+        }
+
+        if(Directory.Exists(Application.streamingAssetsPath))
+        {
+            Directory.Delete(Application.streamingAssetsPath, true);
+        }
+
+        AssetDatabase.Refresh();
+
+        Debug.Log("【Build AssetBundle】 Clear Finish"); 
     }
 
     // -- build Configure --
@@ -349,13 +373,12 @@ public class AssetBundleBuilder
         {
             assetBundleBuild = new BuildInfo(filePath, fileName);
             assetBundleBuild.AssetBundleBuild.assetBundleName = assetBundleName + ".unity3d";
-            assetBundleBuild.AssetBundleBuild.assetNames = new string[]
-                {filePath.Replace(ProjectPath, string.Empty)};
+            assetBundleBuild.AssetBundleBuild.assetNames = new string[] { filePath.Replace(ProjectPath,string.Empty) };
             m_BuildInfoDict.Add(assetBundleName, assetBundleBuild);
         }
         else
         {
-            Debug.LogError(string.Format("【打AB】AB名（{0}）重复！ AB资源路径：{1} | 新资源路径：{2}", assetBundleName,
+            Debug.LogError(string.Format("【Build AssetBundle】AB名（{0}）重复！ AB资源路径：{1} | 新资源路径：{2}", assetBundleName,
                 assetBundleBuild.Path, filePath));
         }
     }
@@ -387,7 +410,7 @@ public class AssetBundleBuilder
         }
         else
         {
-            Debug.LogError(string.Format("【打AB】AB名（{0}）重复！ AB资源路径：{1} | 新资源路径：{2}", assetBundleName,
+            Debug.LogError(string.Format("【Build AssetBundle】AB名（{0}）重复！ AB资源路径：{1} | 新资源路径：{2}", assetBundleName,
                 assetBundleBuild.Path, directoryPath));
         }
     }

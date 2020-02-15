@@ -26,4 +26,4 @@ ClassTypes:
 Assets:
 - Assets/Game/Resource/Prefab/SidePiece.prefab
 Dependencies:
-- F:/SelfEnvironment/CakePiece/Assets/../AssetBundles/windows/material.unity3d
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/material.unity3d
