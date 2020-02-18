@@ -75,6 +75,10 @@ function TerrainManager:GetFloorCount()
     return self.pTerrain:GetFloorCount()
 end
 
+function TerrainManager:GetCharacterFormLogicPosition()
+    --todo:实现获取格子上的棋子，无则返回null
+end
+
 --- Enter ---
 function TerrainManager:__InitArts()
     local floorCount = self.pTerrain:GetFloorCount()

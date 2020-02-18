@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace ANFramework
         private IReousrceLoader m_Loader;
         private Dictionary<string, Object> m_LoadObjectDict = new Dictionary<string, Object>();
 
-        private bool m_UseAssetBundle = true;
+        private bool m_UseAssetBundle = false;
         public bool UseAssetBundle
         {
             set { m_UseAssetBundle = value; }
@@ -34,6 +33,8 @@ namespace ANFramework
             {
                 m_Loader = new AssetBundleResourceLoader();
             }
+
+            Debug.Log("Resource Type:" + m_Loader.GetType().Name);
 
             m_Loader.Init();
         }

@@ -1,5 +1,7 @@
 GameDefine = {}
 
+-------------------------- 类型定义 --------------------------
+
 GameDefine.Framerate = 30 --帧率
 
 --动向  （常量）
@@ -62,6 +64,22 @@ GameDefine.Axial =
     Z = 2,  --z轴
 }
 
+-- 属性
+GameDefine.Attribute =
+{
+    Moon    = 0,    --月
+    Star    = 1,    --星
+    Sun     = 2,    --日
+}
+
+-- 阵法
+GameDefine.Formation = 
+{
+    UpGrade = 1,    --升级
+    Close   = 2,    --拉近
+}
+
+-------------------------- 数值定义 --------------------------
 
 --地址
 GameDefine.Path = 
@@ -145,4 +163,11 @@ GameDefine.Tween =
 {
     Originate       = 8,    --起始高度
     Move            = 0.6 * GameDefine.Framerate,    --显示时间（S）
+}
+
+--有效范围 等级-格子数
+GameDefine.EffectiveRange =
+{
+    [1] = 2,
+    [2] = 4
 }

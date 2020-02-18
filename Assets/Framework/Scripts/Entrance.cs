@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class Entrance : MonoBehaviour
 {
+    
+    public bool m_UseAssetBundle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +28,7 @@ public class Entrance : MonoBehaviour
 
     private void Setting()
     {
+        ANF.Core.Mgr.Resource.UseAssetBundle = m_UseAssetBundle;
         ANF.Core.Mgr.AddManager(new InputManager());
     }
 }

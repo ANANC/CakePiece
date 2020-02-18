@@ -1,7 +1,9 @@
 Character = class()
 
-function Character:ctor(id)
+function Character:ctor(id,attribute,grade)
     self.pId = id
+    self.pAttribute = attribute
+    self.pGrade = grade
     self:__CreateGameobject()
 end
 
@@ -16,6 +18,22 @@ function Character:__CreateGameobject()
     self.pTransform = self.pGameObject.transform
 end
 
+-- GET --
+
+function Character:GetLogicPosition()
+    return self.pLogicPosition
+end
+
+function Character:GetGrade()
+    return self.pGrade
+end
+
+function Character:GetAttribute()
+    return self.pAttribute
+end
+
+-- SET --
+
 function Character:SetLogicPosition(logicPosition)
     self.pLogicPosition = logicPosition
     print("逻辑位置："..logicPosition:DebugStr())
@@ -24,10 +42,6 @@ end
 function Character:SetWorldPosition(worldPosition)
     self.pTransform.localPosition = worldPosition
     print("世界位置："..worldPosition:DebugStr())
-end
-
-function Character:GetLogicPosition()
-    return self.pLogicPosition
 end
 
 function Character:SetActive(active)
