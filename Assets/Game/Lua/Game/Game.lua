@@ -9,7 +9,6 @@ require "Character/Character"
 
 require "Scene/GameScene"
 
-
 function Game:Start()
     print("Game Start")
 

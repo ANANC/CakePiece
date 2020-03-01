@@ -34,6 +34,10 @@ function TerrainManager:Enter()
     self.pEndPiece = self.pTerrain:GetPieceByLogicPosition(self.pEndPosition)
     self:__UpdateCurFloor(self.pFirstPosition.y)
 
+    self.pAutoCharacterId = 1
+    self.pCharacters = {}
+    self.pLogicCharacterIds = {}
+
     self:__InitArts()
 
 end
@@ -75,8 +79,9 @@ function TerrainManager:GetFloorCount()
     return self.pTerrain:GetFloorCount()
 end
 
-function TerrainManager:GetCharacterFormLogicPosition()
-    --todo:实现获取格子上的棋子，无则返回null
+function TerrainManager:GetCharacterIdFormLogicPosition(logicPosition)
+    local logicId = self.pTerrain:LogicPositionToId(logicPosition)
+    return self.pLogicCharacterIds[logicId]
 end
 
 --- Enter ---
@@ -136,7 +141,7 @@ end
 function TerrainManager:__EnterAnimationFinish()
     print("开始动画结束")
 
-    self:__CreateCharacter()
+    self.pCharacter = self:__CreateCharacter(self.pFirstPosition)
     local piece = self.pTerrain:GetPieceByLogicPosition(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
 
@@ -145,23 +150,36 @@ function TerrainManager:__EnterAnimationFinish()
     self.pFloorUI:SetCurFloorText(self.pOldFloor,self.pCurFloor)
 end
 
-function TerrainManager:__CreateCharacter()
-    local characterId = 1
-    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(self.pFirstPosition)
-    self.pCharacter = Character:new(characterId)
+function TerrainManager:__CreateCharacter(logicPosition)
+    local characterId = self.pAutoCharacterId 
+    self.pAutoCharacterId = self.pAutoCharacterId + 1
 
-    self:__SetCharacterLogicPosition(self.pFirstPosition)
+    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
+    local character = Character:new(characterId)
+
+    self.pCharacters[characterId] = character
+    local logicId = self.pTerrain:LogicPositionToId(logicPosition)
+    self.pLogicCharacterIds[logicId] = characterId
+
+    self:__SetCharacterLogicPosition(logicPosition)
     self:__SetCharacterWorldPosition(worldPosition)
+
+    return character
 end
 
 --- logic --- 
 function TerrainManager:CharacterMove(direction)
     -- 移动逻辑
     local logicPosition = self.pCharacter:GetLogicPosition()
+    local logicId = self.pTerrain:LogicPositionToId(logicPosition)
     self.Model.Animation:PlayPieceNormalAnimation(self.pTerrain:GetPieceByLogicPosition(logicPosition))
 
     local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
+    local nextLogicId = self.pTerrain:LogicPositionToId(nextLogicPosition)
     self:__SetCharacterLogicPosition(nextLogicPosition)
+
+    self.pLogicCharacterIds[logicId] = nil
+    self.pLogicCharacterIds[nextLogicId] = self.pCharacter:GetId()
 
     -- 表现
     self:__UpdateCurFloorArt()
@@ -195,6 +213,16 @@ end
 function TerrainManager:__SetCharacterWorldPosition(worldPosition)
     worldPosition = worldPosition + Vector3.up * 0.5
     self.pCharacter:SetWorldPosition(worldPosition)
+end
+
+function TerrainManager:__UpdateAllCharacterFormationData()
+    for _,character in pairs(self.pCharacters) do
+        FormationManager:UpdateCharacterFormationData(character)
+    end
+end
+
+function TerrainManager:__UpdateFloorCharacterFormationData(floor)
+
 end
 
 --- floor ---

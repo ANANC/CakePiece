@@ -19,6 +19,9 @@ function Character:__CreateGameobject()
 end
 
 -- GET --
+function Character:GetId()
+    return self.pId
+end
 
 function Character:GetLogicPosition()
     return self.pLogicPosition
@@ -50,4 +53,8 @@ function Character:SetActive(active)
         scale = Vector3.one
     end
     self.pTransform.localScale = scale
+end
+
+function Character:SetFormationData(formation)
+    self.pFormation = formation
 end
