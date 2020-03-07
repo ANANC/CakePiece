@@ -4,10 +4,16 @@ require "General/Config/GameDefine"
 require "General/Data/TerrainData"
 require "Game/GameUtil"
 
-require "Terrain/TerrainManager"
+require "CellModule/CellModule"
+require "CellModule/Cell"
+
+require "Character/CharacterModule"
 require "Character/Character"
 
+require "Terrain/TerrainManager"
+
 require "Scene/GameScene"
+
 
 function Game:Start()
     print("Game Start")

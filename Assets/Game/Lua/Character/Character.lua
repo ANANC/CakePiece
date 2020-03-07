@@ -1,7 +1,7 @@
-Character = class()
+Character = class(Cell)
 
 function Character:ctor(id,attribute,grade)
-    self.pId = id
+    self:SetId(id)
     self.pAttribute = attribute
     self.pGrade = grade
     self:__CreateGameobject()
@@ -19,13 +19,6 @@ function Character:__CreateGameobject()
 end
 
 -- GET --
-function Character:GetId()
-    return self.pId
-end
-
-function Character:GetLogicPosition()
-    return self.pLogicPosition
-end
 
 function Character:GetGrade()
     return self.pGrade

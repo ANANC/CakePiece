@@ -6,18 +6,21 @@ function Cell:ctor()
     self.pLogicPosition = Vector3.zero
 end
 
+function Cell:Destroy()
+end
+
 ---------------------- SET ----------------------
 
-function Cell:SetWorldPosition()
-    return self.pWorldPosition
+function Cell:SetWorldPosition(worldPosition)
+    self.pWorldPosition = worldPosition
 end
 
-function Cell:SetLogicPosition()
-    return self.pLogicPosition
+function Cell:SetLogicPosition(logicPosition)
+    self.pLogicPosition = logicPosition
 end
 
-function Cell:SetId()
-    return self.pId
+function Cell:SetId(id)
+    self.pId = id
 end
 
 ---------------------- GET ----------------------
@@ -26,7 +29,7 @@ function Cell:GetWorldPosition()
     return self.pWorldPosition
 end
 
-function Cell:pLogicPosition()
+function Cell:GetLogicPosition()
     return self.pLogicPosition
 end
 
