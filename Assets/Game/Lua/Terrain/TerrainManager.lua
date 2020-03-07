@@ -9,7 +9,7 @@ end
 
 require "Terrain/TerrainArtModel"
 require "Terrain/TerrainAnimationModel"
-require "Terrain/Terrain"
+
 
 local TimerNames = 
 {
@@ -17,7 +17,6 @@ local TimerNames =
     MoveAnimation = "MoveAnimation"
 }
 
-local characterModule = CharacterModule:new()
 
 function TerrainManager:Init()
     self.pTimers = {}
@@ -30,10 +29,10 @@ function TerrainManager:Enter()
     self:ModelsControl("Enter")
 
     local data = TerrainData:GetData()
-    self.pTerrain = Terrain:new(TerrainData:GetData())
+    Game.TerrainPieceModule:InitTerrain(data)
     self.pFirstPosition = Vector3.NewByV3(data.FirstPosition)
     self.pEndPosition = Vector3.NewByV3(data.EndPosition)
-    self.pEndPiece = self.pTerrain:GetPieceByLogicPosition(self.pEndPosition)
+    self.pEndPiece = Game.TerrainPieceModule:GetCellByLogicPos(self.pEndPosition)
 
     self.pPlayerId = 0
 
@@ -46,8 +45,8 @@ function TerrainManager:Out()
 
     self:__ClearAllTimer()
 
-    self.pTerrain:Destroy()
-    characterModule:Destroy()
+    Game.TerrainPieceModule:Destroy()
+    Game.CharacterModule:Destroy()
 
     self:ModelsControl("Out")
 end
@@ -74,26 +73,18 @@ function TerrainManager:GetEndFloor()
     return self.pEndPosition.y
 end
 
-function TerrainManager:GetFloorCount()
-    return self.pTerrain:GetFloorCount()
-end
-
-function TerrainManager:GetCharacterIdFormLogicPosition(logicPosition)
-    local character = characterModule:GetCellByLogicPos(logicPosition)
-    return character
-end
 
 --- Enter ---
 function TerrainManager:__InitArts()
-    local floorCount = self.pTerrain:GetFloorCount()
+    local floorCount = Game.TerrainPieceModule:GetFloorCount()
 
     -- character
-    self.pPlayer = self:__CreatePlayer(self.pFirstPosition)
+    self.pPlayer = Game.CharacterModule:CreatPlayer(self.pPlayerId,self.pFirstPosition,false)
 
     -- art
-    local curFloor = characterModule:GetCurFloor()
+    local curFloor = Game.CharacterModule:GetCurFloor()
     for index = 0,floorCount do
-        self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(index),curFloor == index)
+        self.Model.Art:UpdateSingleFloorArt(Game.TerrainPieceModule:GetFloor(index),curFloor == index)
     end
     self:__UpdateEndPieceArt()
 
@@ -103,7 +94,7 @@ function TerrainManager:__InitArts()
     for floor = floorCount,0,-1 do
         local time = index * GameDefine.Tween.Move
         local timer = FrameTimer.New(function() 
-            local floorPieces = self.pTerrain:GetFloor(floor)
+            local floorPieces = Game.TerrainPieceModule:GetFloor(floor)
             self.Model.Animation:PlayFloorDisplayAnimation(floorPieces)
             self:__FloorAnimationFinish(floor)
             self:__UpdateTimer(TimerNames.FloorAnimation..floor,nil)
@@ -146,38 +137,23 @@ function TerrainManager:__EnterAnimationFinish()
     print("开始动画结束")
 
     self.pPlayer:SetActive(true)
-    local piece = self.pTerrain:GetPieceByLogicPosition(self.pFirstPosition)
+    local piece = Game.TerrainPieceModule:GetCellByLogicPos(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
 
     ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
     self.pFloorUI = ANF.UIMgr:GetUI(GameDefine.UI.FloorUI)
-    self.pFloorUI:SetCurFloorText(characterModule:GetOldFloor(),characterModule:GetCurFloor())
-end
-
-function TerrainManager:__CreatePlayer(logicPosition)
-    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
-    local character = characterModule:CreatPlayer(self.pPlayerId,logicPosition,worldPosition,false)
-
-    return character
-end
-
-function TerrainManager:__CreateCharacter(logicPosition)
-    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
-    local character = characterModule:CreateCharacter(nil,logicPosition,worldPosition)
-
-    return character
+    self.pFloorUI:SetCurFloorText(Game.CharacterModule:GetOldFloor(),Game.CharacterModule:GetCurFloor())
 end
 
 --- logic --- 
 function TerrainManager:CharacterMove(direction)
     -- 移动逻辑
     local logicPosition = self.pPlayer:GetLogicPosition()
-    self.Model.Animation:PlayPieceNormalAnimation(self.pTerrain:GetPieceByLogicPosition(logicPosition))
+    self.Model.Animation:PlayPieceNormalAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
 
-    local nextLogicPosition = self.pTerrain:GetNextLogixPosition(logicPosition,direction)
-    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
+    local nextLogicPosition = Game.TerrainPieceModule:GetNextLogixPosition(logicPosition,direction)
 
-    characterModule:MoveCharacter(self.pPlayerId,nextLogicPosition,worldPosition)
+    Game.CharacterModule:MoveCharacter(self.pPlayerId,nextLogicPosition)
 
     -- 表现
     self:__UpdateCurFloorArt()
@@ -187,7 +163,7 @@ function TerrainManager:__CharacterMoveAnimationFinish()
     self.pPlayer:SetActive(true)
 
     local logicPosition = self.pPlayer:GetLogicPosition()
-    self.Model.Animation:PlayPieceDownAnimation(self.pTerrain:GetPieceByLogicPosition(logicPosition))
+    self.Model.Animation:PlayPieceDownAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
 
     self:__JudgeSucces()
 end
@@ -209,15 +185,15 @@ end
 function TerrainManager:__UpdateCurFloorArt()
     self.pPlayer:SetActive(false)
 
-    local oldFloor = characterModule:GetOldFloor()
-    local curFloor = characterModule:GetCurFloor()
+    local oldFloor = Game.CharacterModule:GetOldFloor()
+    local curFloor = Game.CharacterModule:GetCurFloor()
 
     -- art
     if oldFloor ~= nil and oldFloor ~= curFloor then
-        local oldFloor = self.pTerrain:GetFloor(oldFloor)
+        local oldFloor = Game.TerrainPieceModule:GetFloor(oldFloor)
         self.Model.Art:UpdateSingleFloorArt(oldFloor,false)
     end
-    self.Model.Art:UpdateSingleFloorArt(self.pTerrain:GetFloor(curFloor),true)
+    self.Model.Art:UpdateSingleFloorArt(Game.TerrainPieceModule:GetFloor(curFloor),true)
     self:__UpdateEndPieceArt()
 
     -- animation
@@ -226,7 +202,7 @@ function TerrainManager:__UpdateCurFloorArt()
         if oldFloor < curFloor then
             apartCount = curFloor - oldFloor
             for index = oldFloor,curFloor - 1 do
-                local floor = self.pTerrain:GetFloor(index)
+                local floor = Game.TerrainPieceModule:GetFloor(index)
                 self.Model.Animation:PlayFloorHideAnimation(floor)
             end
         end
@@ -234,7 +210,7 @@ function TerrainManager:__UpdateCurFloorArt()
         if curFloor < oldFloor then
             apartCount = oldFloor - curFloor
             for index = oldFloor - 1,curFloor,-1 do
-                local floor = self.pTerrain:GetFloor(index)
+                local floor = Game.TerrainPieceModule:GetFloor(index)
                 self.Model.Animation:PlayFloorDisplayAnimation(floor)
             end
         end

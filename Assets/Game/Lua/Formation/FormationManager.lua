@@ -16,7 +16,7 @@ function FormationManager:UpdateCharacterFormationData(character)
         local directionData = {Direction = direction, CharacterId = -1, Range = -1}
         for range = 1,effectiveRange do
             local nextLogicPosition = curLogicPosition + direction * range
-            local otherCharacterId = TerrainManager:GetCharacterIdFormLogicPosition(nextLogicPosition)
+            local otherCharacterId = Game.CharacterModule:GetCellByLogicPos(nextLogicPosition)
 
             if(otherCharacterId ~= nil) then
                 directionData.CharacterId = otherCharacterId

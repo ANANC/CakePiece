@@ -12,7 +12,7 @@ end
 
 function FloorUI:Start()
     self.pCellImages = {}
-    self:SetFloorCount(TerrainManager:GetFloorCount(),TerrainManager:GetEndFloor())
+    self:SetFloorCount(Game.TerrainPieceModule:GetFloorCount(),TerrainManager:GetEndFloor())
 end
 
 function FloorUI:Close()

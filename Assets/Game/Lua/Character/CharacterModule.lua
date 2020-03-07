@@ -1,5 +1,7 @@
 CharacterModule = class(CellModule)
 
+require "Character/Character"
+
 local AutoCharacterId = 0
 
 function CharacterModule:ctor()
@@ -16,9 +18,10 @@ function CharacterModule:Destroy()
 end
 
 
-function CharacterModule:CreatPlayer(characterId,logicPosition,worldPosition,isActive)
+function CharacterModule:CreatPlayer(characterId,logicPosition,isActive)
     self.pPlayerId = characterId
-    self.pPlayer = self:CreateCharacter(characterId,logicPosition,worldPosition)
+
+    self.pPlayer = self:CreateCharacter(characterId,logicPosition)
     self.pPlayer:SetActive(isActive)
 
     self.pCurFloor = logicPosition.y
@@ -26,11 +29,13 @@ function CharacterModule:CreatPlayer(characterId,logicPosition,worldPosition,isA
     return self.pPlayer
 end
 
-function CharacterModule:CreateCharacter(characterId,logicPosition,worldPosition)
+function CharacterModule:CreateCharacter(characterId,logicPosition)
     if characterId == nil then
         characterId = AutoCharacterId
         AutoCharacterId = AutoCharacterId + 1
     end
+
+    local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
 
     local character = Character:new(characterId)
     character:SetLogicPosition(logicPosition)
@@ -41,8 +46,10 @@ function CharacterModule:CreateCharacter(characterId,logicPosition,worldPosition
     return character
 end
 
-function CharacterModule:MoveCharacter(characterId,logicPosition,worldPosition)
+function CharacterModule:MoveCharacter(characterId,logicPosition)
+    local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
     worldPosition = worldPosition + Vector3.up * 0.5
+    
     self:MoveCell(characterId,logicPosition,worldPosition)
     
     self.pOldFloor = self.pCurFloor

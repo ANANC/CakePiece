@@ -1,4 +1,4 @@
-TerrainPiece = class()
+TerrainPiece = class(Cell)
 
 function TerrainPiece:ctor(pieceData, id, logicPosition, worldPosition)
     self.pPieceData = pieceData
@@ -13,9 +13,16 @@ function TerrainPiece:Destroy()
     self.pPieceData = nil
 end
 
-function TerrainPiece:GetId()
-    return self.pId
+-- Get --
+function TerrainPiece:GetMeasure()
+    return self.pPieceData.Measure
 end
+
+function TerrainPiece:GetTransform()
+    return self.pTransform
+end
+
+-- Judge --
 
 function TerrainPiece:ContainDirection(direction)
     local motion = GameDefine.DirectionToMotion[direction]
@@ -55,14 +62,7 @@ function TerrainPiece:IsLoop()
     return self.pLoop
 end
 
-function TerrainPiece:GetMeasure()
-    return self.pPieceData.Measure
-end
-
 --- art ---
-function TerrainPiece:GetTransform()
-    return self.pTransform
-end
 
 function TerrainPiece:__SetGameObject(gameObject)
     self.pGameObject = gameObject
@@ -70,8 +70,4 @@ function TerrainPiece:__SetGameObject(gameObject)
     self.pTransform = self.pGameObject.transform
     self.pTransform.localPosition = self.pWorldPosition
     TerrainManager.Model.Art:SetPieceDirectionArt(self)
-end
-
-function TerrainPiece:GetWorldPosition()
-    return self.pWorldPosition
 end

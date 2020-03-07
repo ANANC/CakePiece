@@ -1,39 +1,39 @@
-Terrain = class()
+TerrainPieceModule = class(CellModule)
 
-require "Terrain/TerrainPiece"
+require "TerrainPiece/TerrainPiece"
 
-function Terrain:ctor(terrainData)
-    self.pPieces = {}
-    self.pPieceFloors = {}
+function TerrainPieceModule:ctor()
+
+end
+
+function TerrainPieceModule:Destroy()
+    for _,piece in pairs(self.pCells) do 
+        piece:Destroy()
+    end
+    self.pTerrainData = nil
+
+    self[CellModule]:Destroy()
+end
+
+--- set ---
+
+function TerrainPieceModule:InitTerrain(terrainData)
+    if self.pTerrainData ~= nil then
+        print("地形数据不为空的情况下重置地形！")
+    end
+
     self.pTerrainData = terrainData
-
     self:__CreateTerrain()
 end
 
-function Terrain:Destroy()
-    for _,piece in pairs(self.pPieces) do 
-        piece:Destroy()
-    end
-
-    self.pPieces = {}
-end
 
 --- get ---
-function Terrain:GetPieceById(id)
-    local piece = self.pPieces[id]
-    return piece
+function TerrainPieceModule:GetFloor(floor)
+    local floor = self:__GetFloor(floor)
+    return floor.Cells
 end
 
-function Terrain:GetPieceByLogicPosition(logicPosition)
-    local id = self:LogicPositionToId(logicPosition)
-    return self:GetPieceById(id)
-end
-
-function Terrain:GetFloor(floor)
-    return self.pPieceFloors[floor]
-end
-
-function Terrain:GetFloorCount()
+function TerrainPieceModule:GetFloorCount()
     return self.pFloorCount
 end
 
@@ -41,7 +41,7 @@ end
 --- logic ---
 
 -- 创建 --
-function Terrain:__CreateTerrain()
+function TerrainPieceModule:__CreateTerrain()
     self.pFloorCount = 0
     local building = GameDefine.Building
     self.pGap = Vector3.New(building.Size.Width + building.Gap.Width, building.FloorHeight, building.Size.Height + building.Gap.Height)
@@ -49,16 +49,12 @@ function Terrain:__CreateTerrain()
 
     for _,data in pairs(self.pTerrainData.Piece) do
         local logicPosition = data.Position
-        local id = self:LogicPositionToId(logicPosition)
+        local id = self:__Vector3ToId(logicPosition)
         local worldPosition = self:LogicPositionToWorldPosition(logicPosition)
         local piece = self:__CreatePiece(data, id, logicPosition, worldPosition)
-        self.pPieces[id] = piece
-
         local curFloor = logicPosition.y
-        if self.pPieceFloors[curFloor] == nil then
-            self.pPieceFloors[curFloor] = {}
-        end
-        table.insert( self.pPieceFloors[curFloor], piece )
+
+        self:AddCell(piece)
 
         if self.pFloorCount < curFloor then
             self.pFloorCount = curFloor
@@ -66,7 +62,7 @@ function Terrain:__CreateTerrain()
     end
 end
 
-function Terrain:__CreatePiece(pieceData, id, logicPosition, worldPosition)
+function TerrainPieceModule:__CreatePiece(pieceData, id, logicPosition, worldPosition)
     local piece = TerrainPiece:new(pieceData, id, logicPosition, worldPosition)
     piece:__SetGameObject(TerrainManager.Model.Art:CreatePieceGameObject(self.pPieceSize))
     return piece
@@ -74,10 +70,10 @@ end
 
 -- 移动 --
 
-function Terrain:GetNextLogixPosition(curLogicPos, direction)
+function TerrainPieceModule:GetNextLogixPosition(curLogicPos, direction)
 
     local lastLogicPos = curLogicPos
-    local curPiece = self:GetPieceByLogicPosition(lastLogicPos)
+    local curPiece = self:GetCellByLogicPos(lastLogicPos)
 
     local nextLogicPos = curLogicPos + direction * curPiece:GetMeasure()
     local recordLogicPos = {lastLogicPos}
@@ -87,7 +83,7 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
         while ( true )
         do
             -- 是否存在下一块
-            local nextPiece = self:GetPieceByLogicPosition(nextLogicPos)
+            local nextPiece = self:GetCellByLogicPos(nextLogicPos)
             if nextPiece == nil or nextPiece:CanStand() == false then
                 break
             end
@@ -135,15 +131,9 @@ function Terrain:GetNextLogixPosition(curLogicPos, direction)
 end
 
 
--- 工具 --
+-- tool --
 
-function Terrain:LogicPositionToId(logicPosition)
-    local id = logicPosition.x * 10 + logicPosition.y + logicPosition.z * 1000
-    return id
-end
-
-
-function Terrain:LogicPositionToWorldPosition(logicPosition)
+function TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
     local position = Vector3.New(logicPosition.x * self.pGap.x , logicPosition.y * -self.pGap.y, logicPosition.z * self.pGap.z)
     return position
 end
