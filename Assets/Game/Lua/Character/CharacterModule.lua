@@ -3,8 +3,8 @@ CharacterModule = class(CellModule)
 local AutoCharacterId = 0
 
 function CharacterModule:ctor()
-    self.pOldFloor = -1
-    self.pCurFloor = -1
+    self.pOldFloor = nil
+    self.pCurFloor = nil
 end
 
 function CharacterModule:Destroy()
@@ -16,9 +16,10 @@ function CharacterModule:Destroy()
 end
 
 
-function CharacterModule:CreatPlayer(characterId,logicPosition,worldPosition)
+function CharacterModule:CreatPlayer(characterId,logicPosition,worldPosition,isActive)
     self.pPlayerId = characterId
     self.pPlayer = self:CreateCharacter(characterId,logicPosition,worldPosition)
+    self.pPlayer:SetActive(isActive)
 
     self.pCurFloor = logicPosition.y
 

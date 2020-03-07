@@ -86,6 +86,10 @@ end
 --- Enter ---
 function TerrainManager:__InitArts()
     local floorCount = self.pTerrain:GetFloorCount()
+
+    -- character
+    self.pPlayer = self:__CreatePlayer(self.pFirstPosition)
+
     -- art
     local curFloor = characterModule:GetCurFloor()
     for index = 0,floorCount do
@@ -141,7 +145,7 @@ end
 function TerrainManager:__EnterAnimationFinish()
     print("开始动画结束")
 
-    self.pPlayer = self:__CreatePlayer(self.pFirstPosition)
+    self.pPlayer:SetActive(true)
     local piece = self.pTerrain:GetPieceByLogicPosition(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
 
@@ -151,12 +155,15 @@ function TerrainManager:__EnterAnimationFinish()
 end
 
 function TerrainManager:__CreatePlayer(logicPosition)
-    return self:__CreateCharacter(self.pPlayerId,logicPosition)
+    local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
+    local character = characterModule:CreatPlayer(self.pPlayerId,logicPosition,worldPosition,false)
+
+    return character
 end
 
-function TerrainManager:__CreateCharacter(id,logicPosition)
+function TerrainManager:__CreateCharacter(logicPosition)
     local worldPosition = self.pTerrain:LogicPositionToWorldPosition(logicPosition)
-    local character = characterModule:CreateCharacter(id,logicPosition,worldPosition)
+    local character = characterModule:CreateCharacter(nil,logicPosition,worldPosition)
 
     return character
 end

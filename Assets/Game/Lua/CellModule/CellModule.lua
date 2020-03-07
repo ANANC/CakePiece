@@ -46,7 +46,7 @@ function CellModule:MoveCell(cellId,logicPosition,worldPosition)
         return
     end
 
-    local oldLogicPosition = cell:SetLogicPosition()
+    local oldLogicPosition = cell:GetLogicPosition()
 
     cell:SetWorldPosition(worldPosition)
     cell:SetLogicPosition(logicPosition)
@@ -86,13 +86,13 @@ end
 
 function CellModule:__UpdateFloorCell(curLogicPos,oldLogicPos,cell)
     local curFloorIndex = self:__Vector2ToId(curLogicPos)
-    local curFloor = CellModule:__GetFloor(curLogicPos.y)
+    local curFloor = self:__GetFloor(curLogicPos.y)
 
     local oldfloorIndex = -1
     local oldFloor = -1
     if oldLogicPos ~= nil then
         oldfloorIndex = self:__Vector2ToId(oldLogicPos)
-        oldFloor = CellModule:__GetFloor(oldLogicPos.y)
+        oldFloor = self:__GetFloor(oldLogicPos.y)
         oldFloor.Cells[oldfloorIndex] = nil
     end    
 
