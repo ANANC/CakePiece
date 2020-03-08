@@ -169,5 +169,5 @@ GameDefine.Tween =
 GameDefine.EffectiveRange =
 {
     [1] = 2,
-    [2] = 4
+    [2] = 4,
 }

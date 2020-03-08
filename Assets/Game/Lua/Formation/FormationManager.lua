@@ -11,7 +11,7 @@ function FormationManager:UpdateCharacterFormationData(character)
 
     local formationData = {}
 
-    local directons = GameDefine:GetFlatDirectionTable()
+    local directons = GameUtil:GetFlatDirectionTable()
     for _,direction in pairs(directons) do
         local directionData = {Direction = direction, CharacterId = -1, Range = -1}
         for range = 1,effectiveRange do

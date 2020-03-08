@@ -17,11 +17,12 @@ function CharacterModule:Destroy()
     self[CellModule]:Destroy()
 end
 
+--- character ---
 
 function CharacterModule:CreatPlayer(characterId,logicPosition,isActive)
     self.pPlayerId = characterId
 
-    self.pPlayer = self:CreateCharacter(characterId,logicPosition)
+    self.pPlayer = self:CreateCharacter(characterId,GameDefine.Attribute.Moon,1,logicPosition)
     self.pPlayer:SetActive(isActive)
 
     self.pCurFloor = logicPosition.y
@@ -29,7 +30,7 @@ function CharacterModule:CreatPlayer(characterId,logicPosition,isActive)
     return self.pPlayer
 end
 
-function CharacterModule:CreateCharacter(characterId,logicPosition)
+function CharacterModule:CreateCharacter(characterId,attribute,grade,logicPosition)
     if characterId == nil then
         characterId = AutoCharacterId
         AutoCharacterId = AutoCharacterId + 1
@@ -37,7 +38,7 @@ function CharacterModule:CreateCharacter(characterId,logicPosition)
 
     local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
 
-    local character = Character:new(characterId)
+    local character = Character:new(characterId,attribute,grade)
     character:SetLogicPosition(logicPosition)
     character:SetWorldPosition(worldPosition)
 
@@ -47,6 +48,10 @@ function CharacterModule:CreateCharacter(characterId,logicPosition)
 end
 
 function CharacterModule:MoveCharacter(characterId,logicPosition)
+    if self:IsCellExist(characterId) == false then
+        return
+    end
+
     local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
     worldPosition = worldPosition + Vector3.up * 0.5
     
@@ -56,6 +61,8 @@ function CharacterModule:MoveCharacter(characterId,logicPosition)
     self.pCurFloor = logicPosition.y
 
 end
+
+ --- get ---
 
 function CharacterModule:GetPlayer()
     return self.pPlayer
@@ -68,3 +75,19 @@ end
 function CharacterModule:GetCurFloor()
     return self.pCurFloor
 end
+
+--- logic ---
+
+function CharacterModule:UpdateEnvironmentFormation()
+    for _,value in pairs(self.pCells) do
+        FormationManager:UpdateCharacterFormationData(value)
+    end
+end
+
+function CharacterModule:UpdateCharacterFormation(characterId)
+    local cell = self:GetCell(characterId)
+    if cell == nil then
+        return 
+    end
+end
+

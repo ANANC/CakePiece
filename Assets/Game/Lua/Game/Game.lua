@@ -17,6 +17,7 @@ Game.CharacterModule = CharacterModule:new()
 Game.TerrainPieceModule = TerrainPieceModule:new()
 
 -- 组合模块 --
+require "Formation/FormationManager"
 require "Terrain/TerrainManager"
 require "Scene/GameScene"
 

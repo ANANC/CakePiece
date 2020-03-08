@@ -136,6 +136,8 @@ end
 function TerrainManager:__EnterAnimationFinish()
     print("开始动画结束")
 
+    Game.CharacterModule:UpdateEnvironmentFormation()
+
     self.pPlayer:SetActive(true)
     local piece = Game.TerrainPieceModule:GetCellByLogicPos(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
@@ -159,15 +161,6 @@ function TerrainManager:CharacterMove(direction)
     self:__UpdateCurFloorArt()
 end
 
-function TerrainManager:__CharacterMoveAnimationFinish()
-    self.pPlayer:SetActive(true)
-
-    local logicPosition = self.pPlayer:GetLogicPosition()
-    self.Model.Animation:PlayPieceDownAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
-
-    self:__JudgeSucces()
-end
-
 function TerrainManager:__JudgeSucces()
     local curLogicPosition = self.pPlayer:GetLogicPosition()
 
@@ -177,6 +170,7 @@ function TerrainManager:__JudgeSucces()
 end
 
 --- character ---
+
 
 
 
@@ -234,6 +228,17 @@ end
 
 function TerrainManager:__UpdateEndPieceArt()
     self.Model.Art:UpdateSiglePieceColor(self.pEndPiece,GameDefine.Color.Piece.End)
+end
+
+function TerrainManager:__CharacterMoveAnimationFinish()
+    self.pPlayer:SetActive(true)
+
+    Game.CharacterModule:UpdateCharacterFormation(self.pPlayerId)
+
+    local logicPosition = self.pPlayer:GetLogicPosition()
+    self.Model.Animation:PlayPieceDownAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
+
+    self:__JudgeSucces()
 end
 
 --- timer ---

@@ -71,6 +71,10 @@ function CellModule:GetCellByLogicPos(logicPos)
     return floor.Cells[floorIndex]
 end
 
+function CellModule:IsCellExist(cellId)
+    return self.pCells[cellId] ~= nil
+end
+
 -- floor --
 
 function CellModule:__GetFloor(floorValue)
