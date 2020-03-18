@@ -20,6 +20,7 @@ GameDefine.Motion =
 --方向 （向量）
 GameDefine.Direction = 
 {
+    Zero    = Vector3.zero,
     Forward = Vector3.forward,  --前
     Back    = Vector3.back,     --后
     Left    = Vector3.left,     --左
@@ -118,6 +119,8 @@ GameDefine.Color =
     {
         Current = Color.New(0.8,0.8,0.8,1),
         End = Color.New(0.82,0.3,0.3,1),   --终点 
+        EnableTouch = Color.New(0.7,0.47,0.47,1),
+        UnableTouch =  Color.New(1,1,1,1),
     },
     
 
@@ -146,7 +149,7 @@ GameDefine.Building =
     {
         Width       = 4,    --宽
         Height      = 4,    --高
-        Thickness   = 0.1,  --厚
+        Thickness   = 0.01,  --厚
     },
     --地块大小
     Gap    =           

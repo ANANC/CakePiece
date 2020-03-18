@@ -91,7 +91,7 @@ public static class LuaBinder
 		L.BeginModule("ANFramework");
 		ANFramework_ANFWrap.Register(L);
 		ANFramework_ManagersWrap.Register(L);
-		ANFramework_BaseBehaviourWrap.Register(L);
+		ANFramework_BaseManagerWrap.Register(L);
 		ANFramework_ResourceManagerWrap.Register(L);
 		ANFramework_UIManagerWrap.Register(L);
 		ANFramework_BaseUIObjectWrap.Register(L);

@@ -34,6 +34,11 @@ local PiecePath =
     Down    = "Down",
     Up      = "Up",
 }
+local SidePath = 
+{
+    Tag     = "Tag",
+    Touch   = "Touch"
+}
 
 function TerrainArtModel:CreatePieceGameObject(pieceSize)
     local gameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.TerrainPiece)
@@ -102,6 +107,37 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
     
 end
 
+function TerrainArtModel:UpdateLogicTouchPieceArt(logicPos,enableTouch)
+    local curPiece = Game.TerrainPieceModule:GetCellByLogicPos(logicPos)
+
+    local measure = curPiece:GetMeasure()
+    local directions = GameUtil:GetFlatDirectionTable()
+
+    for round = 1, measure do
+        for _,dir in pairs(directions) do
+            local piece = Game.TerrainPieceModule:GetCellByLogicPos(logicPos+dir*round)
+            if piece ~= nil then
+                if curPiece:ContainDirection(dir) then
+                    self:SetTouchPieceArt(piece,enableTouch)
+                else
+                    self:SetTouchPieceArt(piece,false)
+                end
+            end
+        end
+    end
+end
+
+function TerrainArtModel:SetTouchPieceArt(piece,enableTouch)
+    local color = GameDefine.Color.Piece.UnableTouch
+    if enableTouch == true then
+        color = GameDefine.Color.Piece.EnableTouch
+    end
+    local cubeTransform = piece:GetTransform():Find(PiecePath.Cube).transform
+    cubeTransform:GetComponent("BoxCollider").enabled = enableTouch
+    local material = cubeTransform:GetComponent("MeshRenderer").material
+    material.color = color
+end
+
 --- floor ---
 
 function TerrainArtModel:UpdateSingleFloorArt(floorPieces,isPresent)
@@ -132,7 +168,7 @@ function TerrainArtModel:UpdateSiglePieceSideColor(piece,color)
     local sideTransform = pieceTransform:Find(PiecePath.Side).transform
     local sideCellCount = sideTransform.childCount
     for index = 0,sideCellCount - 1 do
-        local materail = sideTransform:GetChild(index):Find(PiecePath.Cube):GetComponent("MeshRenderer").material
+        local materail = sideTransform:GetChild(index):Find(SidePath.Tag):GetComponent("MeshRenderer").material
         materail.color = color
     end
 end

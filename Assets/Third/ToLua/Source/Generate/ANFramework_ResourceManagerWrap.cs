@@ -14,6 +14,7 @@ public class ANFramework_ResourceManagerWrap
 		L.RegFunction("DestroyGameObject", DestroyGameObject);
 		L.RegFunction("New", _CreateANFramework_ResourceManager);
 		L.RegFunction("__tostring", ToLua.op_ToString);
+		L.RegVar("UseAssetBundle", null, set_UseAssetBundle);
 		L.EndClass();
 	}
 
@@ -121,6 +122,25 @@ public class ANFramework_ResourceManagerWrap
 		catch (Exception e)
 		{
 			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int set_UseAssetBundle(IntPtr L)
+	{
+		object o = null;
+
+		try
+		{
+			o = ToLua.ToObject(L, 1);
+			ANFramework.ResourceManager obj = (ANFramework.ResourceManager)o;
+			bool arg0 = LuaDLL.luaL_checkboolean(L, 2);
+			obj.UseAssetBundle = arg0;
+			return 0;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e, o, "attempt to index UseAssetBundle on a nil value");
 		}
 	}
 }

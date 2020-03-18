@@ -7,6 +7,7 @@ local AutoCharacterId = 0
 function CharacterModule:ctor()
     self.pOldFloor = nil
     self.pCurFloor = nil
+    self.pOldPosition = nil
 end
 
 function CharacterModule:Destroy()
@@ -37,6 +38,7 @@ function CharacterModule:CreateCharacter(characterId,attribute,grade,logicPositi
     end
 
     local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
+    worldPosition = worldPosition + Vector3.up * 0.5
 
     local character = Character:new(characterId,attribute,grade)
     character:SetLogicPosition(logicPosition)
@@ -57,8 +59,11 @@ function CharacterModule:MoveCharacter(characterId,logicPosition)
     
     self:MoveCell(characterId,logicPosition,worldPosition)
     
-    self.pOldFloor = self.pCurFloor
-    self.pCurFloor = logicPosition.y
+    if characterId == self.pPlayerId then
+        self.pOldFloor = self.pCurFloor
+        self.pCurFloor = logicPosition.y
+        self.pOldPosition = logicPosition
+    end
 
 end
 
@@ -74,6 +79,10 @@ end
 
 function CharacterModule:GetCurFloor()
     return self.pCurFloor
+end
+
+function CharacterModule:GetOldLoigcPosition()
+    return self.pOldPosition
 end
 
 --- logic ---

@@ -66,7 +66,8 @@ end
 
 function TerrainPiece:__SetGameObject(gameObject)
     self.pGameObject = gameObject
-    self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z
+   --self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z
+    self.pGameObject.name = self.pId 
     self.pTransform = self.pGameObject.transform
     self.pTransform.localPosition = self.pWorldPosition
     TerrainManager.Model.Art:SetPieceDirectionArt(self)

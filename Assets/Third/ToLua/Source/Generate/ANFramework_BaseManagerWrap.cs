@@ -2,7 +2,7 @@
 using System;
 using LuaInterface;
 
-public class ANFramework_BaseBehaviourWrap
+public class ANFramework_BaseManagerWrap
 {
 	public static void Register(LuaState L)
 	{

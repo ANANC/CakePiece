@@ -68,6 +68,15 @@ function TerrainManager:ModelsControl(funcName)
     end
 end
 
+--- CSharpToLua ---
+function TerrainManager:TerrainPieceClick(pieceId)
+    pieceId = tonumber(pieceId)
+    local piece = Game.TerrainPieceModule:GetCell(pieceId)
+    if piece ~= nil then
+        self:__NextPiece(piece)
+    end
+end
+
 --- Get ---
 function TerrainManager:GetEndFloor()
     return self.pEndPosition.y
@@ -80,6 +89,7 @@ function TerrainManager:__InitArts()
 
     -- character
     self.pPlayer = Game.CharacterModule:CreatPlayer(self.pPlayerId,self.pFirstPosition,false)
+    Game.CharacterModule:CreateCharacter(10,nil,1,Vector3.New(1,2,0))
 
     -- art
     local curFloor = Game.CharacterModule:GetCurFloor()
@@ -141,6 +151,7 @@ function TerrainManager:__EnterAnimationFinish()
     self.pPlayer:SetActive(true)
     local piece = Game.TerrainPieceModule:GetCellByLogicPos(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
+    self.Model.Art:UpdateLogicTouchPieceArt(piece:GetLogicPosition(),true)
 
     ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
     self.pFloorUI = ANF.UIMgr:GetUI(GameDefine.UI.FloorUI)
@@ -189,6 +200,8 @@ function TerrainManager:__UpdateCurFloorArt()
     end
     self.Model.Art:UpdateSingleFloorArt(Game.TerrainPieceModule:GetFloor(curFloor),true)
     self:__UpdateEndPieceArt()
+    local oldLogicPos = Game.CharacterModule:GetOldLoigcPosition()
+    self.Model.Art:UpdateLogicTouchPieceArt(oldLogicPos,false)
 
     -- animation
     local apartCount = 0
@@ -231,11 +244,13 @@ function TerrainManager:__UpdateEndPieceArt()
 end
 
 function TerrainManager:__CharacterMoveAnimationFinish()
+    local logicPosition = self.pPlayer:GetLogicPosition()
     self.pPlayer:SetActive(true)
+
+    self.Model.Art:UpdateLogicTouchPieceArt(logicPosition,true)
 
     Game.CharacterModule:UpdateCharacterFormation(self.pPlayerId)
 
-    local logicPosition = self.pPlayer:GetLogicPosition()
     self.Model.Animation:PlayPieceDownAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
 
     self:__JudgeSucces()
@@ -255,4 +270,21 @@ function TerrainManager:__ClearAllTimer()
             timer:Stop()
         end
     end
+end
+
+--- move ---
+function TerrainManager:__NextPiece(piece)
+    local logicPos = piece:GetLogicPosition()
+    local moveDir = logicPos - self.pPlayer:GetLogicPosition()
+    local direction = GameDefine.Direction.Zero
+    if moveDir.x > 0 then
+        direction = GameDefine.Direction.Right
+    elseif moveDir.x < 0 then
+        direction = GameDefine.Direction.Left
+    elseif moveDir.z > 0 then
+        direction = GameDefine.Direction.Forward
+    elseif moveDir.z < 0 then
+        direction = GameDefine.Direction.Back
+    end
+    self:CharacterMove(direction)
 end

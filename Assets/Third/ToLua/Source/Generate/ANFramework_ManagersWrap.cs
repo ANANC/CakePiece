@@ -7,6 +7,7 @@ public class ANFramework_ManagersWrap
 	public static void Register(LuaState L)
 	{
 		L.BeginClass(typeof(ANFramework.Managers), typeof(ANFramework.BaseManager));
+		L.RegFunction("AddManager", AddManager);
 		L.RegFunction("Init", Init);
 		L.RegFunction("Start", Start);
 		L.RegFunction("Update", Update);
@@ -37,6 +38,23 @@ public class ANFramework_ManagersWrap
 			{
 				return LuaDLL.luaL_throw(L, "invalid arguments to ctor method: ANFramework.Managers.New");
 			}
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int AddManager(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 2);
+			ANFramework.Managers obj = (ANFramework.Managers)ToLua.CheckObject<ANFramework.Managers>(L, 1);
+			ANFramework.BaseManager arg0 = (ANFramework.BaseManager)ToLua.CheckObject<ANFramework.BaseManager>(L, 2);
+			obj.AddManager(arg0);
+			return 0;
 		}
 		catch (Exception e)
 		{
