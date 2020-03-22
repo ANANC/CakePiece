@@ -117,9 +117,9 @@ GameDefine.Color =
     --地块
     Piece = 
     {
-        Current = Color.New(0.8,0.8,0.8,1),
+        Current = Color.New(0.83, 0.81, 0.70,1),
         End = Color.New(0.82,0.3,0.3,1),   --终点 
-        EnableTouch = Color.New(0.7,0.47,0.47,1),
+        EnableTouch = Color.New(0.75, 0.78, 0.79,1),
         UnableTouch =  Color.New(1,1,1,1),
     },
     
@@ -127,8 +127,8 @@ GameDefine.Color =
     --指向片
     Side = 
     {
-        Current = Color.New(1,1,0.2,1),   
-        Other   = Color.New(0.3,0.3,0.3,1),
+        Current = Color.New(0.36, 0.33, 0.3,1),   
+        Other   = Color.New(0.37, 0.38, 0.35, 1),
     },
 
     UI = 
@@ -149,7 +149,7 @@ GameDefine.Building =
     {
         Width       = 4,    --宽
         Height      = 4,    --高
-        Thickness   = 0.01,  --厚
+        Thickness   = 1,  --厚
     },
     --地块大小
     Gap    =           

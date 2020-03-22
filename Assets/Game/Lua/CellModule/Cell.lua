@@ -26,11 +26,11 @@ end
 ---------------------- GET ----------------------
 
 function Cell:GetWorldPosition()
-    return self.pWorldPosition
+    return Vector3.NewByV3(self.pWorldPosition)
 end
 
 function Cell:GetLogicPosition()
-    return self.pLogicPosition
+    return Vector3.NewByV3(self.pLogicPosition)
 end
 
 function Cell:GetId()

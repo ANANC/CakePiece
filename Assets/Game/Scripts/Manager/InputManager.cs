@@ -35,6 +35,7 @@ public class InputManager : BaseManager
                     Transform selectedTransform = hit.collider.transform;
                     if (selectedTransform.tag == "PieceTouch")
                     {
+                        Debug.Log("click :"+selectedTransform.parent.name);
                         ANF.Core.Mgr.Lua.CallTableFunc("TerrainManager:TerrainPieceClick", selectedTransform.parent.name);
                     }
                 }

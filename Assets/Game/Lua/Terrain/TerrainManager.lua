@@ -5,6 +5,7 @@ function TerrainManager:AddModel(name,model)
         self.Model = {}
     end
     self.Model[name] = model
+    model.Host = self
 end
 
 require "Terrain/TerrainArtModel"
@@ -87,6 +88,9 @@ end
 function TerrainManager:__InitArts()
     local floorCount = Game.TerrainPieceModule:GetFloorCount()
 
+    -- render Queue
+    self.Model.Art:UpdateAllPieceRenderQueue()
+
     -- character
     self.pPlayer = Game.CharacterModule:CreatPlayer(self.pPlayerId,self.pFirstPosition,false)
     Game.CharacterModule:CreateCharacter(10,nil,1,Vector3.New(1,2,0))
@@ -151,7 +155,7 @@ function TerrainManager:__EnterAnimationFinish()
     self.pPlayer:SetActive(true)
     local piece = Game.TerrainPieceModule:GetCellByLogicPos(self.pFirstPosition)
     self.Model.Animation:PlayPieceDownAnimation(piece)
-    self.Model.Art:UpdateLogicTouchPieceArt(piece:GetLogicPosition(),true)
+    self:__UpdatePieceRoundTouch(self.pFirstPosition,true)
 
     ANF.UIMgr:OpenUI(GameDefine.UI.MainUI)
     self.pFloorUI = ANF.UIMgr:GetUI(GameDefine.UI.FloorUI)
@@ -160,16 +164,13 @@ end
 
 --- logic --- 
 function TerrainManager:CharacterMove(direction)
+
+    self:__MoveBeforeArt()
+
     -- 移动逻辑
-    local logicPosition = self.pPlayer:GetLogicPosition()
-    self.Model.Animation:PlayPieceNormalAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
+    self:__CharacterMove(direction)
 
-    local nextLogicPosition = Game.TerrainPieceModule:GetNextLogixPosition(logicPosition,direction)
-
-    Game.CharacterModule:MoveCharacter(self.pPlayerId,nextLogicPosition)
-
-    -- 表现
-    self:__UpdateCurFloorArt()
+    self:__MoveAfterArt()
 end
 
 function TerrainManager:__JudgeSucces()
@@ -181,15 +182,24 @@ function TerrainManager:__JudgeSucces()
 end
 
 --- character ---
+function TerrainManager:__CharacterMove(direction)
+    local logicPosition = self.pPlayer:GetLogicPosition()
+    self.Model.Animation:PlayPieceNormalAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
 
+    local nextLogicPosition = Game.TerrainPieceModule:GetNextLogixPosition(logicPosition,direction)
 
+    Game.CharacterModule:MoveCharacter(self.pPlayerId,nextLogicPosition)
+end
 
 
 --- floor ---
-
-function TerrainManager:__UpdateCurFloorArt()
+function TerrainManager:__MoveBeforeArt()
     self.pPlayer:SetActive(false)
 
+    self:__UpdatePieceRoundTouch(self.pPlayer:GetLogicPosition(),false)
+end
+
+function TerrainManager:__MoveAfterArt()
     local oldFloor = Game.CharacterModule:GetOldFloor()
     local curFloor = Game.CharacterModule:GetCurFloor()
 
@@ -199,10 +209,7 @@ function TerrainManager:__UpdateCurFloorArt()
         self.Model.Art:UpdateSingleFloorArt(oldFloor,false)
     end
     self.Model.Art:UpdateSingleFloorArt(Game.TerrainPieceModule:GetFloor(curFloor),true)
-    self:__UpdateEndPieceArt()
-    local oldLogicPos = Game.CharacterModule:GetOldLoigcPosition()
-    self.Model.Art:UpdateLogicTouchPieceArt(oldLogicPos,false)
-
+    
     -- animation
     local apartCount = 0
     if oldFloor ~= nil then
@@ -247,13 +254,42 @@ function TerrainManager:__CharacterMoveAnimationFinish()
     local logicPosition = self.pPlayer:GetLogicPosition()
     self.pPlayer:SetActive(true)
 
-    self.Model.Art:UpdateLogicTouchPieceArt(logicPosition,true)
+    self:__UpdatePieceRoundTouch(logicPosition,true)
+    self:__UpdateEndPieceArt()
 
     Game.CharacterModule:UpdateCharacterFormation(self.pPlayerId)
 
     self.Model.Animation:PlayPieceDownAnimation(Game.TerrainPieceModule:GetCellByLogicPos(logicPosition))
 
     self:__JudgeSucces()
+end
+
+function TerrainManager:__UpdatePieceRoundTouch(logicPos,enableTouch)
+    local curPiece = Game.TerrainPieceModule:GetCellByLogicPos(logicPos)
+    self.Model.Animation:StopSinglePiceShakeAnimation(curPiece:GetId())
+    self.Model.Animation:PlaySinglePieceSideShakeAnimation(curPiece:GetId())
+
+    local measure = curPiece:GetMeasure()
+    local directions = GameUtil:GetFlatDirectionTable()
+
+    for round = 1, measure do
+        for _,dir in pairs(directions) do
+            local pieceLogicPos = logicPos + dir * round
+            if Vector3.Equal(pieceLogicPos,self.pEndPosition)  == false then
+                local piece = Game.TerrainPieceModule:GetCellByLogicPos(pieceLogicPos)
+                if piece ~= nil then
+                    local pieceId = piece:GetId()
+                    if enableTouch and curPiece:ContainDirection(dir) then
+                        self.Model.Animation:PlaySinglePiceShakeAnimation(pieceId,GameDefine.Color.Piece.EnableTouch)
+                        self.Model.Art:SetTouchPieceArt(piece,enableTouch)
+                    else
+                        self.Model.Animation:StopSinglePiceShakeAnimation(pieceId)
+                        self.Model.Art:SetTouchPieceArt(piece,false)
+                    end
+                end
+            end
+        end
+    end
 end
 
 --- timer ---
@@ -276,6 +312,7 @@ end
 function TerrainManager:__NextPiece(piece)
     local logicPos = piece:GetLogicPosition()
     local moveDir = logicPos - self.pPlayer:GetLogicPosition()
+
     local direction = GameDefine.Direction.Zero
     if moveDir.x > 0 then
         direction = GameDefine.Direction.Right

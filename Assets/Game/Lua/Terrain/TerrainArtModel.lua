@@ -37,14 +37,13 @@ local PiecePath =
 local SidePath = 
 {
     Tag     = "Tag",
-    Touch   = "Touch"
 }
 
 function TerrainArtModel:CreatePieceGameObject(pieceSize)
     local gameObject = GameUtil:InstanceResource(GameDefine.Path.Prefab.TerrainPiece)
     local transform = gameObject.transform
     transform:SetParent(self.pTransform)
-    self:SetPieceSize(transform,pieceSize)
+    self:SetPieceSize(transform,pieceSize*0.1)
     transform.localScale = Vector3.zero
     return gameObject
 end
@@ -97,7 +96,7 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
                 gameObject.transform:SetParent(sideTransform)
             end
             local direction = GameDefine.MotionToDirection[sides[index + 1]]
-            local position = Vector3.Scale(size,direction) - direction * 0.5
+            local position = Vector3.Scale(size,direction) + direction * 1.2
             position.y = positionY
             sideTransform:GetChild(index).localPosition = position
         elseif index < sideCellCount then
@@ -107,33 +106,15 @@ function TerrainArtModel:SetPieceDirectionArt(piece)
     
 end
 
-function TerrainArtModel:UpdateLogicTouchPieceArt(logicPos,enableTouch)
-    local curPiece = Game.TerrainPieceModule:GetCellByLogicPos(logicPos)
-
-    local measure = curPiece:GetMeasure()
-    local directions = GameUtil:GetFlatDirectionTable()
-
-    for round = 1, measure do
-        for _,dir in pairs(directions) do
-            local piece = Game.TerrainPieceModule:GetCellByLogicPos(logicPos+dir*round)
-            if piece ~= nil then
-                if curPiece:ContainDirection(dir) then
-                    self:SetTouchPieceArt(piece,enableTouch)
-                else
-                    self:SetTouchPieceArt(piece,false)
-                end
-            end
-        end
-    end
-end
-
 function TerrainArtModel:SetTouchPieceArt(piece,enableTouch)
     local color = GameDefine.Color.Piece.UnableTouch
     if enableTouch == true then
         color = GameDefine.Color.Piece.EnableTouch
     end
+
     local cubeTransform = piece:GetTransform():Find(PiecePath.Cube).transform
-    cubeTransform:GetComponent("BoxCollider").enabled = enableTouch
+    local boxCollider = cubeTransform:GetComponent("MeshCollider")
+    boxCollider.enabled = enableTouch
     local material = cubeTransform:GetComponent("MeshRenderer").material
     material.color = color
 end
@@ -170,5 +151,33 @@ function TerrainArtModel:UpdateSiglePieceSideColor(piece,color)
     for index = 0,sideCellCount - 1 do
         local materail = sideTransform:GetChild(index):Find(SidePath.Tag):GetComponent("MeshRenderer").material
         materail.color = color
+    end
+end
+
+function TerrainArtModel:UpdateAllPieceRenderQueue()
+    local floorCount = Game.TerrainPieceModule:GetFloorCount()
+    for floorValue = 0,floorCount-1 do
+        local floors = Game.TerrainPieceModule:GetFloor(floorValue)
+        for _,piece in pairs(floors) do
+            self:UpdatePieceAndSideRenderQueue(piece)
+        end
+    end
+end
+
+
+function TerrainArtModel:UpdatePieceAndSideRenderQueue(piece)
+    local y = piece:GetLogicPosition().y
+    local renderQueue = 3000 + Game.TerrainPieceModule:GetFloorCount() - y
+
+    local pieceTransform = piece:GetTransform()
+    local material = pieceTransform:Find(PiecePath.Cube):GetComponent("MeshRenderer").material
+    material.renderQueue = renderQueue
+
+    local sideTransform = pieceTransform:Find(PiecePath.Side).transform
+    local sideCellCount = sideTransform.childCount
+
+    for index = 0,sideCellCount-1 do 
+        local sideMaterial = sideTransform:GetChild(index):Find(SidePath.Tag):GetComponent("MeshRenderer").material
+        sideMaterial.renderQueue = renderQueue + 1
     end
 end

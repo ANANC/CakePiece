@@ -2,19 +2,45 @@ local TerrainAnimationModel = {}
 
 TerrainManager:AddModel("Animation",TerrainAnimationModel)
 
+local TimerType =
+{
+    Piece = 
+    {
+        Down        = 1,    --掉落
+        Shake       = 2,    --闪动
+        DisPlay     = 3,    --显示
+        Hide        = 4,    --隐藏
+    },
+    Side = 
+    {
+        Shake   = 10 --闪动
+    }
+}
+
 function TerrainAnimationModel:Init()
     
 end
 
 function TerrainAnimationModel:Enter()
     self.pTimers = {}
+    self.pTargetColor = {}
+    self.pCurrentColor = {}
+    self.pCurrentColorDir = {}
+    self.pCurrentColorShake = {}
+
 end
 
 function TerrainAnimationModel:Out()
-    for _,timer in pairs(self.pTimers) do
-        timer:Stop()
+    for pieceId,timers in pairs(self.pTimers) do
+        self:StopTimer(pieceId)
     end
     self.pTimers = {}
+
+    local otherTimers = { self.pSidePieceShakeTimer}
+    for _,timer in pairs(otherTimers) do
+        timer:Stop()
+        timer = nil
+    end
 end
 
 --== Logic ==--
@@ -37,7 +63,7 @@ function TerrainAnimationModel:PlayPieceDisplayAnimation(piece)
     local timer = FrameTimer.New(function ()
         self:__UpdatePieceDisplayAnimation(piece)
     end,1,-1)
-    self:AddTimer(piece:GetId(),timer)
+    self:AddTimerByType(piece:GetId(),TimerType.Piece.DisPlay,timer)
 end
 
 function TerrainAnimationModel:__UpdatePieceDisplayAnimation(piece)
@@ -60,7 +86,7 @@ function TerrainAnimationModel:__UpdatePieceDisplayAnimation(piece)
     pieceTransform.localPosition = position
 
     if arrivals == true then
-        self:StopTimer(piece:GetId())
+        self:StopTimerByType(piece:GetId(),TimerType.Piece.DisPlay)
     end
 end
 
@@ -74,7 +100,7 @@ function TerrainAnimationModel:PlayPieceHideAnimation(piece)
     local timer = FrameTimer.New(function ()
         self:__UpdatePieceHideAnimation(piece)
     end,1,-1)
-    self:AddTimer(piece:GetId(),timer)
+    self:AddTimerByType(piece:GetId(),TimerType.Piece.Hide,timer)
 end
 
 function TerrainAnimationModel:__UpdatePieceHideAnimation(piece)
@@ -98,19 +124,88 @@ function TerrainAnimationModel:__UpdatePieceHideAnimation(piece)
 
     if arrivals == true then
         pieceTransform.localScale = Vector3.zero
-        self:StopTimer(piece:GetId())
+        self:StopTimerByType(piece:GetId(),TimerType.Piece.Hide)
     end
+end
+
+function TerrainAnimationModel:PlaySinglePieceSideShakeAnimation(pieceId)
+    self:StopSinglePieceSideShakeAnimation()
+
+    self.pSidePieceShakeColor = Color.NewByColor(GameDefine.Color.Side.Current)
+    self.pSidePieceShakeColorDirection = -1
+    self.pSidePieceShakeTimer = FrameTimer.New(function() self:__PlaySinglePieceSideShakeAnimation(pieceId) end,2,-1)
+    self.pSidePieceShakeTimer:Start()
+end
+
+function TerrainAnimationModel:__PlaySinglePieceSideShakeAnimation(pieceId)
+    local color = self.pSidePieceShakeColor
+    color.a = color.a + self.pSidePieceShakeColorDirection * 0.1
+    if color.a >= 1 or color.a <= 0 then
+        self.pSidePieceShakeColorDirection = self.pSidePieceShakeColorDirection * -1
+    end
+    self.pSidePieceShakeColor = color
+    local piece = Game.TerrainPieceModule:GetCell(pieceId)
+    self.Host.Model.Art:UpdateSiglePieceSideColor(piece,self.pSidePieceShakeColor)
+end
+
+function TerrainAnimationModel:StopSinglePieceSideShakeAnimation()
+    if self.pSidePieceShakeTimer ~= nil then
+        self.pSidePieceShakeTimer:Stop()
+        self.pSidePieceShakeTimer = nil
+    end
+end
+
+function TerrainAnimationModel:PlaySinglePiceShakeAnimation(pieceId,color)
+    self.pTargetColor[pieceId] = Color.NewByColor(color)
+    self.pCurrentColor[pieceId] = Color.NewByColor(color)
+    self.pCurrentColorDir[pieceId] = {R = 1,G = 1,B = 1}
+    self.pCurrentColorShake[pieceId] = Color.New(1-color.r,1-color.g,1-color.b,1) / 10
+
+    local timer = FrameTimer.New(function () self:__PlaySinglePiceShakeAnimation(pieceId) end,3,-1)
+
+    self:AddTimerByType(pieceId,TimerType.Piece.Shake,timer)
+end
+
+function TerrainAnimationModel:__PlaySinglePiceShakeAnimation(pieceId)
+    local targetColor = self.pTargetColor[pieceId]
+    local curColor = self.pCurrentColor[pieceId]
+    local clolorDir = self.pCurrentColorDir[pieceId]
+    local shacke =  self.pCurrentColorShake[pieceId]
+
+    curColor.r = curColor.r + shacke.r * clolorDir.R
+    curColor.g = curColor.g + shacke.g * clolorDir.G
+    curColor.b = curColor.b + shacke.b * clolorDir.B
+
+    if curColor.r <= targetColor.r or curColor.r >= 1 then
+        clolorDir.R =  clolorDir.R * -1
+    end
+    if curColor.g <= targetColor.g or curColor.g >= 1 then
+        clolorDir.G =  clolorDir.G * -1
+    end        
+    if curColor.b <= targetColor.b or curColor.b >= 1 then
+        clolorDir.B =  clolorDir.B * -1
+    end
+
+    self.pCurrentColor[pieceId] = curColor
+    self.pCurrentColorDir[pieceId] = clolorDir
+
+    local piece = Game.TerrainPieceModule:GetCell(pieceId)
+    self.Host.Model.Art:UpdateSiglePieceColor(piece,curColor)
+end
+
+function TerrainAnimationModel:StopSinglePiceShakeAnimation(pieceId)
+    self:StopTimerByType(pieceId,TimerType.Piece.Shake)
 end
 
 -- 当前站立
 function TerrainAnimationModel:PlayPieceDownAnimation(piece)
     -- piece
     local pieceTransform = piece:GetTransform()
-    pieceTransform.localPosition = pieceTransform.localPosition + Vector3.down * 0.5
-    TerrainManager.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Piece.Current)
+    pieceTransform.localPosition = pieceTransform.localPosition + Vector3.down * 0.2
+    self.Host.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Piece.Current)
 
     -- side
-    TerrainManager.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Current)
+    self.Host.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Current)
 end
 
 -- 非当前站立
@@ -118,29 +213,59 @@ function TerrainAnimationModel:PlayPieceNormalAnimation(piece)
     -- piece
     local pieceTransform = piece:GetTransform()
     pieceTransform.localPosition = piece:GetWorldPosition()
-    TerrainManager.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Floor.Current)
+    self.Host.Model.Art:UpdateSiglePieceColor(piece,GameDefine.Color.Floor.Current)
 
     -- side
-    TerrainManager.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Other)
+    self.Host.Model.Art:UpdateSiglePieceSideColor(piece,GameDefine.Color.Side.Other)
 end
 
 --== timer ==--
+
+function TerrainAnimationModel:GetTimerByType(pieceId,type)
+    local timers = self:GetTimer(pieceId)
+    if timers == nil then
+        return
+    end
+
+    local timer = timers[type]
+    return timer
+end
 
 function TerrainAnimationModel:GetTimer(pieceId)
     return self.pTimers[pieceId]
 end
 
-function TerrainAnimationModel:AddTimer(pieceId,timer)
-    self:StopTimer(pieceId)
-    self.pTimers[pieceId] = timer
+function TerrainAnimationModel:AddTimerByType(pieceId,type,timer)
+    self:StopTimerByType(pieceId,type)
+
+    local timers = self.pTimers[pieceId] 
+    if timers == nil then
+        timers = {}
+        self.pTimers[pieceId] = timers    
+    end
+    timers[type] = timer
+
     timer:Start()
 end
 
-function TerrainAnimationModel:StopTimer(pieceId)
-    local timer = self:GetTimer(pieceId)
-    if timer ~= nil then
-        timer:Stop()
-        timer = nil
-        self.pTimers[pieceId] = nil
+function TerrainAnimationModel:StopTimerByType(pieceId,type)
+    local timer = self:GetTimerByType(pieceId,type)
+    if timer == nil then
+        return
     end
+
+    timer:Stop()
+    timer = nil
+    self.pTimers[pieceId][type] = nil
+end
+
+function TerrainAnimationModel:StopTimer(pieceId)
+    local timers = self:GetTimer(pieceId)
+    if timers ~= nil then
+        for _,timer in pairs(timers) do 
+            timer:Stop()
+            timer = nil
+        end
+    end
+    self.pTimers[pieceId] = nil
 end

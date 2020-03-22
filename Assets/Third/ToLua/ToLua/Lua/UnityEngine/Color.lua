@@ -34,6 +34,10 @@ function Color.New(r, g, b, a)
 	return setmetatable({r = r or 0, g = g or 0, b = b or 0, a = a or 1}, Color)		
 end
 
+function Color.NewByColor(color)
+	return setmetatable({r = color.r or 0, g = color.g or 0, b = color.b or 0, a = color.a or 1}, Color)		
+end
+
 function Color:Set(r, g, b, a)
 	self.r = r
 	self.g = g

@@ -1,4 +1,7 @@
+-- system
+require "UnityEngine.MeshCollider"
 
+-- framework
 require "Engine/class"
 
 ANF = {}

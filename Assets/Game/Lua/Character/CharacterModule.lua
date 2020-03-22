@@ -25,7 +25,7 @@ function CharacterModule:CreatPlayer(characterId,logicPosition,isActive)
 
     self.pPlayer = self:CreateCharacter(characterId,GameDefine.Attribute.Moon,1,logicPosition)
     self.pPlayer:SetActive(isActive)
-
+    
     self.pCurFloor = logicPosition.y
 
     return self.pPlayer
@@ -54,6 +54,10 @@ function CharacterModule:MoveCharacter(characterId,logicPosition)
         return
     end
 
+    if characterId == self.pPlayerId then
+        self.pOldPosition = Vector3.NewByV3(self.pPlayer:GetLogicPosition())
+    end
+
     local worldPosition = Game.TerrainPieceModule:LogicPositionToWorldPosition(logicPosition)
     worldPosition = worldPosition + Vector3.up * 0.5
     
@@ -62,7 +66,6 @@ function CharacterModule:MoveCharacter(characterId,logicPosition)
     if characterId == self.pPlayerId then
         self.pOldFloor = self.pCurFloor
         self.pCurFloor = logicPosition.y
-        self.pOldPosition = logicPosition
     end
 
 end
@@ -82,7 +85,7 @@ function CharacterModule:GetCurFloor()
 end
 
 function CharacterModule:GetOldLoigcPosition()
-    return self.pOldPosition
+    return Vector3.NewByV3(self.pOldPosition)
 end
 
 --- logic ---
