@@ -1,5 +1,7 @@
 TerrainPiece = class(Cell)
 
+require "TerrainPiece/TerrainPieceArt"
+
 function TerrainPiece:ctor(pieceData, id, logicPosition, worldPosition)
     self.pPieceData = pieceData
     self.pId = id
@@ -7,6 +9,8 @@ function TerrainPiece:ctor(pieceData, id, logicPosition, worldPosition)
     self.pWorldPosition = worldPosition
     self.pMotion = self.pPieceData.Motion
     self.pLoop = self.pPieceData.Space == GameDefine.Space.Loop
+    
+    self:__InitArt()
 end
 
 function TerrainPiece:Destroy()
@@ -60,15 +64,4 @@ end
 
 function TerrainPiece:IsLoop()
     return self.pLoop
-end
-
---- art ---
-
-function TerrainPiece:__SetGameObject(gameObject)
-    self.pGameObject = gameObject
-   --self.pGameObject.name = self.pLogicPosition.x..self.pLogicPosition.y..self.pLogicPosition.z
-    self.pGameObject.name = self.pId 
-    self.pTransform = self.pGameObject.transform
-    self.pTransform.localPosition = self.pWorldPosition
-    TerrainManager.Model.Art:SetPieceDirectionArt(self)
 end

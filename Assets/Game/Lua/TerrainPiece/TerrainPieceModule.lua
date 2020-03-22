@@ -64,7 +64,7 @@ end
 
 function TerrainPieceModule:__CreatePiece(pieceData, id, logicPosition, worldPosition)
     local piece = TerrainPiece:new(pieceData, id, logicPosition, worldPosition)
-    piece:__SetGameObject(TerrainManager.Model.Art:CreatePieceGameObject(self.pPieceSize))
+    piece:InitPieceGameObject(self.pPieceSize)
     return piece
 end
 
