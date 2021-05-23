@@ -131,10 +131,12 @@ end
 function TerrainAnimationModel:PlaySinglePieceSideShakeAnimation(pieceId)
     self:StopSinglePieceSideShakeAnimation()
 
+    --[[
     self.pSidePieceShakeColor = Color.NewByColor(GameDefine.Color.Side.Current)
     self.pSidePieceShakeColorDirection = -1
-    self.pSidePieceShakeTimer = FrameTimer.New(function() self:__PlaySinglePieceSideShakeAnimation(pieceId) end,2,-1)
+    self.pSidePieceShakeTimer = FrameTimer.New(function() self:__PlaySinglePieceSideShakeAnimation(pieceId) end,20,-1)
     self.pSidePieceShakeTimer:Start()
+    ]]
 end
 
 function TerrainAnimationModel:__PlaySinglePieceSideShakeAnimation(pieceId)
@@ -161,7 +163,7 @@ function TerrainAnimationModel:PlaySinglePiceShakeAnimation(pieceId,color)
     self.pCurrentColorDir[pieceId] = {R = 1,G = 1,B = 1}
     self.pCurrentColorShake[pieceId] = Color.New(1-color.r,1-color.g,1-color.b,1) / 10
 
-    local timer = FrameTimer.New(function () self:__PlaySinglePiceShakeAnimation(pieceId) end,3,-1)
+    local timer = FrameTimer.New(function () self:__PlaySinglePiceShakeAnimation(pieceId) end,20,-1)
 
     self:AddTimerByType(pieceId,TimerType.Piece.Shake,timer)
 end
