@@ -7,30 +7,7 @@ using UnityEngine;
 
 public class TerrainMakerSceneController
 {
-    public class BaseCloneObject : ICloneable
-    {
-        public object Clone()
-        {
-            object obj = new BaseCloneObject();
-            //字段
-            FieldInfo[] fields = typeof(BaseCloneObject).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < fields.Length; i++)
-            {
-                FieldInfo field = fields[i];
-                field.SetValue(obj, field.GetValue(this));
-            }
-            //属性
-            PropertyInfo[] properties = typeof(BaseCloneObject).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < properties.Length; i++)
-            {
-                PropertyInfo property = properties[i];
-                property.SetValue(obj, property.GetValue(this));
-            }
-            return obj;
-        }
-    }
-
-    public class PathInfo : BaseCloneObject  //路径
+    public class PathInfo : CloneHelper.BaseCloneObject  //路径
     {
         public string TerrainPath;      //地形
         public string TerrainPiecePath; //地块
@@ -38,29 +15,32 @@ public class TerrainMakerSceneController
     private PathInfo m_PathInfo;
     public PathInfo Path { get { return m_PathInfo; } }
 
-    public class BuildingInfo : BaseCloneObject  //建筑
+    public class BuildingInfo : CloneHelper.BaseCloneObject  //建筑
     {
         public Vector3 TerrainSize;     //地块大小
         public Vector3 IntervalSize;    //地块间隔大小
     }
     private BuildingInfo m_BuildingInfo;
+    public BuildingInfo Building { get { return m_BuildingInfo; } }
 
-    public class GamePlayInfo : BaseCloneObject  //玩法
+    public class GamePlayInfo : CloneHelper.BaseCloneObject  //玩法
     {
         public Vector3 BirthLogicPosition;  //出生逻辑位置
         public bool HasEndLogicPosition;    //是否有结束逻辑位置
         public Vector3 EndLoigcPosition;    //结束逻辑位置
     }
     private GamePlayInfo m_GamePlayInfo;
+    public GamePlayInfo GamePlay { get { return m_GamePlayInfo; } }
 
-    public class TweenInfo : BaseCloneObject //动画
+    public class TweenInfo : CloneHelper.BaseCloneObject //动画
     {
         public float Originate;     //起始高度
         public float MoveSpeed;     //移动速度 （s）
     }
     private TweenInfo m_TweenInfo;
+    public TweenInfo Tween { get { return m_TweenInfo; } }
 
-    public class ColorInfo: BaseCloneObject  //颜色
+    public class ColorInfo : CloneHelper.BaseCloneObject  //颜色
     {
         public Color Floor_Current; //当前站立层颜色
         public Color Floor_Other;   //非站立层颜色
@@ -73,6 +53,7 @@ public class TerrainMakerSceneController
         public Color Side_Other;    //非站立地块的指向片颜色
     }
     private ColorInfo m_ColorInfo;
+    public ColorInfo Color { get { return m_ColorInfo; } }
 
 
     private GameObject m_RootTerrainGameObject; //地形根节点
@@ -94,13 +75,13 @@ public class TerrainMakerSceneController
 
     public void InitDefaultInfo()
     {
-        TerrainMakerDefine.ToolSetting toolSetting = m_Root.TerrainMakerDefine.Setting;
+        TerrainMakerDefine.DefaultTerrainInfo defaultTerrainInfo = m_Root.Define.CurrentDefaultTerrainInfo;
 
-        m_PathInfo = toolSetting.DefaultGameInfo.PathInfo.Clone() as PathInfo;
-        m_BuildingInfo = toolSetting.DefaultGameInfo.BuildingInfo.Clone() as BuildingInfo;
-        m_GamePlayInfo = toolSetting.DefaultGameInfo.GamePlayInfo.Clone() as GamePlayInfo;
-        m_TweenInfo = toolSetting.DefaultGameInfo.TweenInfo.Clone() as TweenInfo;
-        m_ColorInfo = toolSetting.DefaultGameInfo.ColorInfo.Clone() as ColorInfo;
+        m_PathInfo = defaultTerrainInfo.PathInfo.Clone() as PathInfo;
+        m_BuildingInfo = defaultTerrainInfo.BuildingInfo.Clone() as BuildingInfo;
+        m_GamePlayInfo = defaultTerrainInfo.GamePlayInfo.Clone() as GamePlayInfo;
+        m_TweenInfo = defaultTerrainInfo.TweenInfo.Clone() as TweenInfo;
+        m_ColorInfo = defaultTerrainInfo.ColorInfo.Clone() as ColorInfo;
     }
 
     public void InitBuild()

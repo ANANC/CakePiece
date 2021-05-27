@@ -1,21 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 public class TerrainMakerDefine
 {
     private const string TerrainMakerDefineSettingPath = "../output/TerrainMakerDefine/TerrainMakerSetting.txt";       //编辑器配置文件路径
 
-    public class ToolSetting
-    {
-        public string DefaultTerrainInfoPath;   //【默认地形配置文件】路径
+    public const string DefaultTerrainInfo_DefaultPath = "Config/Setting/Terrain/DefaultTerrainInfo.txt";   //默认地形配置文件 默认地址
 
-        public DefaultGameInfo DefaultGameInfo;     //默认【游戏配置】
+    public class ToolSetting    //编辑器配置
+    {
+        public string DefaultTerrainInfoPath;   //【默认地形配置文件】路径 初始值：DefaultTerrainInfo_DefaultPath
     }
     private ToolSetting m_ToolSetting;
 
-    public class DefaultGameInfo    //默认配置
+    public class DefaultTerrainInfo    //默认地形配置
     {
         public TerrainMakerSceneController.PathInfo PathInfo;
         public TerrainMakerSceneController.BuildingInfo BuildingInfo;
@@ -23,36 +25,50 @@ public class TerrainMakerDefine
         public TerrainMakerSceneController.TweenInfo TweenInfo;
         public TerrainMakerSceneController.ColorInfo ColorInfo;
     }
-
-    public const string DefaultTerrainInfo_DefaultPath = "Config/Setting/Terrain";   //默认地形配置文件 默认地址
-
+    private DefaultTerrainInfo m_CurrentDefaultTerrainInfo;   //当前更新的配置内容
+    private DefaultTerrainInfo m_RecordDefaultTerrainInfo;    //读取的配置内容，不做修改，用于还原
+    public DefaultTerrainInfo CurrentDefaultTerrainInfo { get { return m_CurrentDefaultTerrainInfo; } }
+    public DefaultTerrainInfo RecordDefaultTerrainInfo { get { return m_RecordDefaultTerrainInfo; } }
 
     private TerrainMakerTool m_Root;
-
-    public ToolSetting Setting
-    {
-        get { return m_ToolSetting; }
-    }
-
 
     public void Init(TerrainMakerTool root)
     {
         m_Root = root;
 
-        //更新默认配置
-        if (File.Exists(TerrainMakerDefineSettingPath))
+        //更新编辑器配置
+        string totalTerrainMakerDefineSettingPath = Application.dataPath + "/" + TerrainMakerDefineSettingPath;
+        LogHelper.Trace?.Log("TerrainMakerTool", "totalTerrainMakerDefineSettingPath", totalTerrainMakerDefineSettingPath);
+        if (File.Exists(totalTerrainMakerDefineSettingPath))
         {
-            string defineSettingStr = File.ReadAllText(TerrainMakerDefineSettingPath);
+            string defineSettingStr = File.ReadAllText(totalTerrainMakerDefineSettingPath);
             m_ToolSetting = LitJson.JsonMapper.ToObject<ToolSetting>(defineSettingStr);
         }
         else
         {
             m_ToolSetting = new ToolSetting();
         }
-
         __CreateToolConfig();
-        __CreateDefaultGameInfo();
 
+        LogHelper.Trace?.Log("TerrainMakerTool", "m_ToolSetting", LogHelper.Object2String(m_ToolSetting));
+
+
+        //更新地形配置
+        string totalDefaultTerrainInfoPath = Application.dataPath + "/" + m_ToolSetting.DefaultTerrainInfoPath;
+        LogHelper.Trace?.Log("TerrainMakerTool", "totalDefaultTerrainInfoPath", totalDefaultTerrainInfoPath);
+        if (File.Exists(totalDefaultTerrainInfoPath))
+        {
+            string defaultTerrainInfo = File.ReadAllText(totalDefaultTerrainInfoPath);
+            m_CurrentDefaultTerrainInfo = LitJson.JsonMapper.ToObject<DefaultTerrainInfo>(defaultTerrainInfo);
+        }
+        else
+        {
+            m_CurrentDefaultTerrainInfo = new DefaultTerrainInfo();
+        }
+        __CreateDefaultTerrainInfo();
+        m_RecordDefaultTerrainInfo = CloneHelper.DeepClone(m_CurrentDefaultTerrainInfo) as DefaultTerrainInfo;
+
+        LogHelper.Trace?.Log("TerrainMakerTool", "m_RecordDefaultTerrainInfo", LogHelper.Object2String(m_RecordDefaultTerrainInfo));
 
     }
 
@@ -75,21 +91,21 @@ public class TerrainMakerDefine
     /// <summary>
     /// 创建默认配置
     /// </summary>
-    private void __CreateDefaultGameInfo()
+    private void __CreateDefaultTerrainInfo()
     {
         //路径
-        if (m_ToolSetting.DefaultGameInfo.PathInfo == null)
+        if (m_CurrentDefaultTerrainInfo.PathInfo == null)
         {
             TerrainMakerSceneController.PathInfo pathInfo = new TerrainMakerSceneController.PathInfo();
 
             pathInfo.TerrainPath = "Prefab/Terrain";
             pathInfo.TerrainPiecePath = "Prefab/TerrainPiece";
 
-            m_ToolSetting.DefaultGameInfo.PathInfo = pathInfo;
+            m_CurrentDefaultTerrainInfo.PathInfo = pathInfo;
         }
 
         //建筑
-        if(m_ToolSetting.DefaultGameInfo.BuildingInfo == null)
+        if(m_CurrentDefaultTerrainInfo.BuildingInfo == null)
         {
             TerrainMakerSceneController.BuildingInfo buildingInfo = new TerrainMakerSceneController.BuildingInfo();
             //地块大小
@@ -104,11 +120,11 @@ public class TerrainMakerDefine
             buildingInfo.IntervalSize.y = 1.6f;
             buildingInfo.IntervalSize.z = 1;
 
-            m_ToolSetting.DefaultGameInfo.BuildingInfo = buildingInfo;
+            m_CurrentDefaultTerrainInfo.BuildingInfo = buildingInfo;
         }
 
         //玩法
-        if(m_ToolSetting.DefaultGameInfo.GamePlayInfo == null)
+        if(m_CurrentDefaultTerrainInfo.GamePlayInfo == null)
         {
             TerrainMakerSceneController.GamePlayInfo gamePlayInfo = new TerrainMakerSceneController.GamePlayInfo();
 
@@ -116,22 +132,22 @@ public class TerrainMakerDefine
             gamePlayInfo.HasEndLogicPosition = false;
             gamePlayInfo.EndLoigcPosition = Vector3.zero;
 
-            m_ToolSetting.DefaultGameInfo.GamePlayInfo = gamePlayInfo;
+            m_CurrentDefaultTerrainInfo.GamePlayInfo = gamePlayInfo;
         }
 
         //动画
-        if(m_ToolSetting.DefaultGameInfo.TweenInfo == null)
+        if(m_CurrentDefaultTerrainInfo.TweenInfo == null)
         {
             TerrainMakerSceneController.TweenInfo tweenInfo = new TerrainMakerSceneController.TweenInfo();
 
             tweenInfo.Originate = 8;
             tweenInfo.MoveSpeed = 1.8f;
 
-            m_ToolSetting.DefaultGameInfo.TweenInfo = tweenInfo;
+            m_CurrentDefaultTerrainInfo.TweenInfo = tweenInfo;
         }
 
         //颜色
-        if(m_ToolSetting.DefaultGameInfo.ColorInfo == null)
+        if(m_CurrentDefaultTerrainInfo.ColorInfo == null)
         {
             TerrainMakerSceneController.ColorInfo colorInfo = new TerrainMakerSceneController.ColorInfo();
 
@@ -145,14 +161,38 @@ public class TerrainMakerDefine
             colorInfo.Side_Current = new Color(0.36f, 0.33f, 0.3f, 1);
             colorInfo.Side_Other = new Color(0.37f, 0.38f, 0.35f, 1);
 
-            m_ToolSetting.DefaultGameInfo.ColorInfo = colorInfo;
+            m_CurrentDefaultTerrainInfo.ColorInfo = colorInfo;
         }
 
     }
 
     #endregion
 
-    #region set
+    #region record
+
+    public void WriteDefaultTerrainInfoFile()
+    {
+        string defaultTerrainInfoJson = LitJson.JsonMapper.ToJson(m_CurrentDefaultTerrainInfo);
+
+        string totalDirectoryPath = Application.dataPath + "/" + m_ToolSetting.DefaultTerrainInfoPath;
+
+        string directoryPath = IOHelper.GetDirectoryPath(totalDirectoryPath);
+        IOHelper.SafeCreateDirectory(directoryPath);
+
+        File.WriteAllText(totalDirectoryPath, defaultTerrainInfoJson);
+    }
+
+    public void WriteToolSettingFile()
+    {
+        string toolSettingJson = LitJson.JsonMapper.ToJson(m_ToolSetting);
+
+        string totalDirectoryPath = Application.dataPath + "/" + TerrainMakerDefineSettingPath;
+
+        string directoryPath = IOHelper.GetDirectoryPath(totalDirectoryPath);
+        IOHelper.SafeCreateDirectory(directoryPath);
+
+        File.WriteAllText(totalDirectoryPath, toolSettingJson);
+    }
 
     #endregion
 
