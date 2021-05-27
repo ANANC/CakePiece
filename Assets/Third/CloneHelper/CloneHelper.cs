@@ -10,16 +10,20 @@ public class CloneHelper
     {
         public object Clone()
         {
-            object obj = new BaseCloneObject();
+            Type curType = this.GetType();
+
+            object obj = System.Activator.CreateInstance(curType);
+
             //×Ö¶Î
-            FieldInfo[] fields = typeof(BaseCloneObject).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] fields = curType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             for (int i = 0; i < fields.Length; i++)
             {
                 FieldInfo field = fields[i];
                 field.SetValue(obj, field.GetValue(this));
             }
+
             //ÊôÐÔ
-            PropertyInfo[] properties = typeof(BaseCloneObject).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo[] properties = curType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo property = properties[i];

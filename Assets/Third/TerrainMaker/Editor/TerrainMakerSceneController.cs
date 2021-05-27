@@ -1,3 +1,4 @@
+using ANFramework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,15 +62,24 @@ public class TerrainMakerSceneController
     private Dictionary<Vector3, GameObject> LogicPosition2TerrainPieceDict; //【逻辑位置】对应【地块gameobject】列表 dict
 
     private TerrainMakerTool m_Root;
+    private EditorReousrceLoader m_EditorReousrceLoader;
 
     public void Init(TerrainMakerTool root)
     {
         m_Root = root;
 
+        LogicPosition2TerrainPieceDict = new Dictionary<Vector3, GameObject>();
+
+        m_EditorReousrceLoader = new EditorReousrceLoader();
+        m_EditorReousrceLoader.Init();
     }
 
     public void UnInit()
     {
+        if (m_RootTerrainGameObject != null)
+        {
+            GameObject.DestroyImmediate(m_RootTerrainGameObject);
+        }
 
     }
 
@@ -82,13 +92,21 @@ public class TerrainMakerSceneController
         m_GamePlayInfo = defaultTerrainInfo.GamePlayInfo.Clone() as GamePlayInfo;
         m_TweenInfo = defaultTerrainInfo.TweenInfo.Clone() as TweenInfo;
         m_ColorInfo = defaultTerrainInfo.ColorInfo.Clone() as ColorInfo;
+
+        LogHelper.Trace?.Log("TerrainMakerTool", "InitDefaultInfo.",
+            LogHelper.Object2String(m_PathInfo),
+            LogHelper.Object2String(m_BuildingInfo),
+            LogHelper.Object2String(m_GamePlayInfo),
+            LogHelper.Object2String(m_TweenInfo),
+            LogHelper.Object2String(m_ColorInfo)
+            );
     }
 
     public void InitBuild()
     {
         InitDefaultInfo();
 
-        m_RootTerrainGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(m_PathInfo.TerrainPath);
+        m_RootTerrainGameObject = m_EditorReousrceLoader.LoadResource<GameObject>(m_PathInfo.TerrainPath);
         m_RootTerrainGameObject = GameObject.Instantiate(m_RootTerrainGameObject);
         m_RootTerrainGameObject.name = "Terrain";
     }
@@ -102,7 +120,7 @@ public class TerrainMakerSceneController
 
         if (m_ResourceTerrainPiece == null)
         {
-            m_ResourceTerrainPiece = AssetDatabase.LoadAssetAtPath<GameObject>(m_PathInfo.TerrainPiecePath); ;
+            m_ResourceTerrainPiece = m_EditorReousrceLoader.LoadResource<GameObject>(m_PathInfo.TerrainPiecePath);
         }
 
         GameObject terrainPiece = GameObject.Instantiate(m_ResourceTerrainPiece);

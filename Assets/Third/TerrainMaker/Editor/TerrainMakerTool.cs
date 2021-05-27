@@ -21,6 +21,14 @@ public class TerrainMakerTool : EditorWindow
         get { return m_Define; }
     }
 
+    public enum GUIType
+    {
+        Notthing,
+        Config,
+        Terrain,
+    }
+    private GUIType m_GUIType;
+
     private bool m_IsDirty;
 
     [MenuItem("Game/地形编辑器")]
@@ -42,6 +50,9 @@ public class TerrainMakerTool : EditorWindow
 
     private void Init()
     {
+        m_GUIType = GUIType.Notthing;
+        m_IsDirty = false;
+
         m_Define = new TerrainMakerDefine();
         m_Define.Init(this);
 
@@ -49,14 +60,27 @@ public class TerrainMakerTool : EditorWindow
         m_Scene.Init(this);
     }
 
+    private void OnValidate()
+    {
+        UnInit();
+    }
+
     private void OnDestroy()
     {
+        UnInit();
+    }
+
+    private void UnInit()
+    {
+        m_GUIType = GUIType.Notthing;
+        m_IsDirty = false;
+
         m_Scene.UnInit();
         m_Define.UnInit();
     }
 
-    private bool m_Building = false;
-
+    private float GUI_ButtonWidth = 60;
+    private float GUI_LableWidth = 120;
     private void OnGUI()
     {
         EditorGUILayout.BeginHorizontal();
@@ -80,33 +104,57 @@ public class TerrainMakerTool : EditorWindow
 
     private void LeftMenuLine()
     {
-        EditorGUILayout.BeginVertical(GUILayout.Width(100));
+        EditorGUILayout.BeginVertical("helpbox", GUILayout.Width(100), GUILayout.ExpandHeight(true));
 
-        if(GUILayout.Button("构建默认配置"))
+        if (GUILayout.Button("构建默认配置"))
         {
             m_Scene.InitBuild();
-            m_Building = true;
+            m_GUIType = GUIType.Config;
         }
+
+        if (m_GUIType != GUIType.Notthing)
+        {
+            EditorGUILayout.Space(GUI_InfoContent_Space);
+
+            GUI.color = m_GUIType == GUIType.Config? Color.gray:Color.white;
+            if (GUILayout.Button("配置"))
+            {
+                m_GUIType = GUIType.Config;
+            }
+            GUI.color = m_GUIType == GUIType.Terrain ? Color.gray : Color.white;
+            if (GUILayout.Button("地形"))
+            {
+                m_GUIType = GUIType.Terrain;
+            }
+
+            GUI.color = Color.white;
+        }
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
 
         EditorGUILayout.EndVertical();
     }
 
     private void RightContent()
     {
+        BuildTerrainConfig();
         BuildTerrainContent();
     }
 
     private void BottomMenuLine()
     {
-        if(GUILayout.Button("重建"))
+        if(GUILayout.Button("重建",GUILayout.Width(GUI_ButtonWidth)))
         {
             BuildScene();
         }
     }
 
-    private void BuildTerrainContent()
+    #region 配置
+
+    private float GUI_InfoContent_Space = 10;
+    private void BuildTerrainConfig()
     {
-        if(!m_Building)
+        if(m_GUIType != GUIType.Config)
         {
             return;
         }
@@ -114,56 +162,72 @@ public class TerrainMakerTool : EditorWindow
         EditorGUILayout.BeginVertical();
 
         GUI_PathInfo();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         GUI_BuildingInfo();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         GUI_GamePlayInfo();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         GUI_TweenInfo();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         GUI_ColorInfo();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
 
         EditorGUILayout.EndVertical();
     }
 
-    private float GUI_ButtonWidth = 60;
 
     private void GUI_PathInfo()
     {
+        GUI_Title("路径");
+
         EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("路径");
-        EditorGUILayout.EndVertical();
 
-        EditorGUILayout.BeginHorizontal();
-
-        FieldInfo[] fields = typeof(TerrainMakerSceneController.PathInfo).GetFields(BindingFlags.Public | BindingFlags.Instance);
-        for (int i = 0; i < fields.Length; i++)
+        FieldInfo[] fields = typeof(TerrainMakerSceneController.PathInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        if (fields != null)
         {
-            FieldInfo field = fields[i];
+            for (int i = 0; i < fields.Length; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                FieldInfo field = fields[i];
 
-            string fieldName = field.Name;
-            string fieldValue = field.GetValue(m_Scene.Path) as string;
+                string fieldName = field.Name;
+                string fieldValue = field.GetValue(m_Scene.Path) as string;
 
-            EditorGUILayout.LabelField(fieldName, fieldValue);
-            GUI_FileButton(
-                () =>
-                {
-                    string path = __Tool_ChangePath(fieldName, fieldValue);
-                    if (path != fieldValue)
+                EditorGUILayout.LabelField(fieldName, GUILayout.Width(GUI_LableWidth));
+                EditorGUILayout.LabelField(fieldValue);
+                GUI_FileButton(
+                    () =>
                     {
-                        field.SetValue(m_Scene.Path, path);
+                        string path = __Tool_ChangePath(fieldName, fieldValue);
+                        if (path != fieldValue)
+                        {
+                            field.SetValue(m_Scene.Path, path);
+                        }
+                    },
+                    () =>
+                    {
+                        field.SetValue(m_Define.CurrentDefaultTerrainInfo.PathInfo, field.GetValue(m_Scene.Path));
+                    },
+                    () =>
+                    {
+                        field.SetValue(m_Scene.Path, field.GetValue(m_Define.RecordDefaultTerrainInfo.PathInfo));
                     }
-                },
-                () =>
-                {
-                    field.SetValue(m_Define.CurrentDefaultTerrainInfo.PathInfo, field.GetValue(m_Scene.Path));
-                },
-                () =>
-                {
-                    field.SetValue(m_Scene.Path, field.GetValue(m_Define.RecordDefaultTerrainInfo.PathInfo));
-                }
-                );
+                    );
 
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
-        EditorGUILayout.EndHorizontal();
-
+        EditorGUILayout.EndVertical();
     }
 
     private bool GUI_BuildingInfo_Init = false;
@@ -172,9 +236,7 @@ public class TerrainMakerTool : EditorWindow
 
     private void GUI_BuildingInfo()
     {
-        EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("建筑");
-        EditorGUILayout.EndVertical();
+        GUI_Title("建筑");
 
         // -- TerrainSize
         EditorGUILayout.BeginHorizontal();
@@ -237,9 +299,7 @@ public class TerrainMakerTool : EditorWindow
     private Vector3 GUI_GamePlay_EndLoigcPosition;
     private void GUI_GamePlayInfo()
     {
-        EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("玩法");
-        EditorGUILayout.EndVertical();
+        GUI_Title("玩法");
 
         // -- BirthLogicPosition
         EditorGUILayout.BeginHorizontal();
@@ -275,7 +335,7 @@ public class TerrainMakerTool : EditorWindow
             GUI_GamePlay_HasEndLogicPosition = m_Scene.GamePlay.HasEndLogicPosition;
         }
 
-        EditorGUILayout.LabelField("是否有结束逻辑位置");
+        EditorGUILayout.LabelField("是否有结束逻辑位置",GUILayout.Width(GUI_LableWidth));
         GUI_GamePlay_HasEndLogicPosition = EditorGUILayout.Toggle(GUI_GamePlay_HasEndLogicPosition);
         GUI_FileButton(
             () =>
@@ -331,6 +391,8 @@ public class TerrainMakerTool : EditorWindow
     private float GUI_Tween_MoveSpeed;
     private void GUI_TweenInfo()
     {
+        GUI_Title("动画");
+
         // -- Originate
         EditorGUILayout.BeginHorizontal();
 
@@ -392,48 +454,102 @@ public class TerrainMakerTool : EditorWindow
     private List<Color> GUI_Color_ValueList = new List<Color>();
     private void GUI_ColorInfo()
     {
-        EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("路径");
+        GUI_Title("路径");
+
+        EditorGUILayout.BeginVertical();
+
+        FieldInfo[] fields = typeof(TerrainMakerSceneController.ColorInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        if (fields != null)
+        {
+            for (int i = 0; i < fields.Length; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                FieldInfo field = fields[i];
+
+                string fieldName = field.Name;
+                Color fieldValue = (Color)field.GetValue(m_Scene.Color);
+
+                if (GUI_Color_ValueList.Count < i + 1)
+                {
+                    GUI_Color_ValueList.Add(fieldValue);
+                }
+
+                Color guiValue = GUI_Color_ValueList[i];
+
+                guiValue = EditorGUILayout.ColorField(fieldName, guiValue);
+
+                GUI_Color_ValueList[i] = guiValue;
+
+                GUI_FileButton(
+                    () =>
+                    {
+                        field.SetValue(m_Scene.Color, guiValue);
+                    },
+                    () =>
+                    {
+                        field.SetValue(m_Define.CurrentDefaultTerrainInfo.ColorInfo, fieldValue);
+                    },
+                    () =>
+                    {
+                        guiValue = fieldValue;
+                        field.SetValue(m_Scene.Color, field.GetValue(m_Define.RecordDefaultTerrainInfo.ColorInfo));
+                    }
+                    );
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.Space(5);
+        }
+
         EditorGUILayout.EndVertical();
+    }
+    #endregion
+
+    #region 地形
+
+    private void BuildTerrainContent()
+    {
+        if (m_GUIType != GUIType.Terrain)
+        {
+            return;
+        }
+
+        EditorGUILayout.BeginVertical();
+
+        GUI_CreateTerrainPiece();
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private Vector3Int GUI_CreateTerrainPiece_CreateLogicPosition;
+    private void GUI_CreateTerrainPiece()
+    {
+        GUI_Title("创建地块");
 
         EditorGUILayout.BeginHorizontal();
-
-        FieldInfo[] fields = typeof(TerrainMakerSceneController.PathInfo).GetFields(BindingFlags.Public | BindingFlags.Instance);
-        for (int i = 0; i < fields.Length; i++)
+        GUI_CreateTerrainPiece_CreateLogicPosition = EditorGUILayout.Vector3IntField("逻辑位置",GUI_CreateTerrainPiece_CreateLogicPosition);
+        if(GUILayout.Button("创建",GUILayout.Width(GUI_ButtonWidth)))
         {
-            FieldInfo field = fields[i];
-
-            string fieldName = field.Name;
-            Color fieldValue = (Color)field.GetValue(m_Scene.Path);
-
-            if(GUI_Color_ValueList.Count<i)
-            {
-                GUI_Color_ValueList.Add(fieldValue);
-            }
-            Color guiValue = GUI_Color_ValueList[i];
-
-            guiValue = EditorGUILayout.ColorField(fieldName, guiValue);
-            GUI_FileButton(
-                () =>
-                {
-                    field.SetValue(m_Scene.Color, guiValue);
-                },
-                () =>
-                {
-                    field.SetValue(m_Define.CurrentDefaultTerrainInfo.ColorInfo, fieldValue);
-                },
-                () =>
-                {
-                    guiValue = fieldValue;
-                    field.SetValue(m_Scene.Color, field.GetValue(m_Define.RecordDefaultTerrainInfo.PathInfo));
-                }
-                );
-
+            m_Scene.BuildTerrain(GUI_CreateTerrainPiece_CreateLogicPosition);
         }
 
         EditorGUILayout.EndHorizontal();
     }
 
+
+    private void BuildScene()
+    {
+
+    }
+
+    #endregion
+
+    private void GUI_Title(string title)
+    {
+        EditorGUILayout.BeginVertical("helpbox");
+        EditorGUILayout.LabelField(title);
+        EditorGUILayout.EndVertical();
+    }
 
     private void GUI_FileButton(Action changeAction,Action setDefaultAction,Action resetAction)
     {
@@ -482,9 +598,4 @@ public class TerrainMakerTool : EditorWindow
         return sourcePath;
     }
 
-
-    private void BuildScene()
-    {
-
-    }
 }

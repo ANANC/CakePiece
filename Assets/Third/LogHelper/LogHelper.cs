@@ -191,7 +191,10 @@ public class LogHelper
         m_Obj2StrStringBuilder.Length = 0;
         m_Obj2StrInputIndex = 0;
 
-        __DeepObject2String(obj);
+        if (obj != null)
+        {
+            __DeepObject2String(obj);
+        }
 
         return m_Obj2StrStringBuilder.ToString();
     }
