@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using static TerrainMakerData;
 
 public class TerrainMakerTool : EditorWindow
 {
@@ -191,7 +192,7 @@ public class TerrainMakerTool : EditorWindow
 
         EditorGUILayout.BeginVertical("box");
 
-        FieldInfo[] fields = typeof(TerrainMakerSceneController.PathInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        FieldInfo[] fields = typeof(ResourcePathInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         if (fields != null)
         {
             for (int i = 0; i < fields.Length; i++)
@@ -200,7 +201,7 @@ public class TerrainMakerTool : EditorWindow
                 FieldInfo field = fields[i];
 
                 string fieldName = field.Name;
-                string fieldValue = field.GetValue(m_Scene.Path) as string;
+                string fieldValue = field.GetValue(m_Scene.ResourcePath) as string;
 
                 EditorGUILayout.LabelField(fieldName, GUILayout.Width(GUI_LableWidth));
                 EditorGUILayout.LabelField(fieldValue);
@@ -210,16 +211,16 @@ public class TerrainMakerTool : EditorWindow
                         string path = __Tool_ChangePath(fieldName, fieldValue);
                         if (path != fieldValue)
                         {
-                            field.SetValue(m_Scene.Path, path);
+                            field.SetValue(m_Scene.ResourcePath, path);
                         }
                     },
                     () =>
                     {
-                        field.SetValue(m_Define.CurrentDefaultTerrainInfo.PathInfo, field.GetValue(m_Scene.Path));
+                        field.SetValue(m_Define.CurrentDefaultTerrainInfo.ResourcePathInfo, field.GetValue(m_Scene.ResourcePath));
                     },
                     () =>
                     {
-                        field.SetValue(m_Scene.Path, field.GetValue(m_Define.RecordDefaultTerrainInfo.PathInfo));
+                        field.SetValue(m_Scene.ResourcePath, field.GetValue(m_Define.RecordDefaultTerrainInfo.ResourcePathInfo));
                     }
                     );
 
@@ -458,7 +459,7 @@ public class TerrainMakerTool : EditorWindow
 
         EditorGUILayout.BeginVertical();
 
-        FieldInfo[] fields = typeof(TerrainMakerSceneController.ColorInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        FieldInfo[] fields = typeof(ColorInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         if (fields != null)
         {
             for (int i = 0; i < fields.Length; i++)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using static TerrainMakerData;
 
 public class TerrainMakerDefine
 {
@@ -19,11 +20,12 @@ public class TerrainMakerDefine
 
     public class DefaultTerrainInfo    //默认地形配置
     {
-        public TerrainMakerSceneController.PathInfo PathInfo;
-        public TerrainMakerSceneController.BuildingInfo BuildingInfo;
-        public TerrainMakerSceneController.GamePlayInfo GamePlayInfo;
-        public TerrainMakerSceneController.TweenInfo TweenInfo;
-        public TerrainMakerSceneController.ColorInfo ColorInfo;
+        public ResourcePathInfo ResourcePathInfo;
+        public GameObjectPathInfo GameObjectPathInfo;
+        public BuildingInfo BuildingInfo;
+        public GamePlayInfo GamePlayInfo;
+        public TweenInfo TweenInfo;
+        public ColorInfo ColorInfo;
     }
     private DefaultTerrainInfo m_CurrentDefaultTerrainInfo;   //当前更新的配置内容
     private DefaultTerrainInfo m_RecordDefaultTerrainInfo;    //读取的配置内容，不做修改，用于还原
@@ -93,21 +95,33 @@ public class TerrainMakerDefine
     /// </summary>
     private void __CreateDefaultTerrainInfo()
     {
-        //路径
-        if (m_CurrentDefaultTerrainInfo.PathInfo == null)
+        //资源路径
+        if (m_CurrentDefaultTerrainInfo.ResourcePathInfo == null)
         {
-            TerrainMakerSceneController.PathInfo pathInfo = new TerrainMakerSceneController.PathInfo();
+            ResourcePathInfo resourcePathInfo = new ResourcePathInfo();
 
-            pathInfo.TerrainPath = "Prefab/Terrain";
-            pathInfo.TerrainPiecePath = "Prefab/TerrainPiece";
+            resourcePathInfo.TerrainPath = "Prefab/Terrain";
+            resourcePathInfo.TerrainPiecePath = "Prefab/TerrainPiece";
 
-            m_CurrentDefaultTerrainInfo.PathInfo = pathInfo;
+            m_CurrentDefaultTerrainInfo.ResourcePathInfo = resourcePathInfo;
+        }
+
+        if(m_CurrentDefaultTerrainInfo.GameObjectPathInfo ==null)
+        {
+            GameObjectPathInfo gameObjectPathInfo = new GameObjectPathInfo();
+
+            gameObjectPathInfo.PiecePath = "Cube";
+            gameObjectPathInfo.SidePath = "Side";
+            gameObjectPathInfo.DownPath = "Down";
+            gameObjectPathInfo.UpPath = "Up";
+
+            m_CurrentDefaultTerrainInfo.GameObjectPathInfo = gameObjectPathInfo;
         }
 
         //建筑
         if(m_CurrentDefaultTerrainInfo.BuildingInfo == null)
         {
-            TerrainMakerSceneController.BuildingInfo buildingInfo = new TerrainMakerSceneController.BuildingInfo();
+            BuildingInfo buildingInfo = new BuildingInfo();
             //地块大小
             buildingInfo.TerrainSize = new Vector3();
             buildingInfo.TerrainSize.x = 4;
@@ -126,7 +140,7 @@ public class TerrainMakerDefine
         //玩法
         if(m_CurrentDefaultTerrainInfo.GamePlayInfo == null)
         {
-            TerrainMakerSceneController.GamePlayInfo gamePlayInfo = new TerrainMakerSceneController.GamePlayInfo();
+            GamePlayInfo gamePlayInfo = new GamePlayInfo();
 
             gamePlayInfo.BirthLogicPosition = Vector3.zero;
             gamePlayInfo.HasEndLogicPosition = false;
@@ -138,7 +152,7 @@ public class TerrainMakerDefine
         //动画
         if(m_CurrentDefaultTerrainInfo.TweenInfo == null)
         {
-            TerrainMakerSceneController.TweenInfo tweenInfo = new TerrainMakerSceneController.TweenInfo();
+            TweenInfo tweenInfo = new TweenInfo();
 
             tweenInfo.Originate = 8;
             tweenInfo.MoveSpeed = 1.8f;
@@ -149,7 +163,7 @@ public class TerrainMakerDefine
         //颜色
         if(m_CurrentDefaultTerrainInfo.ColorInfo == null)
         {
-            TerrainMakerSceneController.ColorInfo colorInfo = new TerrainMakerSceneController.ColorInfo();
+            ColorInfo colorInfo = new ColorInfo();
 
             colorInfo.Floor_Current = new Color(1, 1, 1, 1);
             colorInfo.Floor_Other = new Color(0.8f, 0.8f, 0.8f, 0.29f);
