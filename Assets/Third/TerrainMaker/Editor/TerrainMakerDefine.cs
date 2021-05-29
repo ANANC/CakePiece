@@ -110,8 +110,9 @@ public class TerrainMakerDefine
         {
             GameObjectPathInfo gameObjectPathInfo = new GameObjectPathInfo();
 
-            gameObjectPathInfo.PiecePath = "Cube";
-            gameObjectPathInfo.SidePath = "Side";
+            gameObjectPathInfo.PieceMaterialPath = "Cube";
+            gameObjectPathInfo.SideRootPath = "Side";
+            gameObjectPathInfo.SideMaterialPath = "Tag";
             gameObjectPathInfo.DownPath = "Down";
             gameObjectPathInfo.UpPath = "Up";
 
@@ -169,6 +170,7 @@ public class TerrainMakerDefine
             colorInfo.Floor_Other = new Color(0.8f, 0.8f, 0.8f, 0.29f);
 
             colorInfo.Piece_Current = new Color(1, 1, 1, 1);
+            colorInfo.Piece_ArriveAround = new Color(0.75f, 0.78f, 0.79f, 1);
             colorInfo.Piece_Other = new Color(0.75f, 0.78f, 0.79f, 1);
             colorInfo.Piece_End = new Color(0.82f, 0.3f, 0.3f, 1);
 

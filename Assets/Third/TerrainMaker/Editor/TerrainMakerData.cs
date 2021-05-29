@@ -17,8 +17,9 @@ public class TerrainMakerData
 
     public class GameObjectPathInfo : CloneHelper.BaseCloneObject   //gameObject内路径
     {
-        public string PiecePath;
-        public string SidePath;
+        public string PieceMaterialPath;
+        public string SideRootPath;
+        public string SideMaterialPath;
         public string DownPath;
         public string UpPath;
     }
@@ -48,6 +49,7 @@ public class TerrainMakerData
         public Color Floor_Other;   //非站立层颜色
 
         public Color Piece_Current; //当前站立地块颜色
+        public Color Piece_ArriveAround;    //当前站立地块可以到底的周围地块颜色
         public Color Piece_Other;   //非站立地块颜色
         public Color Piece_End;     //终点地块颜色
 
@@ -59,20 +61,19 @@ public class TerrainMakerData
 
     public enum TerrainPieceDirection
     {
-        Left,
-        Right,
-        Up,
-        Down,
+        Left,       // x = 1
+        Right,      // x= -1
+        Forward,    // z = 1
+        Back,       // z = -1
     }
 
 
-    public class TerrainPieceInfo
+    public class TerrainPieceInfo   //地块基本信息
     {
         public Vector3 LogixPosition;   //逻辑位置
         public Vector3 WorldPosition;   //世界位置
 
-        public bool IsShowPiece;        //是否显示地块
-        public List<GameObject> BuildingList;   //建筑列表
+        public TerrainPieceArtInfo ArtInfo; //美术表现
 
         public Dictionary<TerrainPieceDirection, bool> DirectionFlagDict;   //方向标记列表 dict
 
@@ -86,5 +87,15 @@ public class TerrainMakerData
 
         public Transform UpFlagTransform;   //向上标记 transfrom
         public Transform DownFlagTransform; //向下标记 transform
+    }
+
+    public class TerrainPieceArtInfo    //地块表现信息
+    {
+        public bool IsShowPiece;        //是否显示地块
+
+        public List<GameObject> BuildingList;   //建筑列表
+
+        public bool IsCoverBaseInfo;    //是否覆盖基本信息 使用当前信息
+        public Color MyColor;           //自己的颜色
     }
 }

@@ -31,11 +31,13 @@ public class TerrainMakerSceneController
 
     //-- 逻辑数据
 
-    public class InputInfo
+    public class InputInfo  //输入数据
     {
-        public int CurLogicPosition;   //当前逻辑位置
+        public Vector3 CurLogicPosition;   //当前逻辑位置
+        public Vector3 EndLogicPosition;   //最终逻辑位置
     }
-
+    private InputInfo m_InputInfo;
+    public InputInfo Input { get { return m_InputInfo; } }
 
     private GameObject m_RootTerrainGameObject; //地形根节点
     private GameObject m_ResourceTerrainPiece;  //地块资源GameObject
@@ -50,6 +52,8 @@ public class TerrainMakerSceneController
 
         LogicPosition2TerrainPieceDict = new Dictionary<Vector3, TerrainPieceInfo>();
 
+        m_InputInfo = new InputInfo();
+
         m_EditorReousrceLoader = new EditorReousrceLoader();
         m_EditorReousrceLoader.Init();
     }
@@ -63,6 +67,9 @@ public class TerrainMakerSceneController
 
     }
 
+    /// <summary>
+    /// 初始化默认配置
+    /// </summary>
     public void InitDefaultInfo()
     {
         TerrainMakerDefine.DefaultTerrainInfo defaultTerrainInfo = m_Root.Define.CurrentDefaultTerrainInfo;
@@ -84,9 +91,34 @@ public class TerrainMakerSceneController
             );
     }
 
+    /// <summary>
+    /// 初始化当前配置
+    /// </summary>
+    private void InitCurInputInfo()
+    {
+        m_InputInfo.CurLogicPosition = m_GamePlayInfo.BirthLogicPosition;
+        if(m_GamePlayInfo.HasEndLogicPosition)
+        {
+            m_InputInfo.EndLogicPosition = m_GamePlayInfo.EndLoigcPosition;
+        }
+        else
+        {
+            m_InputInfo.EndLogicPosition = new Vector3(-1, -1, -1);
+        }
+    }
+
     public void InitBuild()
     {
+
+
         InitDefaultInfo();
+        InitCurInputInfo();
+
+        GameObject oldRoot = GameObject.Find("Terrain");
+        if(oldRoot!=null)
+        {
+            GameObject.DestroyImmediate(oldRoot);
+        }
 
         m_RootTerrainGameObject = m_EditorReousrceLoader.LoadResource<GameObject>(m_ResourcePathInfo.TerrainPath);
         m_RootTerrainGameObject = GameObject.Instantiate(m_RootTerrainGameObject);
@@ -100,49 +132,11 @@ public class TerrainMakerSceneController
             return;
         }
 
-        if (m_ResourceTerrainPiece == null)
-        {
-            m_ResourceTerrainPiece = m_EditorReousrceLoader.LoadResource<GameObject>(m_ResourcePathInfo.TerrainPiecePath);
-        }
-
-        TerrainPieceInfo terrainPieceInfo = new TerrainPieceInfo();
-
-        //logic
-        terrainPieceInfo.LogixPosition = logicPosition;
+        TerrainPieceInfo terrainPieceInfo = m_Root.PieceFactory.CreateBasisTerrainPiece(logicPosition);
         UpdateTerrainLogic(terrainPieceInfo);
-
-        //art
-        GameObject terrainPiece = GameObject.Instantiate(m_ResourceTerrainPiece);
-        terrainPiece.name = "x:" + logicPosition.x + " y:" + logicPosition.y + " z:" + logicPosition.z;
-        terrainPieceInfo.GameObject = terrainPiece;
-
-        Transform terrainPieceTransform = terrainPiece.transform;
-        terrainPieceTransform.SetParent(m_RootTerrainGameObject.transform);
-        terrainPieceInfo.Transform = terrainPieceTransform;
-
-        // -- 预制体内的对象
-        Transform pieceTransform = terrainPieceTransform.Find(m_GameObjectPathInfo.PiecePath);
-        Material pieceMaterial = pieceTransform.GetComponent<Renderer>().material;
-        terrainPieceInfo.PieceMaterial = pieceMaterial;
-
-        Transform sideRootTransform = terrainPieceTransform.Find(m_GameObjectPathInfo.SidePath);
-        int childCount = sideRootTransform.childCount;
-        Transform[] sides = new Transform[childCount];
-        Material[] sideMaterials = new Material[childCount];
-        for (int index = 0;index< sides.Length;index++)
-        {
-            Transform sideTransform = sideRootTransform.GetChild(index);
-            sides[index] = sideTransform;
-            sideMaterials[index] = sideTransform.GetComponent<Renderer>().material;
-        }
-
-        Transform upFlagTransform = terrainPieceTransform.Find(m_GameObjectPathInfo.UpPath);
-        terrainPieceInfo.UpFlagTransform = upFlagTransform;
-
-        Transform downFlagTransform = terrainPieceTransform.Find(m_GameObjectPathInfo.DownPath);
-        terrainPieceInfo.DownFlagTransform = downFlagTransform;
-
         UpdateTerrainArt(terrainPieceInfo);
+
+        terrainPieceInfo.Transform.SetParent(m_RootTerrainGameObject.transform);
 
         LogicPosition2TerrainPieceDict.Add(logicPosition, terrainPieceInfo);
     }
@@ -161,28 +155,35 @@ public class TerrainMakerSceneController
 
     private void UpdateTerrainLogic(TerrainPieceInfo terrainPiece)
     {
-        Vector3 worldPosition = LogicPositionToWorldPosition(terrainPiece.LogixPosition);
+        Vector3 worldPosition = m_Root.GamePlay.LogicPositionToWorldPosition(terrainPiece.LogixPosition);
         terrainPiece.WorldPosition = worldPosition;
     }
 
     private void UpdateTerrainArt(TerrainPieceInfo terrainPiece)
     {
         Transform terrainPieceTransform = terrainPiece.Transform;
-        terrainPieceTransform.localPosition = terrainPiece.WorldPosition;
+        terrainPieceTransform.position = terrainPiece.WorldPosition;
         terrainPieceTransform.localScale = m_BuildingInfo.TerrainSize;
 
-        //todo:更新表现 颜色
+        Material pieceMaterial = terrainPiece.PieceMaterial;
+        pieceMaterial.color = m_Root.GamePlay.LogicPositionToDynamicColor(terrainPiece);
+
+        //todo:方向块更新
     }
 
-    public Vector3 LogicPositionToWorldPosition(Vector3 logicPosition)
-    {
-        Vector3 worldPosition = new Vector3(
-            logicPosition.x * (m_BuildingInfo.TerrainSize.x + m_BuildingInfo.IntervalSize.x),
-            logicPosition.y * -m_BuildingInfo.IntervalSize.y,
-            logicPosition.z * (m_BuildingInfo.TerrainSize.z + m_BuildingInfo.IntervalSize.z)
-            );
 
-        return worldPosition;
+    /// <summary>
+    /// 得到当前站立的地块信息
+    /// </summary>
+    /// <returns></returns>
+    public TerrainPieceInfo GetCurrentTerrainPieceInfo()
+    {
+        TerrainPieceInfo terrainPieceInfo;
+        if (LogicPosition2TerrainPieceDict.TryGetValue(m_InputInfo.CurLogicPosition,out terrainPieceInfo))
+        {
+            return terrainPieceInfo;
+        }
+        return null;
     }
 
 }

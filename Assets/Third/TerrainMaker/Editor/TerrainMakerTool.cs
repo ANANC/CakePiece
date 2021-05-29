@@ -10,10 +10,15 @@ public class TerrainMakerTool : EditorWindow
 {
     private static TerrainMakerTool m_Instance = null;
 
-    private TerrainMakerSceneController m_Scene;
-    public TerrainMakerSceneController Scene
+    [MenuItem("Game/地形编辑器")]
+    private static void Open()
     {
-        get { return m_Scene; }
+        if (m_Instance != null)
+        {
+            EditorWindow.DestroyImmediate(m_Instance);
+        }
+        EditorApplication.isPlaying = true;
+        m_Instance = EditorWindow.GetWindow<TerrainMakerTool>("地形生成器");
     }
 
     private TerrainMakerDefine m_Define;
@@ -21,6 +26,25 @@ public class TerrainMakerTool : EditorWindow
     {
         get { return m_Define; }
     }
+
+    private TerrainMakerSceneController m_Scene;
+    public TerrainMakerSceneController Scene
+    {
+        get { return m_Scene; }
+    }
+
+    private TerrainMakerGamePlayController m_GamePlay;
+    public TerrainMakerGamePlayController GamePlay
+    {
+        get { return m_GamePlay; }
+    }
+
+    private TerrainMakerPieceFactory m_PieceFactory;
+    public TerrainMakerPieceFactory PieceFactory
+    {
+        get { return m_PieceFactory; }
+    }
+
 
     public enum GUIType
     {
@@ -32,16 +56,6 @@ public class TerrainMakerTool : EditorWindow
 
     private bool m_IsDirty;
 
-    [MenuItem("Game/地形编辑器")]
-    private static void Open()
-    {
-        if (m_Instance != null)
-        {
-            EditorWindow.DestroyImmediate(m_Instance);
-        }
-
-        m_Instance = EditorWindow.GetWindow<TerrainMakerTool>("地形生成器");
-    }
     private void OnEnable()
     {
         m_Instance = this;
@@ -59,6 +73,12 @@ public class TerrainMakerTool : EditorWindow
 
         m_Scene = new TerrainMakerSceneController();
         m_Scene.Init(this);
+
+        m_GamePlay = new TerrainMakerGamePlayController();
+        m_GamePlay.Init(this);
+
+        m_PieceFactory = new TerrainMakerPieceFactory();
+        m_PieceFactory.Init(this);
     }
 
     private void OnValidate()
@@ -73,9 +93,16 @@ public class TerrainMakerTool : EditorWindow
 
     private void UnInit()
     {
+        if (m_Instance == null)
+        {
+            return;
+        }
+
         m_GUIType = GUIType.Notthing;
         m_IsDirty = false;
 
+        m_PieceFactory.UnInit();
+        m_GamePlay.UnInit();
         m_Scene.UnInit();
         m_Define.UnInit();
     }
@@ -533,6 +560,10 @@ public class TerrainMakerTool : EditorWindow
         {
             m_Scene.BuildTerrain(GUI_CreateTerrainPiece_CreateLogicPosition);
         }
+
+        //todo:编辑器设置地块颜色
+
+        //todo:移动更新
 
         EditorGUILayout.EndHorizontal();
     }
