@@ -28,6 +28,7 @@ public class TerrainMakerData
     {
         public Vector3 TerrainSize;     //地块大小
         public Vector3 IntervalSize;    //地块间隔大小
+        public float SideShiftingValue;    //地块方向块偏移距离
     }
 
     public class GamePlayInfo : CloneHelper.BaseCloneObject  //玩法
@@ -62,15 +63,14 @@ public class TerrainMakerData
     public enum TerrainPieceDirection
     {
         Left,       // x = 1
-        Right,      // x= -1
+        Right,      // x = -1
         Forward,    // z = 1
         Back,       // z = -1
     }
 
-
     public class TerrainPieceInfo   //地块基本信息
     {
-        public Vector3 LogixPosition;   //逻辑位置
+        public Vector3 LogicPosition;   //逻辑位置
         public Vector3 WorldPosition;   //世界位置
 
         public TerrainPieceArtInfo ArtInfo; //美术表现

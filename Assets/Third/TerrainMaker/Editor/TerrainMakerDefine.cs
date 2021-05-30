@@ -32,9 +32,9 @@ public class TerrainMakerDefine
     public DefaultTerrainInfo CurrentDefaultTerrainInfo { get { return m_CurrentDefaultTerrainInfo; } }
     public DefaultTerrainInfo RecordDefaultTerrainInfo { get { return m_RecordDefaultTerrainInfo; } }
 
-    private TerrainMakerTool m_Root;
+    private TerrainMakerEditorWindow m_Root;
 
-    public void Init(TerrainMakerTool root)
+    public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
 
@@ -134,6 +134,9 @@ public class TerrainMakerDefine
             buildingInfo.IntervalSize.x = 1;
             buildingInfo.IntervalSize.y = 1.6f;
             buildingInfo.IntervalSize.z = 1;
+
+            //地块方向块偏移值
+            buildingInfo.SideShiftingValue = 1.2f;
 
             m_CurrentDefaultTerrainInfo.BuildingInfo = buildingInfo;
         }

@@ -6,14 +6,14 @@ using static TerrainMakerData;
 
 public class TerrainMakerPieceFactory
 {
-    private TerrainMakerTool m_Root;
+    private TerrainMakerEditorWindow m_Root;
     private TerrainMakerSceneController m_Scene { get { return m_Root.Scene; } }
 
     private EditorReousrceLoader m_EditorReousrceLoader;
 
     private GameObject m_ResourceTerrainPiece;  //µØ¿é×ÊÔ´GameObject
 
-    public void Init(TerrainMakerTool root)
+    public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
 
@@ -40,7 +40,7 @@ public class TerrainMakerPieceFactory
         }
 
         //logic
-        terrainPieceInfo.LogixPosition = logicPosition;
+        terrainPieceInfo.LogicPosition = logicPosition;
 
         terrainPieceInfo.DirectionFlagDict = new Dictionary<TerrainPieceDirection, bool>
         {
@@ -74,6 +74,8 @@ public class TerrainMakerPieceFactory
             Transform sideMaterialPath = sideTransform.Find(m_Scene.GameObjectPath.SideMaterialPath);
             sideMaterials[index] = sideMaterialPath.GetComponent<Renderer>().material;
         }
+        terrainPieceInfo.SideTransforms = sides;
+        terrainPieceInfo.SideMaterials = sideMaterials;
 
         Transform upFlagTransform = terrainPieceTransform.Find(m_Scene.GameObjectPath.UpPath);
         terrainPieceInfo.UpFlagTransform = upFlagTransform;

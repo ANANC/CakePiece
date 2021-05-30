@@ -5,23 +5,13 @@ using static TerrainMakerData;
 
 public class TerrainMakerGamePlayController 
 {
-    private TerrainMakerTool m_Root;
+    private TerrainMakerEditorWindow m_Root;
     private TerrainMakerSceneController m_Scene { get { return m_Root.Scene; } }
+    private TerrainMakerTool m_Tool { get { return m_Root.Tool; } }
 
-    private Dictionary<Vector3, TerrainPieceDirection> m_V32EnumDirectironDict; //【vector3】对应【TerrainPieceDirection】列表 dict
-
-    public void Init(TerrainMakerTool root)
+    public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
-
-        m_V32EnumDirectironDict = new Dictionary<Vector3, TerrainPieceDirection>()
-        {
-            {Vector3.left, TerrainPieceDirection.Left},
-            {Vector3.right, TerrainPieceDirection.Right},
-            {Vector3.forward, TerrainPieceDirection.Forward},
-            {Vector3.back, TerrainPieceDirection.Back},
-
-        };
     }
 
     public void UnInit()
@@ -55,10 +45,10 @@ public class TerrainMakerGamePlayController
     public bool IsCurrentCanArriveTerrainPiece(Vector3 logicPosition)
     {
         TerrainPieceInfo curTerrainPieceInfo = m_Scene.GetCurrentTerrainPieceInfo();
-        Vector3 distance = curTerrainPieceInfo.LogixPosition - logicPosition;
+        Vector3 distance = curTerrainPieceInfo.LogicPosition - logicPosition;
 
         TerrainPieceDirection terrainPieceDirection;
-        if(m_V32EnumDirectironDict.TryGetValue(distance,out terrainPieceDirection))
+        if(m_Tool.V32EnumDirectionDict.TryGetValue(distance,out terrainPieceDirection))
         {
             bool enable;
             if(curTerrainPieceInfo.DirectionFlagDict.TryGetValue(terrainPieceDirection,out enable))
@@ -78,9 +68,9 @@ public class TerrainMakerGamePlayController
     /// <returns></returns>
     public Color LogicPositionToDynamicColor(TerrainPieceInfo terrainPiece)
     {
-        bool IsCurLogicPosition = terrainPiece.LogixPosition == m_Scene.Input.CurLogicPosition;
-        bool IsEndLogicPosition = terrainPiece.LogixPosition == m_Scene.Input.EndLogicPosition;
-        bool IsCurLayer = terrainPiece.LogixPosition.y == m_Scene.Input.CurLogicPosition.y;
+        bool IsCurLogicPosition = terrainPiece.LogicPosition == m_Scene.Input.CurLogicPosition;
+        bool IsEndLogicPosition = terrainPiece.LogicPosition == m_Scene.Input.EndLogicPosition;
+        bool IsCurLayer = terrainPiece.LogicPosition.y == m_Scene.Input.CurLogicPosition.y;
         bool IsCover = terrainPiece.ArtInfo.IsCoverBaseInfo;
 
         //最终地块
@@ -112,7 +102,7 @@ public class TerrainMakerGamePlayController
                 return color;
             }
             //可到达的周围地块
-            if(IsCurrentCanArriveTerrainPiece(terrainPiece.LogixPosition))
+            if(IsCurrentCanArriveTerrainPiece(terrainPiece.LogicPosition))
             {
                 return m_Scene.Color.Piece_ArriveAround;
             }else

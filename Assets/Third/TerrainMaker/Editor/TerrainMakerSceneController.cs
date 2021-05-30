@@ -40,13 +40,12 @@ public class TerrainMakerSceneController
     public InputInfo Input { get { return m_InputInfo; } }
 
     private GameObject m_RootTerrainGameObject; //地形根节点
-    private GameObject m_ResourceTerrainPiece;  //地块资源GameObject
     private Dictionary<Vector3, TerrainPieceInfo> LogicPosition2TerrainPieceDict; //【逻辑位置】对应【地块数据】列表 dict
 
-    private TerrainMakerTool m_Root;
+    private TerrainMakerEditorWindow m_Root;
     private EditorReousrceLoader m_EditorReousrceLoader;
 
-    public void Init(TerrainMakerTool root)
+    public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
 
@@ -109,8 +108,6 @@ public class TerrainMakerSceneController
 
     public void InitBuild()
     {
-
-
         InitDefaultInfo();
         InitCurInputInfo();
 
@@ -125,7 +122,7 @@ public class TerrainMakerSceneController
         m_RootTerrainGameObject.name = "Terrain";
     }
 
-    public void BuildTerrain(Vector3 logicPosition)
+    public void BuildTerrainPiece(Vector3 logicPosition)
     {
         if (LogicPosition2TerrainPieceDict.ContainsKey(logicPosition))
         {
@@ -141,7 +138,16 @@ public class TerrainMakerSceneController
         LogicPosition2TerrainPieceDict.Add(logicPosition, terrainPieceInfo);
     }
 
-    public void UpdateAllTerrain()
+    public void UpdateCurrentTerrainPieceArt()
+    {
+        TerrainPieceInfo current = GetCurrentTerrainPieceInfo();
+        if(current!=null)
+        {
+            UpdateTerrainArt(current);
+        }
+    }
+
+    public void UpdateTerrain()
     {
         Dictionary<Vector3, TerrainPieceInfo>.Enumerator enumerator = LogicPosition2TerrainPieceDict.GetEnumerator();
         while(enumerator.MoveNext())
@@ -155,7 +161,7 @@ public class TerrainMakerSceneController
 
     private void UpdateTerrainLogic(TerrainPieceInfo terrainPiece)
     {
-        Vector3 worldPosition = m_Root.GamePlay.LogicPositionToWorldPosition(terrainPiece.LogixPosition);
+        Vector3 worldPosition = m_Root.GamePlay.LogicPositionToWorldPosition(terrainPiece.LogicPosition);
         terrainPiece.WorldPosition = worldPosition;
     }
 
@@ -168,7 +174,34 @@ public class TerrainMakerSceneController
         Material pieceMaterial = terrainPiece.PieceMaterial;
         pieceMaterial.color = m_Root.GamePlay.LogicPositionToDynamicColor(terrainPiece);
 
-        //todo:方向块更新
+        UpdatePieceSidePosition(terrainPiece);
+    }
+
+    private void UpdatePieceSidePosition(TerrainPieceInfo terrainPiece)
+    {
+        int index = 0;
+        Dictionary<TerrainPieceDirection, bool>.Enumerator enumerator = terrainPiece.DirectionFlagDict.GetEnumerator();
+        while(enumerator.MoveNext())
+        {
+            TerrainPieceDirection direction = enumerator.Current.Key;
+            bool enable = enumerator.Current.Value;
+
+            Transform sideTransform = terrainPiece.SideTransforms[index];
+            GameObject sideGameobject = sideTransform.gameObject;
+
+            sideGameobject.SetActive(enable);
+
+            if (enable)
+            {
+                Vector3 v3Direction = m_Root.Tool.Enum2Vector3Direction[direction];
+                Vector3 sidePosition = v3Direction * m_BuildingInfo.SideShiftingValue;
+                sideTransform.localPosition = sidePosition;
+            }
+        }
+        for(;index< terrainPiece.SideTransforms.Length;index++)
+        {
+            terrainPiece.SideTransforms[index].gameObject.SetActive(false);
+        }
     }
 
 
@@ -184,6 +217,11 @@ public class TerrainMakerSceneController
             return terrainPieceInfo;
         }
         return null;
+    }
+
+    public bool HasTerrainPieceInfo(Vector3 logicPosition)
+    {
+        return LogicPosition2TerrainPieceDict.ContainsKey(logicPosition);
     }
 
 }
