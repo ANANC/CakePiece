@@ -15,8 +15,13 @@ public class TerrainMakerDefine
     public class ToolSetting    //编辑器配置
     {
         public string DefaultTerrainInfoPath;   //【默认地形配置文件】路径 初始值：DefaultTerrainInfo_DefaultPath
+
+        public List<string> SceneBuildingDirectionList;  //场景建筑文件夹路径
+        public List<string> SceneBuildingFileList;       //场景建筑文件路径
+
     }
     private ToolSetting m_ToolSetting;
+    public ToolSetting Setting { get { return m_ToolSetting; } }
 
     public class DefaultTerrainInfo    //默认地形配置
     {
@@ -87,6 +92,16 @@ public class TerrainMakerDefine
         {
             m_ToolSetting.DefaultTerrainInfoPath = DefaultTerrainInfo_DefaultPath;
         }
+
+        if(m_ToolSetting.SceneBuildingDirectionList == null)
+        {
+            m_ToolSetting.SceneBuildingDirectionList = new List<string>();
+        }
+
+        if(m_ToolSetting.SceneBuildingFileList == null)
+        {
+            m_ToolSetting.SceneBuildingFileList = new List<string>();
+        }
     }
 
 
@@ -118,6 +133,7 @@ public class TerrainMakerDefine
 
             m_CurrentDefaultTerrainInfo.GameObjectPathInfo = gameObjectPathInfo;
         }
+
 
         //建筑
         if(m_CurrentDefaultTerrainInfo.BuildingInfo == null)

@@ -57,6 +57,7 @@ public class TerrainMakerEditorWindow : EditorWindow
     public enum GUIType
     {
         Notthing,
+        EditorWindowSetting,
         Config,
         Terrain,
     }
@@ -209,13 +210,18 @@ public class TerrainMakerEditorWindow : EditorWindow
     {
         EditorGUILayout.BeginVertical("helpbox", GUILayout.Width(100), GUILayout.ExpandHeight(true));
 
+        if (GUILayout.Button("编辑器配置"))
+        {
+            m_GUIType = GUIType.EditorWindowSetting;
+        }
+
         if (GUILayout.Button("构建默认配置"))
         {
             m_Scene.InitBuild();
             m_GUIType = GUIType.Config;
         }
 
-        if (m_GUIType != GUIType.Notthing)
+        if (m_GUIType == GUIType.Config)
         {
             EditorGUILayout.Space(GUI_InfoContent_Space);
 
@@ -240,6 +246,7 @@ public class TerrainMakerEditorWindow : EditorWindow
 
     private void RightContent()
     {
+        EditorWindowSetting();
         BuildTerrainConfig();
         BuildTerrainContent();
     }
@@ -252,7 +259,99 @@ public class TerrainMakerEditorWindow : EditorWindow
         }
     }
 
-    #region 配置
+    #region 编辑器配置
+
+    private bool GUI_EditorWindowSetting_Init = false;
+    private string GUI_EditorWindowSetting_DefaultTerrainInfoPath;
+    private void EditorWindowSetting()
+    {
+        if (m_GUIType != GUIType.EditorWindowSetting)
+        {
+            return;
+        }
+
+        EditorGUILayout.BeginVertical();
+
+        GUI_EditorWindowsSetting();
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private void GUI_EditorWindowsSetting()
+    {
+        GUI_Title("编辑器配置");
+
+        // -- DefaultTerrainInfoPath
+        EditorGUILayout.BeginHorizontal();
+
+        if (!GUI_EditorWindowSetting_Init)
+        {
+            GUI_EditorWindowSetting_DefaultTerrainInfoPath = m_Define.Setting.DefaultTerrainInfoPath;
+        }
+
+        EditorGUILayout.LabelField("[默认地形配置文件]路径", GUILayout.Width(GUI_LableWidth));
+        EditorGUILayout.LabelField(GUI_EditorWindowSetting_DefaultTerrainInfoPath);
+        GUI_FileButton(
+            () =>
+            {
+                string path = __Tool_ChangePath("[默认地形配置文件]路径", GUI_EditorWindowSetting_DefaultTerrainInfoPath);
+                if (!string.IsNullOrEmpty(path) && path != GUI_EditorWindowSetting_DefaultTerrainInfoPath)
+                {
+                    m_Define.Setting.DefaultTerrainInfoPath = path;
+                    GUI_EditorWindowSetting_DefaultTerrainInfoPath = path;
+                }
+            }, null, null);
+
+
+        EditorGUILayout.EndHorizontal();
+
+        GUI_Title("场景建筑配置");
+
+        // -- SceneBuilding
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("[场景建筑文件夹]路径", GUILayout.Width(GUI_LableWidth));
+        if (GUILayout.Button("新增", GUILayout.Width(GUI_ButtonWidth)))
+        {
+            string path = __Tool_ChangePath("新增[场景建筑文件夹]路径", Application.dataPath);
+            if (!string.IsNullOrEmpty(path) && path.StartsWith(Application.dataPath))
+            {
+                path = path.Replace(Application.dataPath, string.Empty);
+                if (path.StartsWith("/"))
+                {
+                    path = path.Substring(1, path.Length - 1);
+                }
+                if (!string.IsNullOrEmpty(path))
+                {
+                    m_Define.Setting.SceneBuildingDirectionList.Add(path);
+                }
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+        if (m_Define.Setting.SceneBuildingDirectionList != null && m_Define.Setting.SceneBuildingDirectionList.Count > 0)
+        {
+            for (int index = 0; index < m_Define.Setting.SceneBuildingDirectionList.Count; index++)
+            {
+                string path = m_Define.Setting.SceneBuildingDirectionList[index];
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(path);
+                if (GUILayout.Button("X", GUILayout.Width(GUI_ButtonWidth)))
+                {
+                    m_Define.Setting.SceneBuildingDirectionList.RemoveAt(index);
+                    break;
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+        }
+
+        GUI_EditorWindowSetting_Init = true;
+    }
+
+    #endregion
+
+    #region 地形配置
 
     private float GUI_InfoContent_Space = 10;
     private Vector2 GUI_BuildTerrainConfig_ScrollView;
@@ -297,14 +396,14 @@ public class TerrainMakerEditorWindow : EditorWindow
     {
         GUI_Title("路径");
 
-        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.BeginVertical();
 
         FieldInfo[] fields = typeof(ResourcePathInfo).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
         if (fields != null)
         {
             for (int i = 0; i < fields.Length; i++)
             {
-                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginHorizontal("box");
                 FieldInfo field = fields[i];
 
                 string fieldName = field.Name;

@@ -20,8 +20,8 @@ public class TerrainMakerTool
         {Vector3.right, TerrainPieceDirection.Right},
         {Vector3.forward, TerrainPieceDirection.Forward},
         {Vector3.back, TerrainPieceDirection.Back},
-
     };
+
     public Dictionary<TerrainPieceDirection, Vector3> Enum2Vector3Direction { get { return m_Enum2V3DirectionDict; } }
     public Dictionary<Vector3, TerrainPieceDirection> V32EnumDirectionDict { get { return m_V32EnumDirectironDict; } }
 
