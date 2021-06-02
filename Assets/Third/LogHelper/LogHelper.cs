@@ -213,7 +213,13 @@ public class LogHelper
             FieldInfo field = fields[i];
 
             var fieldValue = field.GetValue(obj);
-            if (fieldValue.GetType().IsValueType || fieldValue.GetType().Equals(typeof(System.String)) || fieldValue.GetType().IsEnum)
+            if(fieldValue == null)
+            {
+                continue;
+            }
+
+            var fieldType = fieldValue.GetType();
+            if (fieldType.IsValueType || fieldType.Equals(typeof(System.String)) || fieldType.IsEnum)
             {
                 string fieldName = field.Name;
                 for (int index = 0; index < m_Obj2StrInputIndex+2; index++)
@@ -221,6 +227,21 @@ public class LogHelper
                     m_Obj2StrStringBuilder.Append("     ");
                 }
                 m_Obj2StrStringBuilder.AppendFormat("{0}£º{1}\n", fieldName, fieldValue);
+            }
+            else if(fieldType.IsArray)
+            {
+                string fieldName = field.Name;
+                IEnumerable enumerable = (IEnumerable)fieldValue;
+                var fieldEnumerable = enumerable.GetEnumerator();
+                while(fieldEnumerable.MoveNext())
+                {
+                    var current = fieldEnumerable.Current;
+                    for (int index = 0; index < m_Obj2StrInputIndex + 2; index++)
+                    {
+                        m_Obj2StrStringBuilder.Append("     ");
+                    }
+                    m_Obj2StrStringBuilder.AppendFormat("{0}£º{1}\n", fieldName, current);
+                }
             }
             else
             {

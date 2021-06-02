@@ -294,7 +294,7 @@ public class TerrainMakerEditorWindow : EditorWindow
         GUI_FileButton(
             () =>
             {
-                string path = __Tool_ChangePath("[默认地形配置文件]路径", GUI_EditorWindowSetting_DefaultTerrainInfoPath);
+                string path = __Tool_OpenFolderPanel("[默认地形配置文件]路径", GUI_EditorWindowSetting_DefaultTerrainInfoPath);
                 if (!string.IsNullOrEmpty(path) && path != GUI_EditorWindowSetting_DefaultTerrainInfoPath)
                 {
                     m_Define.Setting.DefaultTerrainInfoPath = path;
@@ -305,26 +305,20 @@ public class TerrainMakerEditorWindow : EditorWindow
 
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         GUI_Title("场景建筑配置");
 
-        // -- SceneBuilding
+        // -- SceneBuildingDirectionList
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("[场景建筑文件夹]路径", GUILayout.Width(GUI_LableWidth));
         if (GUILayout.Button("新增", GUILayout.Width(GUI_ButtonWidth)))
         {
-            string path = __Tool_ChangePath("新增[场景建筑文件夹]路径", Application.dataPath);
-            if (!string.IsNullOrEmpty(path) && path.StartsWith(Application.dataPath))
+            string path = __Tool_OpenFolderPanel("新增[场景建筑文件夹]路径", Application.dataPath);
+            if (!string.IsNullOrEmpty(path))
             {
-                path = path.Replace(Application.dataPath, string.Empty);
-                if (path.StartsWith("/"))
-                {
-                    path = path.Substring(1, path.Length - 1);
-                }
-                if (!string.IsNullOrEmpty(path))
-                {
-                    m_Define.Setting.SceneBuildingDirectionList.Add(path);
-                }
+                m_Define.Setting.SceneBuildingDirectionList.Add(path);
             }
         }
         EditorGUILayout.EndHorizontal();
@@ -335,7 +329,7 @@ public class TerrainMakerEditorWindow : EditorWindow
             {
                 string path = m_Define.Setting.SceneBuildingDirectionList[index];
 
-                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginHorizontal("helpbox");
                 EditorGUILayout.LabelField(path);
                 if (GUILayout.Button("X", GUILayout.Width(GUI_ButtonWidth)))
                 {
@@ -345,6 +339,40 @@ public class TerrainMakerEditorWindow : EditorWindow
                 EditorGUILayout.EndHorizontal();
             }
         }
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
+        // -- SceneBuildingFileList
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("[场景建筑文件]路径", GUILayout.Width(GUI_LableWidth));
+        if (GUILayout.Button("新增", GUILayout.Width(GUI_ButtonWidth)))
+        {
+            string path = __Tool_OpenFilePanel("新增[场景建筑文件]路径", Application.dataPath);
+            if (!string.IsNullOrEmpty(path))
+            {
+                m_Define.Setting.SceneBuildingFileList.Add(path);
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+        if (m_Define.Setting.SceneBuildingFileList != null && m_Define.Setting.SceneBuildingFileList.Count > 0)
+        {
+            for (int index = 0; index < m_Define.Setting.SceneBuildingFileList.Count; index++)
+            {
+                string path = m_Define.Setting.SceneBuildingFileList[index];
+
+                EditorGUILayout.BeginHorizontal("helpbox");
+                EditorGUILayout.LabelField(path);
+                if (GUILayout.Button("X", GUILayout.Width(GUI_ButtonWidth)))
+                {
+                    m_Define.Setting.SceneBuildingFileList.RemoveAt(index);
+                    break;
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+        }
+
 
         GUI_EditorWindowSetting_Init = true;
     }
@@ -403,7 +431,7 @@ public class TerrainMakerEditorWindow : EditorWindow
         {
             for (int i = 0; i < fields.Length; i++)
             {
-                EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.BeginHorizontal("helpbox");
                 FieldInfo field = fields[i];
 
                 string fieldName = field.Name;
@@ -414,8 +442,8 @@ public class TerrainMakerEditorWindow : EditorWindow
                 GUI_FileButton(
                     () =>
                     {
-                        string path = __Tool_ChangePath(fieldName, fieldValue);
-                        if (path != fieldValue)
+                        string path = __Tool_OpenFolderPanel(fieldName, fieldValue);
+                        if (!string.IsNullOrEmpty(path) && path != fieldValue)
                         {
                             field.SetValue(m_Scene.ResourcePath, path);
                         }
@@ -821,6 +849,15 @@ public class TerrainMakerEditorWindow : EditorWindow
         GUI_UpdateCurTerrainPiece_Init = true;
     }
 
+    private void GUI_CreateBuilding()
+    {
+        GUI_Title("创建建筑");
+
+        //todo:确定建筑放的位置，获取当前全部的建筑
+
+        //todo:添加建筑，根据tool的direction和file可以选择
+    }
+
     private void BuildScene()
     {
         m_Scene.UpdateTerrain();
@@ -896,21 +933,49 @@ public class TerrainMakerEditorWindow : EditorWindow
         }
     }
 
-    private string __Tool_ChangePath(string title,string sourcePath)
+    private string __Tool_OpenFilePanel(string title, string sourcePath)
+    {
+        string path = EditorUtility.OpenFilePanel(title, Application.dataPath + "/" + sourcePath, "");
+        if (!string.IsNullOrEmpty(path))
+        {
+            if (!path.StartsWith(Application.dataPath))
+            {
+                EditorUtility.DisplayDialog("修改根目录", "目录路径超出范围,请选择Assets目录下的路径！", "确定");
+                return string.Empty;
+            }
+
+            path = path.Replace(Application.dataPath, string.Empty);
+            if (path.StartsWith("/"))
+            {
+                path = path.Substring(1, path.Length - 1);
+            }
+
+            return path;
+        }
+        return string.Empty;
+    }
+
+
+    private string __Tool_OpenFolderPanel(string title,string sourcePath)
     {
         string path = EditorUtility.OpenFolderPanel(title, Application.dataPath + "/" + sourcePath, "");
         if (!string.IsNullOrEmpty(path))
         {
             if (!path.StartsWith(Application.dataPath))
             {
-                EditorUtility.DisplayDialog("修改根目录", "目录路径超出范围,请放置到Assets目录下！", "确定");
-                return sourcePath;
+                EditorUtility.DisplayDialog("修改根目录", "目录路径超出范围,请选择Assets目录下的路径！", "确定");
+                return string.Empty;
             }
 
-            path = path.Replace(Application.dataPath + "/", string.Empty);
+            path = path.Replace(Application.dataPath, string.Empty);
+            if (path.StartsWith("/"))
+            {
+                path = path.Substring(1, path.Length - 1);
+            }
+
             return path;
         }
-        return sourcePath;
+        return string.Empty;
     }
 
     // -- logic
