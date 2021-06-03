@@ -1169,7 +1169,7 @@ public class TerrainMakerEditorWindow : EditorWindow
                 }
                 string filePath =  fileParentPath + "/" + fileName;
 
-                LogHelper.Trace?.Log("ItemSelected", filePath);
+                LogHelper.Trace?.Log("TerrainMakerTool","ItemSelected", filePath);
 
                 m_Instance.GUI_CreateBuilding_WaitCreateBuildingPathList.Add(filePath);
             }
