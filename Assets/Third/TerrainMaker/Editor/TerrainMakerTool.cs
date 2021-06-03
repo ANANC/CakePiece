@@ -1,3 +1,4 @@
+using ANFramework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,13 +28,23 @@ public class TerrainMakerTool
 
     private TerrainMakerEditorWindow m_Root;
 
+    private EditorReousrceLoader m_EditorReousrceLoader;
+
     public void Init(TerrainMakerEditorWindow root)
     {
         root = m_Root;
+
+        m_EditorReousrceLoader = new EditorReousrceLoader();
+        m_EditorReousrceLoader.Init();
     }
 
     public void UnInit()
     {
 
+    }
+
+    public T LoadResource<T>(string path) where T : Object
+    {
+        return m_EditorReousrceLoader.LoadResource<T>(path);
     }
 }

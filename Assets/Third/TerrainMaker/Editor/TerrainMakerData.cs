@@ -22,6 +22,7 @@ public class TerrainMakerData
         public string SideMaterialPath;
         public string DownPath;
         public string UpPath;
+        public string BuildingRootPath;
     }
 
     public class BuildingInfo : CloneHelper.BaseCloneObject  //建筑
@@ -87,15 +88,25 @@ public class TerrainMakerData
 
         public Transform UpFlagTransform;   //向上标记 transfrom
         public Transform DownFlagTransform; //向下标记 transform
+
+        public Transform BuildingRootTransform; //建筑根节点 transform
     }
 
     public class TerrainPieceArtInfo    //地块表现信息
     {
         public bool IsShowPiece;        //是否显示地块
 
-        public List<GameObject> BuildingList;   //建筑列表
+        public Dictionary<GameObject, TerrainPieceBuildingInfo> BuildingDict;   //建筑列表
 
         public bool IsCoverBaseInfo;    //是否覆盖基本信息 使用当前信息
         public Color MyColor;           //自己的颜色
+    }
+
+    public class TerrainPieceBuildingInfo
+    {
+        public string ResourcePath;
+        public Vector3 Position;
+        public Vector3 Scale;
+        public Vector3 Rotation;
     }
 }

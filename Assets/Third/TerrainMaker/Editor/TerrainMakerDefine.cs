@@ -130,6 +130,7 @@ public class TerrainMakerDefine
             gameObjectPathInfo.SideMaterialPath = "Tag";
             gameObjectPathInfo.DownPath = "Down";
             gameObjectPathInfo.UpPath = "Up";
+            gameObjectPathInfo.BuildingRootPath = "Building";
 
             m_CurrentDefaultTerrainInfo.GameObjectPathInfo = gameObjectPathInfo;
         }

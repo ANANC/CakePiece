@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using static TerrainMakerData;
 
@@ -43,7 +44,6 @@ public class TerrainMakerSceneController
     private Dictionary<Vector3, TerrainPieceInfo> LogicPosition2TerrainPieceDict; //【逻辑位置】对应【地块数据】列表 dict
 
     private TerrainMakerEditorWindow m_Root;
-    private EditorReousrceLoader m_EditorReousrceLoader;
 
     public void Init(TerrainMakerEditorWindow root)
     {
@@ -52,9 +52,6 @@ public class TerrainMakerSceneController
         LogicPosition2TerrainPieceDict = new Dictionary<Vector3, TerrainPieceInfo>();
 
         m_InputInfo = new InputInfo();
-
-        m_EditorReousrceLoader = new EditorReousrceLoader();
-        m_EditorReousrceLoader.Init();
     }
 
     public void UnInit()
@@ -117,7 +114,7 @@ public class TerrainMakerSceneController
             GameObject.DestroyImmediate(oldRoot);
         }
 
-        m_RootTerrainGameObject = m_EditorReousrceLoader.LoadResource<GameObject>(m_ResourcePathInfo.TerrainPath);
+        m_RootTerrainGameObject = m_Root.Tool.LoadResource<GameObject>(m_ResourcePathInfo.TerrainPath);
         m_RootTerrainGameObject = GameObject.Instantiate(m_RootTerrainGameObject);
         m_RootTerrainGameObject.name = "Terrain";
     }

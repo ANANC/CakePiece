@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using static TerrainMakerData;
 
@@ -210,34 +212,38 @@ public class TerrainMakerEditorWindow : EditorWindow
     {
         EditorGUILayout.BeginVertical("helpbox", GUILayout.Width(100), GUILayout.ExpandHeight(true));
 
+        GUI.color = m_GUIType == GUIType.EditorWindowSetting ? Color.gray : Color.white;
         if (GUILayout.Button("编辑器配置"))
         {
             m_GUIType = GUIType.EditorWindowSetting;
         }
 
+        GUI.color = (m_GUIType == GUIType.Config || m_GUIType == GUIType.Terrain) ? Color.gray : Color.white;
         if (GUILayout.Button("构建默认配置"))
         {
             m_Scene.InitBuild();
             m_GUIType = GUIType.Config;
         }
 
-        if (m_GUIType == GUIType.Config)
+        if (m_GUIType == GUIType.Config || m_GUIType == GUIType.Terrain)
         {
             EditorGUILayout.Space(GUI_InfoContent_Space);
 
-            GUI.color = m_GUIType == GUIType.Config? Color.gray:Color.white;
+            GUI.color = m_GUIType == GUIType.Config ? Color.gray : Color.white;
             if (GUILayout.Button("配置"))
             {
                 m_GUIType = GUIType.Config;
             }
+
             GUI.color = m_GUIType == GUIType.Terrain ? Color.gray : Color.white;
             if (GUILayout.Button("地形"))
             {
                 m_GUIType = GUIType.Terrain;
             }
 
-            GUI.color = Color.white;
         }
+
+        GUI.color = Color.white;
 
         EditorGUILayout.Space(GUI_InfoContent_Space);
 
@@ -752,6 +758,10 @@ public class TerrainMakerEditorWindow : EditorWindow
 
         EditorGUILayout.Space(GUI_InfoContent_Space);
 
+        GUI_CreateBuilding();
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
         EditorGUILayout.EndVertical();
     }
 
@@ -849,13 +859,64 @@ public class TerrainMakerEditorWindow : EditorWindow
         GUI_UpdateCurTerrainPiece_Init = true;
     }
 
+
+    private List<string> GUI_CreateBuilding_WaitCreateBuildingPathList = new List<string>();
     private void GUI_CreateBuilding()
     {
-        GUI_Title("创建建筑");
+        TerrainPieceInfo terrainPieceInfo = m_Scene.GetCurrentTerrainPieceInfo();
+        if (terrainPieceInfo == null)
+        {
+            return;
+        }
 
-        //todo:确定建筑放的位置，获取当前全部的建筑
+        GUI_Title("地块建筑");
 
-        //todo:添加建筑，根据tool的direction和file可以选择
+        if(GUILayout.Button("创建建筑",GUILayout.Width(GUI_ButtonWidth)))
+        {
+            var dropdown = new BuildingDropdown(new AdvancedDropdownState());
+            dropdown.Show( new Rect(0,0,400,500));
+        }
+
+        if(GUI_CreateBuilding_WaitCreateBuildingPathList.Count>0)
+        {
+            for(int index = 0;index<GUI_CreateBuilding_WaitCreateBuildingPathList.Count;index++)
+            {
+                string filePath = GUI_CreateBuilding_WaitCreateBuildingPathList[index];
+
+
+                GameObject buildingResource = Tool.LoadResource<GameObject>(filePath);
+                GameObject buildingGameObject = GameObject.Instantiate(buildingResource);
+                Transform buildingTransfrom = buildingGameObject.transform;
+
+                buildingTransfrom.SetParent(terrainPieceInfo.BuildingRootTransform);
+
+                //todo:进行初始化，创建TerrainPieceBuildingInfo
+                buildingTransfrom.localPosition = Vector3.zero;
+            }
+
+            GUI_CreateBuilding_WaitCreateBuildingPathList.Clear();
+        }
+
+        //显示现有的
+        Dictionary<GameObject, TerrainPieceBuildingInfo>.Enumerator enumerator = terrainPieceInfo.ArtInfo.BuildingDict.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            GameObject gameObject = enumerator.Current.Key;
+            Transform transform = gameObject.transform;
+            TerrainPieceBuildingInfo terrainPieceBuildingInfo = enumerator.Current.Value;
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(transform.name);
+            if (GUILayout.Button("X", GUILayout.Width(GUI_ButtonWidth)))
+            {
+                GameObject.DestroyImmediate(gameObject);
+                terrainPieceInfo.ArtInfo.BuildingDict.Remove(gameObject);
+                break;
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+
     }
 
     private void BuildScene()
@@ -994,4 +1055,125 @@ public class TerrainMakerEditorWindow : EditorWindow
     }
 
 
+    public class BuildingDropdown : AdvancedDropdown
+    {
+        private Dictionary<string, string> Child2ParentDict;
+
+        public BuildingDropdown(AdvancedDropdownState state) : base(state)
+        {
+            Child2ParentDict = new Dictionary<string, string>();
+        }
+
+        protected override AdvancedDropdownItem BuildRoot()
+        {
+            Child2ParentDict.Clear();
+
+            var root = new AdvancedDropdownItem("地块建筑选择");
+
+            if (m_Instance == null)
+            {
+                return root;
+            }
+
+            TerrainPieceInfo terrainPieceInfo = m_Instance.m_Scene.GetCurrentTerrainPieceInfo();
+            if (terrainPieceInfo == null)
+            {
+                return root;
+            }
+
+            TerrainMakerDefine.ToolSetting toolSetting = m_Instance.m_Define.Setting;
+
+            List<string> directionList = toolSetting.SceneBuildingDirectionList;
+            if (directionList != null && directionList.Count >0)
+            {
+                var directionHalf = new AdvancedDropdownItem("文件夹");
+                root.AddChild(directionHalf);
+
+                for (int index = 0;index< directionList.Count;index++)
+                {
+                    string directionPath = directionList[index];
+
+                    DirectoryInfo directoryInfo = new DirectoryInfo("Assets/"+directionPath);
+                    FileInfo[] fileInfos = directoryInfo.GetFiles();
+
+                    if (fileInfos.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    var directionItem = new AdvancedDropdownItem(directionPath);
+
+                    for(int j = 0;j<fileInfos.Length;j++)
+                    {
+                        string fileName = fileInfos[j].Name;
+                        if(fileName.EndsWith("meta"))
+                        {
+                            continue;
+                        }
+
+                        var fileItem = new AdvancedDropdownItem(fileName);
+                        directionItem.AddChild(fileItem);
+                        directionItem.AddSeparator();
+
+                        Child2ParentDict.Add(fileName, directionPath);
+                    }
+
+                    directionHalf.AddChild(directionItem);
+                }
+            }
+
+            root.AddSeparator();
+
+            List<string> fileList = toolSetting.SceneBuildingFileList;
+            if(fileList != null && fileList.Count > 0)
+            {
+                var fileHalf = new AdvancedDropdownItem("文件");
+                root.AddChild(fileHalf);
+
+                for (int index = 0;index< fileList.Count;index++)
+                {
+                    string filePath = fileList[index];
+                    string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                    var fileItem = new AdvancedDropdownItem(fileName);
+                    fileHalf.AddChild(fileItem);
+                    fileHalf.AddSeparator();
+
+                    Child2ParentDict.Add(fileName, IOHelper.GetDirectoryPath(filePath));
+                }
+            }
+            return root;
+        }
+
+        protected override void ItemSelected(AdvancedDropdownItem item)
+        {
+            if (m_Instance == null)
+            {
+                return;
+            }
+
+            TerrainPieceInfo terrainPieceInfo = m_Instance.m_Scene.GetCurrentTerrainPieceInfo();
+            if (terrainPieceInfo == null)
+            {
+                return;
+            }
+
+            string fileName = item.name;
+            string fileParentPath;
+            if(Child2ParentDict.TryGetValue(fileName,out fileParentPath))
+            {
+                string extension = Path.GetExtension(fileName);
+                if (!string.IsNullOrEmpty(extension))
+                {
+                    fileName = fileName.Replace(extension, string.Empty);
+                }
+                string filePath =  fileParentPath + "/" + fileName;
+
+                LogHelper.Trace?.Log("ItemSelected", filePath);
+
+                m_Instance.GUI_CreateBuilding_WaitCreateBuildingPathList.Add(filePath);
+            }
+
+        }
+    }
 }

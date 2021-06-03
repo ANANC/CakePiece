@@ -9,16 +9,11 @@ public class TerrainMakerPieceFactory
     private TerrainMakerEditorWindow m_Root;
     private TerrainMakerSceneController m_Scene { get { return m_Root.Scene; } }
 
-    private EditorReousrceLoader m_EditorReousrceLoader;
-
     private GameObject m_ResourceTerrainPiece;  //µØ¿é×ÊÔ´GameObject
 
     public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
-
-        m_EditorReousrceLoader = new EditorReousrceLoader();
-        m_EditorReousrceLoader.Init();
     }
 
     public void UnInit()
@@ -36,7 +31,7 @@ public class TerrainMakerPieceFactory
 
         if (m_ResourceTerrainPiece == null)
         {
-            m_ResourceTerrainPiece = m_EditorReousrceLoader.LoadResource<GameObject>(m_Scene.ResourcePath.TerrainPiecePath);
+            m_ResourceTerrainPiece = m_Root.Tool.LoadResource<GameObject>(m_Scene.ResourcePath.TerrainPiecePath);
         }
 
         //logic
@@ -83,11 +78,15 @@ public class TerrainMakerPieceFactory
         Transform downFlagTransform = terrainPieceTransform.Find(m_Scene.GameObjectPath.DownPath);
         terrainPieceInfo.DownFlagTransform = downFlagTransform;
 
+        Transform buildingRootTransform = terrainPieceTransform.Find(m_Scene.GameObjectPath.BuildingRootPath);
+        terrainPieceInfo.BuildingRootTransform = buildingRootTransform;
+        
+
         // artInfo
         TerrainPieceArtInfo terrainPieceArtInfo = new TerrainPieceArtInfo();
         terrainPieceArtInfo.IsShowPiece = true;
         terrainPieceArtInfo.IsCoverBaseInfo = false;
-        terrainPieceArtInfo.BuildingList = new List<GameObject>();
+        terrainPieceArtInfo.BuildingDict = new Dictionary<GameObject, TerrainPieceBuildingInfo>();
 
         terrainPieceInfo.ArtInfo = terrainPieceArtInfo;
 
