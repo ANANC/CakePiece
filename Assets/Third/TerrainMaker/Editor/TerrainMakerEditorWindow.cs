@@ -212,22 +212,21 @@ public class TerrainMakerEditorWindow : EditorWindow
     {
         EditorGUILayout.BeginVertical("helpbox", GUILayout.Width(100), GUILayout.ExpandHeight(true));
 
+        EditorGUILayout.LabelField("编辑器",GUILayout.Width(GUI_LableWidth));
+
         GUI.color = m_GUIType == GUIType.EditorWindowSetting ? Color.gray : Color.white;
         if (GUILayout.Button("编辑器配置"))
         {
             m_GUIType = GUIType.EditorWindowSetting;
         }
 
-        GUI.color = (m_GUIType == GUIType.Config || m_GUIType == GUIType.Terrain) ? Color.gray : Color.white;
-        if (GUILayout.Button("构建默认配置"))
-        {
-            m_Scene.InitBuild();
-            m_GUIType = GUIType.Config;
-        }
+        EditorGUILayout.Space(GUI_InfoContent_Space);
 
-        if (m_GUIType == GUIType.Config || m_GUIType == GUIType.Terrain)
+        if (m_Scene.IsBuiling)
         {
-            EditorGUILayout.Space(GUI_InfoContent_Space);
+            GUI.color = Color.white;
+
+            EditorGUILayout.LabelField("当前地形配置", GUILayout.Width(GUI_LableWidth));
 
             GUI.color = m_GUIType == GUIType.Config ? Color.gray : Color.white;
             if (GUILayout.Button("配置"))
@@ -240,7 +239,6 @@ public class TerrainMakerEditorWindow : EditorWindow
             {
                 m_GUIType = GUIType.Terrain;
             }
-
         }
 
         GUI.color = Color.white;
@@ -257,11 +255,40 @@ public class TerrainMakerEditorWindow : EditorWindow
         BuildTerrainContent();
     }
 
+    private float GUI_MenuButton_Width = 100;
+
     private void BottomMenuLine()
     {
-        if(GUILayout.Button("重建",GUILayout.Width(GUI_ButtonWidth)))
+        if (GUILayout.Button("构建默认配置",GUILayout.Width(GUI_MenuButton_Width)))
         {
-            BuildScene();
+            bool isInitBuild = false;
+            if (m_Scene.IsBuiling)
+            {
+                if (EditorUtility.DisplayDialog("重建默认配置", "当前存在未保存的地形配置，确定要清理重建吗？", "确定", "取消"))
+                {
+                    isInitBuild = true;
+                }
+            }
+            else
+            {
+                isInitBuild = true;
+            }
+
+            if (isInitBuild)
+            {
+                m_Scene.InitBuild();
+                m_GUIType = GUIType.Config;
+            }
+        }
+
+        EditorGUILayout.Space(GUI_InfoContent_Space);
+
+        if (m_Scene.IsBuiling)
+        {
+            if (GUILayout.Button("刷新场景", GUILayout.Width(GUI_MenuButton_Width)))
+            {
+                BuildScene();
+            }
         }
     }
 
@@ -775,7 +802,8 @@ public class TerrainMakerEditorWindow : EditorWindow
         GUI_CreateTerrainPiece_CreateLogicPosition = EditorGUILayout.Vector3IntField("逻辑位置",GUI_CreateTerrainPiece_CreateLogicPosition);
         if(GUILayout.Button("创建",GUILayout.Width(GUI_ButtonWidth)))
         {
-            m_Scene.BuildTerrainPiece(GUI_CreateTerrainPiece_CreateLogicPosition);
+            m_Scene.CreateTerrainPiece(GUI_CreateTerrainPiece_CreateLogicPosition);
+            SetCurrentSelectPiece(GUI_CreateTerrainPiece_CreateLogicPosition);
         }
 
         EditorGUILayout.EndHorizontal();
@@ -856,6 +884,8 @@ public class TerrainMakerEditorWindow : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
 
+        //todo:设置可行走
+
         GUI_UpdateCurTerrainPiece_Init = true;
     }
 
@@ -883,15 +913,7 @@ public class TerrainMakerEditorWindow : EditorWindow
             {
                 string filePath = GUI_CreateBuilding_WaitCreateBuildingPathList[index];
 
-
-                GameObject buildingResource = Tool.LoadResource<GameObject>(filePath);
-                GameObject buildingGameObject = GameObject.Instantiate(buildingResource);
-                Transform buildingTransfrom = buildingGameObject.transform;
-
-                buildingTransfrom.SetParent(terrainPieceInfo.BuildingRootTransform);
-
-                //todo:进行初始化，创建TerrainPieceBuildingInfo
-                buildingTransfrom.localPosition = Vector3.zero;
+                m_Scene.CreateBuilding(filePath);
             }
 
             GUI_CreateBuilding_WaitCreateBuildingPathList.Clear();

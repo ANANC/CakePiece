@@ -152,8 +152,8 @@ public class TerrainMakerDefine
             buildingInfo.IntervalSize.y = 1.6f;
             buildingInfo.IntervalSize.z = 1;
 
-            //地块方向块偏移值
-            buildingInfo.SideShiftingValue = 1.2f;
+            //地块方向块偏移值 (从中心点到边缘的方向）
+            buildingInfo.SideShiftingValue = 0.35f;
 
             m_CurrentDefaultTerrainInfo.BuildingInfo = buildingInfo;
         }

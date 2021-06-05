@@ -45,6 +45,9 @@ public class TerrainMakerSceneController
 
     private TerrainMakerEditorWindow m_Root;
 
+    private bool m_IsBuiling;
+    public bool IsBuiling { get { return m_IsBuiling; } }
+
     public void Init(TerrainMakerEditorWindow root)
     {
         m_Root = root;
@@ -52,6 +55,8 @@ public class TerrainMakerSceneController
         LogicPosition2TerrainPieceDict = new Dictionary<Vector3, TerrainPieceInfo>();
 
         m_InputInfo = new InputInfo();
+
+        m_IsBuiling = false;
     }
 
     public void UnInit()
@@ -105,6 +110,8 @@ public class TerrainMakerSceneController
 
     public void InitBuild()
     {
+        m_IsBuiling = true;
+
         InitDefaultInfo();
         InitCurInputInfo();
 
@@ -119,7 +126,9 @@ public class TerrainMakerSceneController
         m_RootTerrainGameObject.name = "Terrain";
     }
 
-    public void BuildTerrainPiece(Vector3 logicPosition)
+    #region µØ¿é
+
+    public void CreateTerrainPiece(Vector3 logicPosition)
     {
         if (LogicPosition2TerrainPieceDict.ContainsKey(logicPosition))
         {
@@ -194,6 +203,8 @@ public class TerrainMakerSceneController
                 Vector3 sidePosition = v3Direction * m_BuildingInfo.SideShiftingValue;
                 sideTransform.localPosition = sidePosition;
             }
+
+            index += 1;
         }
         for(;index< terrainPiece.SideTransforms.Length;index++)
         {
@@ -221,4 +232,26 @@ public class TerrainMakerSceneController
         return LogicPosition2TerrainPieceDict.ContainsKey(logicPosition);
     }
 
+    #endregion
+
+    #region ½¨Öþ
+
+    public void CreateBuilding(string filePath)
+    {
+        TerrainPieceInfo terrainPieceInfo = GetCurrentTerrainPieceInfo();
+
+        GameObject buildingResource = m_Root.Tool.LoadResource<GameObject>(filePath);
+        GameObject buildingGameObject = GameObject.Instantiate(buildingResource);
+        Transform buildingTransfrom = buildingGameObject.transform;
+
+        buildingTransfrom.SetParent(terrainPieceInfo.BuildingRootTransform);
+        buildingTransfrom.localPosition = Vector3.zero;
+
+        TerrainPieceBuildingInfo terrainPieceBuildingInfo = new TerrainPieceBuildingInfo();
+        terrainPieceBuildingInfo.ResourcePath = filePath;
+
+        terrainPieceInfo.ArtInfo.BuildingDict.Add(buildingGameObject, terrainPieceBuildingInfo);
+    }
+
+    #endregion
 }

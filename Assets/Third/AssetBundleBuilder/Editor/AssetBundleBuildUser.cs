@@ -46,6 +46,7 @@ public class AssetBundleBuildUser
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.EF2O, resourcePath + "/UI", "UI");
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.EF2O, resourcePath + "/Prefab", "Prefab");
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.D2O, resourcePath + "/Music", "Music");
+        m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.D2O, resourcePath + "/Texture", "Texture");
         m_Builder.AddConfigure(AssetBundleBuilder.ConfigureType.EF2O, "Test/SimpleNaturePack/Prefabs");
 
     }
