@@ -59,6 +59,13 @@ public class TerrainMakerData
         public Color Side_Other;    //非站立地块的指向片颜色
     }
 
+    public class SceneArtInfo : CloneHelper.BaseCloneObject //场景表现
+    {
+        public int FirstFloorShaderLayer;     //首逻辑层的shader层级
+        public int FloorShaderLayerInterval;  //逻辑层之间shader层级间隔
+    }
+
+
     //-- 逻辑数据
 
     public enum TerrainPieceDirection
@@ -67,6 +74,8 @@ public class TerrainMakerData
         Right,      // x = -1
         Forward,    // z = 1
         Back,       // z = -1
+        Up,         // y = 1
+        Down,       // y = -1
     }
 
     public class TerrainPieceInfo   //地块基本信息
@@ -77,6 +86,7 @@ public class TerrainMakerData
         public TerrainPieceArtInfo ArtInfo; //美术表现
 
         public Dictionary<TerrainPieceDirection, bool> DirectionFlagDict;   //方向标记列表 dict
+        public Dictionary<TerrainPieceDirection, int> DirectionMeasureDict;
 
         public GameObject GameObject;   //gameobject
         public Transform Transform;     //tranform
@@ -102,11 +112,21 @@ public class TerrainMakerData
         public Color MyColor;           //自己的颜色
     }
 
-    public class TerrainPieceBuildingInfo
+    public class TerrainPieceBuildingInfo   //地块建筑信息
     {
-        public string ResourcePath;
+        public string ResourcePath;     //资源路径
         public Vector3 Position;
         public Vector3 Scale;
         public Vector3 Rotation;
     }
+
+    public enum FloorShaderLayer    //逻辑层内shader层层级
+    {
+        Expand = 0,     //扩展
+        Player = 1,     //玩家
+        Building = 2,   //建筑
+        PieceSide = 3,  //地块方向
+        Piece = 4,      //地块
+    }
+
 }

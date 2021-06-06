@@ -30,6 +30,9 @@ public class TerrainMakerSceneController
     private ColorInfo m_ColorInfo;
     public ColorInfo Color { get { return m_ColorInfo; } }
 
+    private SceneArtInfo m_SceneArtInfo;
+    public SceneArtInfo SceneArt { get { return m_SceneArtInfo; } }
+
     //-- 逻辑数据
 
     public class InputInfo  //输入数据
@@ -81,6 +84,7 @@ public class TerrainMakerSceneController
         m_GamePlayInfo = defaultTerrainInfo.GamePlayInfo.Clone() as GamePlayInfo;
         m_TweenInfo = defaultTerrainInfo.TweenInfo.Clone() as TweenInfo;
         m_ColorInfo = defaultTerrainInfo.ColorInfo.Clone() as ColorInfo;
+        m_SceneArtInfo = defaultTerrainInfo.SceneArtInfo.Clone() as SceneArtInfo;
 
         LogHelper.Trace?.Log("TerrainMakerTool", "InitDefaultInfo.",
             LogHelper.Object2String(m_ResourcePathInfo),
@@ -88,7 +92,8 @@ public class TerrainMakerSceneController
             LogHelper.Object2String(m_BuildingInfo),
             LogHelper.Object2String(m_GamePlayInfo),
             LogHelper.Object2String(m_TweenInfo),
-            LogHelper.Object2String(m_ColorInfo)
+            LogHelper.Object2String(m_ColorInfo),
+            LogHelper.Object2String(m_SceneArtInfo)
             );
     }
 
@@ -180,7 +185,12 @@ public class TerrainMakerSceneController
         Material pieceMaterial = terrainPiece.PieceMaterial;
         pieceMaterial.color = m_Root.GamePlay.LogicPositionToDynamicColor(terrainPiece);
 
+        int pieceShaderLayer = m_Root.GamePlay.GetFloorShaderTargerLayer((int)terrainPiece.LogicPosition.y, FloorShaderLayer.Piece);
+        pieceMaterial.renderQueue = pieceShaderLayer;
+
         UpdatePieceSidePosition(terrainPiece);
+
+        UpdatePieceBuilding(terrainPiece);
     }
 
     private void UpdatePieceSidePosition(TerrainPieceInfo terrainPiece)
@@ -192,23 +202,99 @@ public class TerrainMakerSceneController
             TerrainPieceDirection direction = enumerator.Current.Key;
             bool enable = enumerator.Current.Value;
 
-            Transform sideTransform = terrainPiece.SideTransforms[index];
-            GameObject sideGameobject = sideTransform.gameObject;
-
-            sideGameobject.SetActive(enable);
-
-            if (enable)
+            if (direction == TerrainPieceDirection.Up)
             {
-                Vector3 v3Direction = m_Root.Tool.Enum2Vector3Direction[direction];
-                Vector3 sidePosition = v3Direction * m_BuildingInfo.SideShiftingValue;
-                sideTransform.localPosition = sidePosition;
+                terrainPiece.UpFlagTransform.gameObject.SetActive(enable);
             }
+            else if (direction == TerrainPieceDirection.Down)
+            {
+                terrainPiece.DownFlagTransform.gameObject.SetActive(enable);
+            }
+            else
+            {
+                Transform sideTransform = terrainPiece.SideTransforms[index];
+                GameObject sideGameobject = sideTransform.gameObject;
 
-            index += 1;
+                sideGameobject.SetActive(enable);
+
+                if (enable)
+                {
+                    Vector3 v3Direction = m_Root.Tool.Enum2Vector3Direction[direction];
+                    Vector3 sidePosition = v3Direction * m_BuildingInfo.SideShiftingValue;
+                    sideTransform.localPosition = sidePosition;
+
+                    Material material = terrainPiece.SideMaterials[index];
+                    int shaderLayer = m_Root.GamePlay.GetFloorShaderTargerLayer((int)terrainPiece.LogicPosition.y, FloorShaderLayer.PieceSide);
+                    material.renderQueue = shaderLayer;
+                }
+
+                index += 1;
+            }
         }
-        for(;index< terrainPiece.SideTransforms.Length;index++)
+    }
+
+    private void UpdatePieceBuilding(TerrainPieceInfo terrainPiece)
+    {
+        TerrainPieceInfo floorTerrainPieceInfo = GetCurrentTerrainPieceInfo();
+        bool isInFloor = false;
+        if(floorTerrainPieceInfo !=null)
         {
-            terrainPiece.SideTransforms[index].gameObject.SetActive(false);
+            isInFloor = terrainPiece.LogicPosition.y == floorTerrainPieceInfo.LogicPosition.y;
+        }
+
+        Dictionary<GameObject, TerrainPieceBuildingInfo>.Enumerator enumerator = terrainPiece.ArtInfo.BuildingDict.GetEnumerator();
+        while(enumerator.MoveNext())
+        {
+            GameObject buildingGameObject = enumerator.Current.Key;
+            buildingGameObject.SetActive(isInFloor);
+        }
+    }
+
+    /// <summary>
+    /// 更新地块可以移动的方向
+    /// </summary>
+    /// <param name="terrainPiece"></param>
+    public void ChangeTerrainPieceEnableDirection(TerrainPieceInfo terrainPiece, TerrainPieceDirection terrainPieceDirection, bool enable)
+    {
+        Dictionary<TerrainPieceDirection, bool> directionFlagDict = terrainPiece.DirectionFlagDict;
+        Dictionary<TerrainPieceDirection, bool> updateDict = new Dictionary<TerrainPieceDirection, bool>();
+
+        // 可以兼容的方向
+        Dictionary<TerrainPieceDirection, List<TerrainPieceDirection>> terrainPieceDirectionCompatibleDict = m_Root.GamePlay.GetTerrainPieceDirectionCompatibleDict();
+        List<TerrainPieceDirection> compatibleDirectionList = terrainPieceDirectionCompatibleDict[terrainPieceDirection];
+
+        for (int index = 0; index < compatibleDirectionList.Count; index++)
+        {
+            TerrainPieceDirection compatibleDirection = compatibleDirectionList[index];
+            updateDict.Add(compatibleDirection, directionFlagDict[compatibleDirection]);
+        }
+
+        updateDict[terrainPieceDirection] = enable;
+
+        //不能兼容的方向
+        Dictionary<TerrainPieceDirection, bool>.Enumerator enumerator = directionFlagDict.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            TerrainPieceDirection curTerrainPieceDirection = enumerator.Current.Key;
+            if (!updateDict.ContainsKey(curTerrainPieceDirection))
+            {
+                if(enable)
+                {
+                    updateDict.Add(curTerrainPieceDirection, false);
+                }
+                else
+                {
+                    updateDict.Add(curTerrainPieceDirection, directionFlagDict[curTerrainPieceDirection]);
+                }
+            }
+        }
+
+        //更新
+        enumerator = updateDict.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            TerrainPieceDirection curTerrainPieceDirection = enumerator.Current.Key;
+            directionFlagDict[curTerrainPieceDirection] = enumerator.Current.Value;
         }
     }
 

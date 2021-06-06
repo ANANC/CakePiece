@@ -43,6 +43,17 @@ public class TerrainMakerPieceFactory
              {TerrainPieceDirection.Right,true },
              {TerrainPieceDirection.Forward,true },
              {TerrainPieceDirection.Back,true },
+             {TerrainPieceDirection.Up,false },
+             {TerrainPieceDirection.Down,false },
+        };
+        terrainPieceInfo.DirectionMeasureDict = new Dictionary<TerrainPieceDirection, int>
+        {
+             {TerrainPieceDirection.Left,1 },
+             {TerrainPieceDirection.Right,1 },
+             {TerrainPieceDirection.Forward,1 },
+             {TerrainPieceDirection.Back,1 },
+             {TerrainPieceDirection.Up,1 },
+             {TerrainPieceDirection.Down,1 },
         };
 
         //art

@@ -13,6 +13,8 @@ public class TerrainMakerTool
         {TerrainPieceDirection.Right,Vector3.right },
         {TerrainPieceDirection.Forward,Vector3.forward},
         {TerrainPieceDirection.Back,Vector3.back },
+        {TerrainPieceDirection.Up,Vector3.up},
+        {TerrainPieceDirection.Down,Vector3.down },
     };
     //【vector3】对应【TerrainPieceDirection】列表 dict
     private Dictionary<Vector3, TerrainPieceDirection> m_V32EnumDirectironDict = new Dictionary<Vector3, TerrainPieceDirection>
@@ -21,6 +23,8 @@ public class TerrainMakerTool
         {Vector3.right, TerrainPieceDirection.Right},
         {Vector3.forward, TerrainPieceDirection.Forward},
         {Vector3.back, TerrainPieceDirection.Back},
+        {Vector3.up, TerrainPieceDirection.Up},
+        {Vector3.down, TerrainPieceDirection.Down},
     };
 
     public Dictionary<TerrainPieceDirection, Vector3> Enum2Vector3Direction { get { return m_Enum2V3DirectionDict; } }

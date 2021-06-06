@@ -54,7 +54,7 @@ public class TerrainMakerEditorWindow : EditorWindow
         get { return m_PieceFactory; }
     }
 
-
+    private TerrainMakerSceneRender m_TerrainMakerSceneRender;
 
     public enum GUIType
     {
@@ -178,19 +178,25 @@ public class TerrainMakerEditorWindow : EditorWindow
 
     private float GUI_ButtonWidth = 60;
     private float GUI_LableWidth = 120;
+
+    private Vector2 GUI_RightContent_ScrollView;
     private void OnGUI()
     {
         EditorGUILayout.BeginHorizontal();
 
+        //左边菜单
         LeftMenuLine();
+
+        //右边内容
+        GUI_RightContent_ScrollView = EditorGUILayout.BeginScrollView(GUI_RightContent_ScrollView);
         RightContent();
+        EditorGUILayout.EndScrollView();
 
         EditorGUILayout.EndHorizontal();
 
+        //底部菜单
         EditorGUILayout.BeginHorizontal("helpbox");
-
         BottomMenuLine();
-
         EditorGUILayout.EndHorizontal();
 
         if (m_IsDirty)
@@ -415,15 +421,12 @@ public class TerrainMakerEditorWindow : EditorWindow
     #region 地形配置
 
     private float GUI_InfoContent_Space = 10;
-    private Vector2 GUI_BuildTerrainConfig_ScrollView;
     private void BuildTerrainConfig()
     {
         if(m_GUIType != GUIType.Config)
         {
             return;
         }
-
-        GUI_BuildTerrainConfig_ScrollView = EditorGUILayout.BeginScrollView(GUI_BuildTerrainConfig_ScrollView);
 
         EditorGUILayout.BeginVertical();
 
@@ -447,9 +450,9 @@ public class TerrainMakerEditorWindow : EditorWindow
 
         EditorGUILayout.Space(GUI_InfoContent_Space);
 
-        EditorGUILayout.EndVertical();
+        GUI_SceneArtInfo();
 
-        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndVertical();
     }
 
 
@@ -760,6 +763,44 @@ public class TerrainMakerEditorWindow : EditorWindow
 
         EditorGUILayout.EndVertical();
     }
+
+
+    private bool GUI_SceneArtInfo_Init = false;
+    private int GUI_SceneArtInfo_FirstFloorShaderLayer;
+    private int GUI_SceneArtInfo_FloorShaderLayerInterval;
+    private void GUI_SceneArtInfo()
+    {
+        GUI_Title("场景表现");
+
+        // -- FirstFloorShaderLayer
+        EditorGUILayout.BeginHorizontal();
+
+        GUI_SceneArtInfo_FirstFloorShaderLayer = EditorGUILayout.IntField("首层的shader层级", GUI_SceneArtInfo_FirstFloorShaderLayer);
+        GUI_FileButton<int>(
+             ref GUI_SceneArtInfo_Init,
+             ref GUI_SceneArtInfo_FirstFloorShaderLayer,
+             ref m_Scene.SceneArt.FirstFloorShaderLayer,
+             ref m_Define.CurrentDefaultTerrainInfo.SceneArtInfo.FirstFloorShaderLayer,
+             ref m_Define.RecordDefaultTerrainInfo.SceneArtInfo.FirstFloorShaderLayer);
+
+        EditorGUILayout.EndHorizontal();
+
+        // -- FloorShaderLayerInterval
+        EditorGUILayout.BeginHorizontal();
+
+        GUI_SceneArtInfo_FloorShaderLayerInterval = EditorGUILayout.IntField("逻辑层的shader层级间隔", GUI_SceneArtInfo_FloorShaderLayerInterval);
+        GUI_FileButton<int>(
+             ref GUI_SceneArtInfo_Init,
+             ref GUI_SceneArtInfo_FloorShaderLayerInterval,
+             ref m_Scene.SceneArt.FloorShaderLayerInterval,
+             ref m_Define.CurrentDefaultTerrainInfo.SceneArtInfo.FloorShaderLayerInterval,
+             ref m_Define.RecordDefaultTerrainInfo.SceneArtInfo.FloorShaderLayerInterval);
+
+        EditorGUILayout.EndHorizontal();
+
+        GUI_SceneArtInfo_Init = true;
+    }
+
     #endregion
 
     #region 地形
@@ -830,8 +871,13 @@ public class TerrainMakerEditorWindow : EditorWindow
     }
 
     private bool GUI_UpdateCurTerrainPiece_Init = false;
+    private bool GUI_UpdateCurTerrainPiece_UpdateDirection = true;
     private bool GUI_UpdateCurTerrainPiece_IsCover;
     private Color GUI_UpdateCurTerrainPiece_MyColor;
+    private Dictionary<TerrainPieceDirection, string> TerrainPieceDirectionNameDict;
+    private Dictionary<TerrainPieceDirection, bool> GUI_UpdateCurTerrainPiece_DirectionEnableDict = new Dictionary<TerrainPieceDirection, bool>();
+    private Dictionary<TerrainPieceDirection, int> GUI_UpdateCurTerrainPiece_DirectionMeasureDict = new Dictionary<TerrainPieceDirection, int>();
+
     private void GUI_UpdateCurTerrainPiece()
     {
         TerrainPieceInfo terrainPieceInfo = m_Scene.GetCurrentTerrainPieceInfo();
@@ -840,15 +886,10 @@ public class TerrainMakerEditorWindow : EditorWindow
             return;
         }
 
-        if (IsChangeCurrent)
-        {
-            GUI_UpdateCurTerrainPiece_Init = false;
-        }
-
         GUI_Title("当前地块");
 
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("逻辑位置",GUILayout.Width(GUI_LableWidth));
+        EditorGUILayout.LabelField("逻辑位置", GUILayout.Width(GUI_LableWidth));
         EditorGUILayout.LabelField(terrainPieceInfo.LogicPosition.x.ToString());
         EditorGUILayout.LabelField(terrainPieceInfo.LogicPosition.y.ToString());
         EditorGUILayout.LabelField(terrainPieceInfo.LogicPosition.z.ToString());
@@ -884,7 +925,82 @@ public class TerrainMakerEditorWindow : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
 
-        //todo:设置可行走
+        //Direction
+        Dictionary<TerrainPieceDirection, bool>.Enumerator enumerator = terrainPieceInfo.DirectionFlagDict.GetEnumerator();
+        if (!GUI_UpdateCurTerrainPiece_Init || GUI_UpdateCurTerrainPiece_UpdateDirection)
+        {
+            GUI_UpdateCurTerrainPiece_DirectionEnableDict.Clear();
+            GUI_UpdateCurTerrainPiece_DirectionMeasureDict.Clear();
+            while (enumerator.MoveNext())
+            {
+                TerrainPieceDirection terrainPieceDirection = enumerator.Current.Key;
+                bool enable = enumerator.Current.Value;
+                GUI_UpdateCurTerrainPiece_DirectionEnableDict.Add(terrainPieceDirection, enable);
+
+                int measure = terrainPieceInfo.DirectionMeasureDict[terrainPieceDirection];
+                GUI_UpdateCurTerrainPiece_DirectionMeasureDict.Add(terrainPieceDirection, measure);
+            }
+
+            GUI_UpdateCurTerrainPiece_UpdateDirection = false;
+        }
+        if (TerrainPieceDirectionNameDict == null)
+        {
+            TerrainPieceDirectionNameDict = new Dictionary<TerrainPieceDirection, string>()
+            {
+                { TerrainPieceDirection.Left,"左边（x = 1）" },
+                { TerrainPieceDirection.Right,"右边（x = -1）" },
+                { TerrainPieceDirection.Forward,"前边（z = 1）" },
+                { TerrainPieceDirection.Back,"后边（z = -1）" },
+                { TerrainPieceDirection.Up,"往上（y = 1）" },
+                { TerrainPieceDirection.Down,"向下（y = -1）" },
+            };
+        }
+        while (enumerator.MoveNext())
+        {
+            TerrainPieceDirection terrainPieceDirection = enumerator.Current.Key;
+            bool enable = enumerator.Current.Value;
+            string name = TerrainPieceDirectionNameDict[terrainPieceDirection];
+            int measure = terrainPieceInfo.DirectionMeasureDict[terrainPieceDirection];
+
+            bool isChange = false;
+
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField(name, GUILayout.Width(GUI_LableWidth));
+            bool guiEnabele = GUI_UpdateCurTerrainPiece_DirectionEnableDict[terrainPieceDirection];
+            guiEnabele = EditorGUILayout.Toggle(guiEnabele);
+            if(guiEnabele != enable)
+            {
+                m_Scene.ChangeTerrainPieceEnableDirection(terrainPieceInfo, terrainPieceDirection, guiEnabele);
+
+                IsUpdateCurrentPiece = true;
+                GUI_UpdateCurTerrainPiece_UpdateDirection = true;
+
+                isChange = true;
+            }
+
+            if(guiEnabele)
+            {
+                int guiMeasure = GUI_UpdateCurTerrainPiece_DirectionMeasureDict[terrainPieceDirection];
+                guiMeasure = EditorGUILayout.IntField(guiMeasure);
+                if(guiMeasure != measure)
+                {
+                    terrainPieceInfo.DirectionMeasureDict[terrainPieceDirection] = guiMeasure;
+                    GUI_UpdateCurTerrainPiece_DirectionMeasureDict[terrainPieceDirection] = guiMeasure;
+
+                    IsUpdateCurrentPiece = true;
+
+                    isChange = true;
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+            if(isChange)
+            {
+                break;
+            }
+        }
 
         GUI_UpdateCurTerrainPiece_Init = true;
     }
@@ -904,7 +1020,7 @@ public class TerrainMakerEditorWindow : EditorWindow
         if(GUILayout.Button("创建建筑",GUILayout.Width(GUI_ButtonWidth)))
         {
             var dropdown = new BuildingDropdown(new AdvancedDropdownState());
-            dropdown.Show( new Rect(0,0,400,500));
+            dropdown.Show( new Rect(-200,-250,400,500));
         }
 
         if(GUI_CreateBuilding_WaitCreateBuildingPathList.Count>0)
@@ -1070,13 +1186,17 @@ public class TerrainMakerEditorWindow : EditorWindow
         }
 
         m_Scene.Input.CurLogicPosition = logicPosition;
-        GUI_ChangeCurrent_CurLogicPosition = logicPosition;
         IsChangeCurrent = true;
         IsUpdateCurrentPiece = true;
         m_IsDirty = true;
+
+        GUI_ChangeCurrent_CurLogicPosition = logicPosition;
+        GUI_UpdateCurTerrainPiece_Init = false;
+
+        SceneGUI_ShowCurrentAndRound();
     }
 
-
+    // 建筑选择菜单栏
     public class BuildingDropdown : AdvancedDropdown
     {
         private Dictionary<string, string> Child2ParentDict;
@@ -1197,5 +1317,68 @@ public class TerrainMakerEditorWindow : EditorWindow
             }
 
         }
+    }
+
+
+    // scene
+
+    private bool SceneGUI_ShowCurrentAndRound_Init = false;
+    private float SceneGUI_ShowCurrentAndRound_PieceWidthRadius;
+    private float SceneGUI_ShowCurrentAndRound_PieceHeighthRadius;
+    private Vector3[] SceneGUI_ShowCurrentAndRound_RoundWorlds;
+
+    private void SceneGUI_ShowCurrentAndRound()
+    {
+        TerrainPieceInfo terrainPieceInfo = m_Scene.GetCurrentTerrainPieceInfo();
+        if (terrainPieceInfo == null)
+        {
+            return;
+        }
+
+        if(m_TerrainMakerSceneRender==null)
+        {
+            GameObject gameObject = new GameObject();
+            gameObject.name = "TerrainMakerSceneRender";
+            m_TerrainMakerSceneRender = gameObject.AddComponent<TerrainMakerSceneRender>();
+        }
+
+        m_TerrainMakerSceneRender.Clean();
+
+        if (!SceneGUI_ShowCurrentAndRound_Init)
+        {
+            SceneGUI_ShowCurrentAndRound_PieceWidthRadius = m_Scene.Building.TerrainSize.x / 2;
+            SceneGUI_ShowCurrentAndRound_PieceHeighthRadius = m_Scene.Building.TerrainSize.z / 2;
+            SceneGUI_ShowCurrentAndRound_RoundWorlds = new Vector3[4];
+        }
+
+        Vector3 curLogic = terrainPieceInfo.LogicPosition;
+        Vector3 curWorld = terrainPieceInfo.WorldPosition;
+        SceneGUI_DrawBox(curLogic,curWorld);
+
+
+        Dictionary<TerrainPieceDirection, Vector3>.Enumerator enumerator = m_Tool.Enum2Vector3Direction.GetEnumerator();
+        while(enumerator.MoveNext())
+        {
+            Vector3 roundLogic = curLogic + enumerator.Current.Value;
+            Vector3 roundWorld = m_GamePlay.LogicPositionToWorldPosition(roundLogic);
+            SceneGUI_DrawBox(roundLogic,roundWorld);
+        }
+
+        SceneGUI_ShowCurrentAndRound_Init = true;
+    }
+
+    private void SceneGUI_DrawBox(Vector3 logicCenter, Vector3 worldCenter)
+    {
+        float widthRadius = SceneGUI_ShowCurrentAndRound_PieceWidthRadius;
+        float heightRadius = SceneGUI_ShowCurrentAndRound_PieceHeighthRadius;
+
+        Vector3 leftTop     = new Vector3(worldCenter.x - widthRadius, worldCenter.y,worldCenter.z + heightRadius);
+        Vector3 rightTop    = new Vector3(worldCenter.x + widthRadius, worldCenter.y, worldCenter.z + heightRadius);
+        Vector3 leftBottom  = new Vector3(worldCenter.x - widthRadius, worldCenter.y, worldCenter.z - heightRadius);
+        Vector3 rightBottom = new Vector3(worldCenter.x + widthRadius, worldCenter.y, worldCenter.z - heightRadius);
+
+        string msg = "x:" + logicCenter.x + " y:" + logicCenter.y + " z:" + logicCenter.z;
+        m_TerrainMakerSceneRender.AddDrawInfo(msg, worldCenter, leftTop, rightTop, leftBottom, rightBottom);
+
     }
 }

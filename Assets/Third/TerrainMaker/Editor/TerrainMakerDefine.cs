@@ -31,6 +31,7 @@ public class TerrainMakerDefine
         public GamePlayInfo GamePlayInfo;
         public TweenInfo TweenInfo;
         public ColorInfo ColorInfo;
+        public SceneArtInfo SceneArtInfo;
     }
     private DefaultTerrainInfo m_CurrentDefaultTerrainInfo;   //当前更新的配置内容
     private DefaultTerrainInfo m_RecordDefaultTerrainInfo;    //读取的配置内容，不做修改，用于还原
@@ -198,6 +199,25 @@ public class TerrainMakerDefine
             colorInfo.Side_Other = new Color(0.37f, 0.38f, 0.35f, 1);
 
             m_CurrentDefaultTerrainInfo.ColorInfo = colorInfo;
+        }
+
+        //场景表现
+        if(m_CurrentDefaultTerrainInfo.SceneArtInfo == null)
+        {
+            SceneArtInfo sceneArtInfo = new SceneArtInfo();
+
+            //首层3200 到3000可以容纳40层，应该是满足扩展的。
+            sceneArtInfo.FirstFloorShaderLayer = 3200;
+ 
+            //每个层预留5个shader层级单位
+            //  0 = 扩展层
+            // -1 = player
+            // -2 = building
+            // -3 = pieceSide
+            // -4 = piece
+            sceneArtInfo.FloorShaderLayerInterval = 5; 
+
+            m_CurrentDefaultTerrainInfo.SceneArtInfo = sceneArtInfo;
         }
 
     }

@@ -5,6 +5,8 @@ using static TerrainMakerData;
 
 public class TerrainMakerGamePlayController 
 {
+    private Dictionary<TerrainPieceDirection, List<TerrainPieceDirection>> m_TerrainPieceDirectionCompatibleDict;
+
     private TerrainMakerEditorWindow m_Root;
     private TerrainMakerSceneController m_Scene { get { return m_Root.Scene; } }
     private TerrainMakerTool m_Tool { get { return m_Root.Tool; } }
@@ -57,6 +59,50 @@ public class TerrainMakerGamePlayController
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// 获得地块方向相互可以并存的方向
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<TerrainPieceDirection, List<TerrainPieceDirection>> GetTerrainPieceDirectionCompatibleDict()
+    {
+        if (m_TerrainPieceDirectionCompatibleDict == null)
+        {
+            m_TerrainPieceDirectionCompatibleDict = new Dictionary<TerrainPieceDirection, List<TerrainPieceDirection>>()
+            {
+                //上
+                { TerrainPieceDirection.Up,new List<TerrainPieceDirection>{  TerrainPieceDirection.Up} },
+
+                //下
+                { TerrainPieceDirection.Down,new List<TerrainPieceDirection>{  TerrainPieceDirection.Down } },
+
+                //前后左右
+                { TerrainPieceDirection.Left,new List<TerrainPieceDirection>
+                    {
+                        TerrainPieceDirection.Left,TerrainPieceDirection.Right,TerrainPieceDirection.Forward,TerrainPieceDirection.Back
+                    }
+                },
+                { TerrainPieceDirection.Right,new List<TerrainPieceDirection>
+                    {
+                        TerrainPieceDirection.Left,TerrainPieceDirection.Right,TerrainPieceDirection.Forward,TerrainPieceDirection.Back
+                    }
+                },
+                { TerrainPieceDirection.Forward,new List<TerrainPieceDirection>
+                    {
+                        TerrainPieceDirection.Left,TerrainPieceDirection.Right,TerrainPieceDirection.Forward,TerrainPieceDirection.Back
+                    }
+                },
+                { TerrainPieceDirection.Back,new List<TerrainPieceDirection>
+                    {
+                        TerrainPieceDirection.Left,TerrainPieceDirection.Right,TerrainPieceDirection.Forward,TerrainPieceDirection.Back
+                    }
+                },
+            };
+
+        }
+
+        return m_TerrainPieceDirectionCompatibleDict;
     }
 
     //-- 表现
@@ -123,5 +169,33 @@ public class TerrainMakerGamePlayController
         }
 
     }
+
+    /// <summary>
+    /// 得到当前逻辑层的渲染首层
+    /// </summary>
+    /// <param name="logicY"></param>
+    /// <returns></returns>
+    private int GetFloorShaderFirstLayer(int logicY)
+    {
+        int firstFloorShaderLayer = m_Scene.SceneArt.FirstFloorShaderLayer;
+        int shaderLayer = firstFloorShaderLayer - m_Scene.SceneArt.FloorShaderLayerInterval * logicY;
+        return shaderLayer;
+    }
+
+    /// <summary>
+    /// 得到当前逻辑层的层内的渲染层级
+    /// </summary>
+    /// <param name="logicY"></param>
+    /// <param name="floorShaderLayer"></param>
+    /// <returns></returns>
+    public int GetFloorShaderTargerLayer(int logicY, FloorShaderLayer floorShaderLayer)
+    {
+        int shaderLayer = GetFloorShaderFirstLayer(logicY);
+
+        shaderLayer -= (int)floorShaderLayer;
+
+        return shaderLayer;
+    }
+
 
 }
