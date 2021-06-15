@@ -1,26 +1,9 @@
+require "Game/GameRegFile"
+
 Game = {}
-
--- 数据 --
-require "General/Config/GameDefine"
-require "General/Data/TerrainData"
-require "Game/GameUtil"
-
--- 基础模块 --
-require "CellModule/CellModule"
-require "CellModule/Cell"
-
--- 单元模块 --
-require "Character/CharacterModule"
-require "TerrainPiece/TerrainPieceModule"
 
 Game.CharacterModule = CharacterModule:new()
 Game.TerrainPieceModule = TerrainPieceModule:new()
-
--- 组合模块 --
-require "Formation/FormationManager"
-require "Terrain/TerrainManager"
-require "Scene/GameScene"
-
 
 function Game:Start()
     print("Game Start")

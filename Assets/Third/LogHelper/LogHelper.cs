@@ -36,7 +36,7 @@ public class LogHelper
                 return;
             }
 
-            LogHelper.Log(m_LogGrade, message);
+            LogHelper.Log(m_LogGrade,"[c#]", message);
         }
     }
 
@@ -152,7 +152,13 @@ public class LogHelper
         }
     }
 
-    private static void Log(LogGrade logGrade, params string[] message)
+    public static void LuaLog(int logGrade,string title,string message)
+    {
+        LogGrade cslogGrade = (LogGrade)logGrade;
+        Log(cslogGrade, "[lua]", title, message);
+    }
+
+    private static void Log(LogGrade logGrade,string source, params string[] message)
     {
         int length = message.Length;
         if (length <= 0)

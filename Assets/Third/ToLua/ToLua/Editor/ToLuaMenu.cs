@@ -41,6 +41,10 @@ using System.Threading;
 [InitializeOnLoad]
 public static class ToLuaMenu
 {
+
+    public const string LuaFirstModuleName = "CS";  //lua第一层模块名
+    public const string LuaFirstNameSpaceName = "GameLogic";    //Lua第一层命名空间
+
     //不需要导出或者无法导出的类型
     public static List<Type> dropType = new List<Type>
     {
@@ -637,6 +641,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("using System;");
         sb.AppendLineEx("using UnityEngine;");
         sb.AppendLineEx("using LuaInterface;");
+        sb.AppendLineEx($"namespace {LuaFirstNameSpaceName} \n{{");
         sb.AppendLineEx();
         sb.AppendLineEx("public static class LuaBinder");
         sb.AppendLineEx("{");
@@ -644,6 +649,7 @@ public static class ToLuaMenu
         sb.AppendLineEx("\t{");
         sb.AppendLineEx("\t\tfloat t = Time.realtimeSinceStartup;");
         sb.AppendLineEx("\t\tL.BeginModule(null);");
+        sb.AppendFormat("\t\tL.BeginModule(\"{0}\");",LuaFirstModuleName);
 
         GenRegisterInfo(null, sb, list, dtList);
 
@@ -668,7 +674,8 @@ public static class ToLuaMenu
             }
         };
 
-        tree.DepthFirstTraversal(begin, end, tree.GetRoot());        
+        tree.DepthFirstTraversal(begin, end, tree.GetRoot());
+        sb.AppendLineEx("\t\tL.EndModule();");
         sb.AppendLineEx("\t\tL.EndModule();");
         
         if (CustomSettings.dynamicList.Count > 0)
@@ -705,6 +712,7 @@ public static class ToLuaMenu
         }
 
         sb.AppendLineEx("}\r\n");
+        sb.AppendLineEx($"}}");
         allTypes.Clear();
         string file = CustomSettings.saveDir + "LuaBinder.cs";
 
