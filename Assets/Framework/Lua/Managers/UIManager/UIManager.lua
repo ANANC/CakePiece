@@ -1,4 +1,4 @@
-UIManager = class()
+UIManager = ANF:LuaRequire("UIManager")
 
 local csUIMgr = ANF.CSharp.Core.Mgr.UI
 

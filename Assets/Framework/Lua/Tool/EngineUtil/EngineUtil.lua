@@ -1,4 +1,6 @@
-local Util = ANF.Util
+Util = class()
+
+
 
 function Util:GenUnityAction(luaObj, strLuaFunc, ...)
 	local tOrgParamArr 	= {...}
@@ -42,3 +44,4 @@ end
 function Util:DebugVector3(v3,outputStr)
 	print(outputStr.."x:"..v3.x.." y:"..v3.y.." z:"..v3.z)
 end
+

@@ -7,5 +7,5 @@ require "Tool/LogHelper/LogHelper"
 -- 基础模块 --
 
 --UI
-require "Managers/BaseUIObject"
-require "Managers/UIManager"
+require "Managers/UIManager/BaseUIObject"
+require "Managers/UIManager/UIManager"
