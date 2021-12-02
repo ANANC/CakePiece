@@ -7,6 +7,7 @@ public class LogHelperWrap
 	public static void Register(LuaState L)
 	{
 		L.BeginClass(typeof(LogHelper), typeof(System.Object));
+		L.RegFunction("LuaLog", LuaLog);
 		L.RegFunction("Object2String", Object2String);
 		L.RegFunction("New", _CreateLogHelper);
 		L.RegFunction("__tostring", ToLua.op_ToString);
@@ -35,6 +36,24 @@ public class LogHelperWrap
 			{
 				return LuaDLL.luaL_throw(L, "invalid arguments to ctor method: LogHelper.New");
 			}
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int LuaLog(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 3);
+			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
+			string arg1 = ToLua.CheckString(L, 2);
+			string arg2 = ToLua.CheckString(L, 3);
+			LogHelper.LuaLog(arg0, arg1, arg2);
+			return 0;
 		}
 		catch (Exception e)
 		{

@@ -1,4 +1,5 @@
-﻿using LuaInterface;
+﻿using GameLogic;
+using LuaInterface;
 using System;
 using System.Collections;
 using System.Collections.Generic;
