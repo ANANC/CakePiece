@@ -22,8 +22,11 @@ public class TestState : Stone_IState
 
     public void Enter()
     {
-        ModelManager modelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
-        modelManager.InstanceModel("100000_Piece");
+        Stone_RunTime.AddManager(new PieceManager());
+        Stone_RunTime.AddManager(new TerrainManager());
+
+        TerrainManager terrainManager = Stone_RunTime.GetManager<TerrainManager>(TerrainManager.Name);
+        terrainManager.CreateTerrain("300000_Test");
     }
 
     public void Exist()

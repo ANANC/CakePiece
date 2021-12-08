@@ -29,6 +29,31 @@ public class ModelManager : Stone_Manager
         m_RootGameObject.name = ModelManager.Name;
     }
 
+    /// <summary>
+    /// 获取或创建一个跟节点
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public GameObject GetOrCreateNodeRoot(string name)
+    {
+        Transform child = m_RootTransform.Find(name);
+        if (child != null)
+        {
+            return child.gameObject;
+        }
+
+        GameObject node = new GameObject();
+        node.transform.SetParent(m_RootTransform);
+        node.name = name;
+
+        return node;
+    }
+
+    /// <summary>
+    /// 实例化模型
+    /// </summary>
+    /// <param name="modelName"></param>
+    /// <returns></returns>
     public GameObject InstanceModel(string modelName)
     {
         GameObject modelGameObject = m_ResourceManager.Instance(modelName + ".prefab", m_ModelFolderPath);

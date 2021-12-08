@@ -1,0 +1,9 @@
+{
+    "OriginPosition": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+    },
+    "HorizontalInterval": 1.5,
+    "VerticalInterval": 1
+}

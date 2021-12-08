@@ -42,7 +42,7 @@ public class GameEntrance : MonoBehaviour
         Stone_RunTime.AddManager(new Stone_ResourceManager(resourceManagerLifeControl));
         Stone_RunTime.AddManager(new Stone_StateManager(new Stone_StateManagerLifeControl()));
 
-        //游戏
+        //游戏-通用
         Stone_RunTime.AddManager(new ModelManager());
 
         Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
