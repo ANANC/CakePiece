@@ -1,0 +1,4 @@
+{
+    "GamePlayType": 1,
+    "ExpandConfigName": "400000_GamePlayExpand_ThreeDimensionalSpace"
+}

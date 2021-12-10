@@ -125,7 +125,7 @@ public class PieceManager : Stone_Manager
     /// </summary>
     /// <param name="logicPosition"></param>
     /// <returns></returns>
-    private Vector3 LogicPositionToArtPosition(Vector3 logicPosition)
+    public Vector3 LogicPositionToArtPosition(Vector3 logicPosition)
     {
         Vector3 artPosition = m_UserPieceArtInfo.OriginPosition;
         artPosition.x += logicPosition.x * m_UserPieceArtInfo.HorizontalInterval;
@@ -134,4 +134,10 @@ public class PieceManager : Stone_Manager
 
         return artPosition;
     }
+
+    public bool HasPiece(Vector3 logicPosition)
+    {
+        return m_LogicPos2PieceControllerDict.ContainsKey(logicPosition);
+    }
+
 }

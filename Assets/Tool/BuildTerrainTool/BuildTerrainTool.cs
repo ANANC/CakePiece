@@ -14,6 +14,7 @@ public class BuildTerrainTool : MonoBehaviour
     public GameObject PiecePrefab;
 
     public const string OutputFolderPath = "Config/Terrain";
+    public const string PieceRootName = "Pieces";
 
     public const float PieceInterval = 1.5f;
     public const float PieceRadius = 0.2f;
@@ -40,7 +41,7 @@ public class BuildTerrainTool : MonoBehaviour
 
     public void CreatePieceTxt()
     {
-        Transform terrainRootTransform = TerrainRoot.transform;
+        Transform pieceRootTransform = TerrainRoot.transform.Find(PieceRootName);
 
         Dictionary<Vector3, bool> isExistDict = new Dictionary<Vector3, bool>();
         List<PieceManager.UserPieceInfo> userPieceInfoList = new List<PieceManager.UserPieceInfo>();
@@ -51,23 +52,23 @@ public class BuildTerrainTool : MonoBehaviour
 
         Transform beforeChild = null;
         Vector3 originPos = Vector3.zero;
-        for (int index = 0; index < terrainRootTransform.childCount; index++)
+        for (int index = 0; index < pieceRootTransform.childCount; index++)
         {
-            Transform child = terrainRootTransform.GetChild(index);
+            Transform child = pieceRootTransform.GetChild(index);
 
             Vector3 logic = originPos;
             if (beforeChild != null)
             {
                 float xDistance = child.localPosition.x - beforeChild.localPosition.x;
-                float xInterval = xDistance / PieceInterval;
+                int xInterval = Mathf.RoundToInt(xDistance / PieceInterval);
                 logic.x += xInterval;
 
                 float yDistance = child.localPosition.y - beforeChild.localPosition.y;
-                float yInterval = yDistance / PieceInterval;
+                int yInterval = Mathf.RoundToInt(yDistance / PieceInterval);
                 logic.y += yInterval;
 
                 float zDistance = child.localPosition.z - beforeChild.localPosition.z;
-                float zInterval = zDistance / PieceInterval;
+                int zInterval = Mathf.RoundToInt(zDistance / PieceInterval);
                 logic.z += zInterval;
             }
 
@@ -120,16 +121,18 @@ public class BuildTerrainTool : MonoBehaviour
         TerrainManager.UserTerrainInfo userTerrainInfo = LitJson.JsonMapper.ToObject<TerrainManager.UserTerrainInfo>(jsonTxt);
         PieceManager.UserPieceInfo[] pieceInfos = userTerrainInfo.PieceInfos;
 
-        string pieceRootName = "Pieces";
-        Transform pieceRoot = this.transform.Find(pieceRootName);
+       
+        Transform pieceRoot = this.transform.Find(PieceRootName);
         if (pieceRoot != null)
         {
             GameObject.DestroyImmediate(pieceRoot.gameObject);
         }
         GameObject root = new GameObject();
-        root.name = pieceRootName;
+        root.name = PieceRootName;
         pieceRoot = root.transform;
         pieceRoot.SetParent(this.transform);
+
+        string meshPath = GetMeshRendererPath();
 
         for (int index = 0; index < pieceInfos.Length; index++)
         {
@@ -142,7 +145,7 @@ public class BuildTerrainTool : MonoBehaviour
             transform.localPosition = userPieceInfo.LogicPosition * PieceInterval;
 
             BuildTerrainTool_PieceController buildTerrainTool_PieceController = gameObject.AddComponent<BuildTerrainTool_PieceController>();
-            buildTerrainTool_PieceController.MeshRenderer = buildTerrainTool_PieceController.transform.GetComponent<MeshRenderer>();
+            buildTerrainTool_PieceController.MeshRenderer = buildTerrainTool_PieceController.transform.Find(meshPath).GetComponent<MeshRenderer>();
             buildTerrainTool_PieceController.Color = userPieceInfo.Color;
             buildTerrainTool_PieceController.Material = new Material(buildTerrainTool_PieceController.MeshRenderer.sharedMaterial.shader);
             buildTerrainTool_PieceController.MeshRenderer.material = buildTerrainTool_PieceController.Material;
