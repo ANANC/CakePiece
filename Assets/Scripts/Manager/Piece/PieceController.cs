@@ -14,16 +14,23 @@ public class PieceController
     private Vector3 m_LogicPosition;
     private Vector3 m_ArtPosition;
 
+    private List<PieceAction> m_ActionList;
 
 
     public void Init()
     {
-
+        m_ActionList = new List<PieceAction>();
     }
 
     public void UnInit()
     {
-
+        for(int index = 0;index< m_ActionList.Count;index++)
+        {
+            PieceAction action = m_ActionList[index];
+            action.UnInit();
+            action.SetPieceController(null);
+        }
+        m_ActionList.Clear();
     }
 
     public void Active(GameObject gameObject)
@@ -32,16 +39,33 @@ public class PieceController
         m_Transform = m_GameObject.transform;
 
         m_Material = m_Transform.Find(MaterialPath).GetComponent<MeshRenderer>().material;
-
-        m_GameObject.SetActive(true);
     }
 
     public void Dormancy()
     {
-        m_GameObject.SetActive(false);
-
         m_GameObject = null;
         m_Transform = null;
+    }
+
+    public void AddAction(PieceAction action)
+    {
+        action.SetPieceController(this);
+        action.Init();
+
+        m_ActionList.Add(action);
+    }
+
+    public void DeleteAction(PieceAction action)
+    {
+        if(!m_ActionList.Contains(action))
+        {
+            return;
+        }
+
+        action.UnInit();
+        action.SetPieceController(null);
+
+        m_ActionList.Remove(action);
     }
 
     public void SetPosition(Vector3 logicPosition, Vector3 artPosition)
@@ -64,5 +88,20 @@ public class PieceController
     public Vector3 GetLogicPosition()
     {
         return m_LogicPosition;
+    }
+
+    public Vector3 GetArtPosition()
+    {
+        return m_ArtPosition;
+    }
+
+    public GameObject GetGameObject()
+    {
+        return m_GameObject;
+    }
+
+    public Transform GetTransform()
+    {
+        return m_Transform;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,18 +28,27 @@ public class PieceManager : Stone_Manager
     private GameObject m_RootGameObject;
 
     private Dictionary<Vector3, PieceController> m_LogicPos2PieceControllerDict;    //【逻辑位置】对应【棋子管理器】列表 dict
-    private List<PieceController> m_DormancyPieceControllerList;                    //休眠棋子列表 list
-    private List<GameObject> m_DormancyPieceGameObjectList;                         //休眠棋子GameObject列表 list
+    private List<PieceController> m_PieceControllerPool;                            //棋子池 list
+    private List<GameObject> m_PieceGameObjectPool;                                 //棋子GameObject池 list
+
+    private Dictionary<string,Func<PieceAction>> m_PieceActionName2CreateFuncDict;  //【行为名】对应【创建函数】列表 dict
+    private List<string> m_DefaultPieceActionNameList;                              //默认行为名列表 list
 
     private UserPieceArtInfo m_UserPieceArtInfo;
 
     private ModelManager ModelManager;
 
+    public PieceManager(Stone_IManagerLifeControl stone_ManagerLifeControl) : base(stone_ManagerLifeControl) { }
+
+
     public override void Init()
     {
         m_LogicPos2PieceControllerDict = new Dictionary<Vector3, PieceController>();
-        m_DormancyPieceControllerList = new List<PieceController>();
-        m_DormancyPieceGameObjectList = new List<GameObject>();
+        m_PieceControllerPool = new List<PieceController>();
+        m_PieceGameObjectPool = new List<GameObject>();
+
+        m_PieceActionName2CreateFuncDict = new Dictionary<string, Func<PieceAction>>();
+        m_DefaultPieceActionNameList = new List<string>();
 
         ModelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
         m_RootGameObject = ModelManager.GetOrCreateNodeRoot(PieceManager.Name);
@@ -53,6 +63,16 @@ public class PieceManager : Stone_Manager
     {
         Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
         m_UserPieceArtInfo = userConfigManager.GetConfig<UserPieceArtInfo>();
+    }
+
+    public void AddAcitonCreateFunc(string actionName,Func<PieceAction> createFunc)
+    {
+        m_PieceActionName2CreateFuncDict.Add(actionName, createFunc);
+    }
+
+    public void AddDefaultPieceActionName(string actionName)
+    {
+        m_DefaultPieceActionNameList.Add(actionName);
     }
 
     /// <summary>
@@ -77,6 +97,17 @@ public class PieceManager : Stone_Manager
         pieceController.SetPosition(logic, art);
 
         pieceController.SetColor(pieceInfo.Color);
+
+        for (int index = 0; index < m_DefaultPieceActionNameList.Count; index++)
+        {
+            string actionName = m_DefaultPieceActionNameList[index];
+            Func<PieceAction> createFunc = m_PieceActionName2CreateFuncDict[actionName];
+
+            PieceAction pieceAction = createFunc();
+
+            pieceAction.SetPieceController(pieceController);
+            pieceController.AddAction(pieceAction);
+        }
     }
 
     /// <summary>
@@ -86,10 +117,10 @@ public class PieceManager : Stone_Manager
     private PieceController GetOrCreatePieceController()
     {
         PieceController pieceController;
-        if (m_DormancyPieceControllerList.Count != 0)
+        if (m_PieceControllerPool.Count != 0)
         {
-            pieceController = m_DormancyPieceControllerList[0];
-            m_DormancyPieceControllerList.RemoveAt(0);
+            pieceController = m_PieceControllerPool[0];
+            m_PieceControllerPool.RemoveAt(0);
         }
         else
         {
@@ -107,10 +138,10 @@ public class PieceManager : Stone_Manager
     private GameObject GetOrCreatePieceGameObject()
     {
         GameObject pieceGameObject;
-        if (m_DormancyPieceGameObjectList.Count != 0)
+        if (m_PieceGameObjectPool.Count != 0)
         {
-            pieceGameObject = m_DormancyPieceGameObjectList[0];
-            m_DormancyPieceControllerList.RemoveAt(0);
+            pieceGameObject = m_PieceGameObjectPool[0];
+            m_PieceGameObjectPool.RemoveAt(0);
         }
         else
         {

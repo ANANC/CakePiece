@@ -22,9 +22,9 @@ public class TestState : Stone_IState
 
     public void Enter()
     {
-        Stone_RunTime.AddManager(new PieceManager());
+        Stone_RunTime.AddManager(new PieceManager(new PieceManagerLifeControl()));
         Stone_RunTime.AddManager(new TerrainManager());
-        Stone_RunTime.AddManager(new RoleManager());
+        Stone_RunTime.AddManager(new RoleManager(new RoleManagerLiftControl()));
         Stone_RunTime.AddManager(new ActionControlManager());
         Stone_RunTime.AddManager(new GamePlayerManager());
 
@@ -33,6 +33,7 @@ public class TestState : Stone_IState
 
         GameObject keyboardGameObject = new GameObject();
         keyboardGameObject.AddComponent<KeyboardControl>();
+        keyboardGameObject.name = "KeyboardControl";
     }
 
     public void Exist()

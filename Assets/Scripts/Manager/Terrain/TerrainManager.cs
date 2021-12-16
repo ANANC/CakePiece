@@ -21,6 +21,7 @@ public class TerrainManager : Stone_Manager
 
     private UserTerrainInfo m_CurUserTerrainInfo;
 
+    private int m_CurFloor; //当前层
 
     private PieceManager PieceManager;
 
@@ -54,6 +55,16 @@ public class TerrainManager : Stone_Manager
         {
             PieceManager.LayPiece(userPieceInfos[index]);
         }
+    }
+
+    public void SetCurFloor(int floor)
+    {
+        m_CurFloor = floor;
+    }
+
+    public int GetCurFloor()
+    {
+        return m_CurFloor;
     }
 
 }

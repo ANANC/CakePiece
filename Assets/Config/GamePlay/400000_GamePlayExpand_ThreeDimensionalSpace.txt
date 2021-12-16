@@ -1,9 +1,15 @@
 {
+	"PieceActions":[
+		"PieceAction_ThreeDimensionalSpace_FloorArt"
+	],
     "TerrainName": "300000_Test",
     "OriginLogicPosition": {
         "x": 0,
         "y": 0,
         "z": 0
     },
-	"PlayerModelName":"101000_Player"
+	"MainPlayerModelName":"101000_Player",
+	"MainPlayerActions":[
+		"RoleAction_ThreeDimensionalSpace_EffectArt"
+	]
 }

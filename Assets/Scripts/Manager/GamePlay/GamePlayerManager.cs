@@ -54,4 +54,14 @@ public class GamePlayerManager : Stone_Manager
         m_GamePlay = gamePlayerObject as IGamePlayController;
         m_GamePlay.Init(m_GamePlayInfo.ExpandConfigName);
     }
+
+    public T GetGamePlay<T>() where T: IGamePlayController
+    {
+        if(m_GamePlay == null)
+        {
+            return default(T);
+        }
+
+        return (T)m_GamePlay;
+    }
 }

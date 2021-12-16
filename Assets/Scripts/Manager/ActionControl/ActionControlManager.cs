@@ -22,12 +22,12 @@ public class ActionControlManager : Stone_Manager
 
     private RoleController m_MainPlayer;
 
-    private TerrainManager TerrainManager;
+    private Stone_EventManager EventManager;
     private PieceManager PieceManager;
 
     public override void Init()
     {
-        TerrainManager = Stone_RunTime.GetManager<TerrainManager>(TerrainManager.Name);
+        EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
         PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
     }
 
@@ -60,8 +60,11 @@ public class ActionControlManager : Stone_Manager
             return;
         }
 
-        Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
+        GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo = new GameEventDefine.MainPlayerMoveEventInfo();
+        mainPlayerMoveEventInfo.OldLogicPosition = m_MainPlayer.GetLogicPosition();
+        mainPlayerMoveEventInfo.NewLogicPosition = newLogicPos;
 
+        Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
         m_MainPlayer.SetPosition(newLogicPos, newArtPos);
     }
 
@@ -76,8 +79,11 @@ public class ActionControlManager : Stone_Manager
             return;
         }
 
-        Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
+        GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo = new GameEventDefine.MainPlayerMoveEventInfo();
+        mainPlayerMoveEventInfo.OldLogicPosition = m_MainPlayer.GetLogicPosition();
+        mainPlayerMoveEventInfo.NewLogicPosition = newLogicPos;
 
+        Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
         m_MainPlayer.SetPosition(newLogicPos, newArtPos);
     }
 
