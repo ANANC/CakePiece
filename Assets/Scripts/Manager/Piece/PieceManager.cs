@@ -14,8 +14,9 @@ public class PieceManager : Stone_Manager
 
     public class UserPieceInfo
     {
-        public Vector3 LogicPosition;
-        public Color Color;
+        public Vector3 LogicPosition;       //逻辑位置
+        public Vector3 EnableDirection;     //可以到达的方向
+        public Color Color;                 //块颜色
     }
 
     public class UserPieceArtInfo: Stone_BaseUserConfigData

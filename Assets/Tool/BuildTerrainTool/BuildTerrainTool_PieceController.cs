@@ -11,18 +11,14 @@ public class BuildTerrainTool_PieceController : MonoBehaviour
 
     public Color Color;
 
-    [Header("是否下个对象随机颜色")]
-    public bool isNextRandonColor = true;
-
-    void Start()
+    public Dictionary<Vector3, bool> DirectionDict = new Dictionary<Vector3, bool>()
     {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-
+        {Vector3.left,true },
+        {Vector3.right,true },
+        {Vector3.forward,true },
+        {Vector3.back,true },
+        {Vector3.up,false },
+        {Vector3.down,false },
+    };
 
 }

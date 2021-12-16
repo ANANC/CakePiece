@@ -19,6 +19,7 @@ public class BuildTerrainTool_PieceControllerEditorWindow : Editor
         public Vector3 LeftBottom;
         public Vector3 RightBottom;
         public float Size;
+        public Vector3 Direction;
     }
 
     private List<DrawInfo> m_DrawInfoList;
@@ -59,12 +60,50 @@ public class BuildTerrainTool_PieceControllerEditorWindow : Editor
             Vector3 leftBottom = new Vector3(center.x - BuildTerrainTool.PieceRadius, center.y, center.z - BuildTerrainTool.PieceRadius);
             Vector3 rightBottom = new Vector3(center.x + BuildTerrainTool.PieceRadius, center.y, center.z - BuildTerrainTool.PieceRadius);
 
-            AddDrawInfo(msgs[index], center, leftTop, rightTop, leftBottom, rightBottom, BuildTerrainTool.PieceRadius * 2);
+            AddDrawInfo(msgs[index], center, leftTop, rightTop, leftBottom, rightBottom, BuildTerrainTool.PieceRadius, Vector3.zero);
         }
 
+        center = PieceController.transform.position;
+        roundPos = new Vector3[]
+        {
+            center + Vector3.left*BuildTerrainTool.PieceDirectionRadius,
+            center + Vector3.right*BuildTerrainTool.PieceDirectionRadius,
+            center + Vector3.forward*BuildTerrainTool.PieceDirectionRadius,
+            center + Vector3.back*BuildTerrainTool.PieceDirectionRadius,
+            center + Vector3.up*BuildTerrainTool.PieceDirectionRadius,
+            center + Vector3.down*BuildTerrainTool.PieceDirectionRadius,
+        };
+        msgs = new string[] {
+            "左",
+            "右",
+            "前",
+            "后",
+            "上",
+            "下",
+        };
+        Vector3[] directions = new Vector3[]
+        {
+            Vector3.left,
+            Vector3.right,
+            Vector3.forward,
+            Vector3.back,
+            Vector3.up,
+            Vector3.down,
+        };
+        for (int index = 0; index < roundPos.Length; index++)
+        {
+            center = roundPos[index];
+
+            Vector3 leftTop = new Vector3(center.x - BuildTerrainTool.PieceDirectionRadius, center.y, center.z + BuildTerrainTool.PieceDirectionRadius);
+            Vector3 rightTop = new Vector3(center.x + BuildTerrainTool.PieceDirectionRadius, center.y, center.z + BuildTerrainTool.PieceDirectionRadius);
+            Vector3 leftBottom = new Vector3(center.x - BuildTerrainTool.PieceDirectionRadius, center.y, center.z - BuildTerrainTool.PieceDirectionRadius);
+            Vector3 rightBottom = new Vector3(center.x + BuildTerrainTool.PieceDirectionRadius, center.y, center.z - BuildTerrainTool.PieceDirectionRadius);
+
+            AddDrawInfo(msgs[index], center, leftTop, rightTop, leftBottom, rightBottom, 0.02f, directions[index]);
+        }
     }
 
-    public void AddDrawInfo(string msg, Vector3 center, Vector3 leftTop, Vector3 rightTop, Vector3 leftBottom, Vector3 rightBottom, float size)
+    public void AddDrawInfo(string msg, Vector3 center, Vector3 leftTop, Vector3 rightTop, Vector3 leftBottom, Vector3 rightBottom, float size,Vector3 direction)
     {
         DrawInfo drawInfo = new DrawInfo();
 
@@ -75,6 +114,7 @@ public class BuildTerrainTool_PieceControllerEditorWindow : Editor
         drawInfo.RightTop = rightTop;
         drawInfo.RightBottom = rightBottom;
         drawInfo.Size = size;
+        drawInfo.Direction = direction;
 
         m_DrawInfoList.Add(drawInfo);
     }
@@ -112,33 +152,84 @@ public class BuildTerrainTool_PieceControllerEditorWindow : Editor
             //Debug.DrawLine(drawInfo.LeftBottom, drawInfo.RightBottom);
             //Debug.DrawLine(drawInfo.RightTop, drawInfo.RightBottom);
 
-            if (Handles.Button(drawInfo.Center, Quaternion.identity, drawInfo.Size, drawInfo.Size, Handles.RectangleHandleCap))
+            bool isDirection = false;
+            bool enable = false;
+
+            Vector3 direction = drawInfo.Direction;
+            if(PieceController.DirectionDict !=null && PieceController.DirectionDict.TryGetValue(direction,out enable))
             {
-                if (PieceController.isNextRandonColor)
+                isDirection = true;
+                if (enable)
                 {
-                    Color randomColor = new Color(PieceController.Color.r + Random.Range(-0.01f, 0.01f), PieceController.Color.g + Random.Range(-0.01f, 0.01f), PieceController.Color.b + Random.Range(-0.01f, 0.01f));
+                    Handles.color = Color.red;
+                    Handles.DrawWireCube(drawInfo.Center, Vector3.one * drawInfo.Size);
+                    Handles.color = Color.white;
                 }
+            }
 
-                GameObject newGameObject = GameObject.Instantiate(PieceController.gameObject);
+            if(!isDirection)
+            {
+                if (Handles.Button(drawInfo.Center, Quaternion.identity, drawInfo.Size, drawInfo.Size, Handles.RectangleHandleCap))
+                {
+                    GameObject newGameObject = GameObject.Instantiate(PieceController.gameObject);
 
-                Transform newTransform = newGameObject.transform;
-                newTransform.SetParent(PieceController.transform.parent);
+                    Transform newTransform = newGameObject.transform;
+                    newTransform.SetParent(PieceController.transform.parent);
 
-                newTransform.localPosition = drawInfo.Center;
+                    newTransform.localPosition = drawInfo.Center;
 
-                newGameObject.name = "piece";
+                    newGameObject.name = "x:" + newTransform.localPosition.x + " z:" + newTransform.localPosition.z + " y:" + newTransform.localPosition.y;
 
-                Selection.activeGameObject = newGameObject;
+                    Selection.activeGameObject = newGameObject;
 
-                break;
+                    break;
+                }
+            }
+            else
+            {
+                if (Handles.Button(drawInfo.Center, Quaternion.identity, drawInfo.Size, drawInfo.Size, Handles.RectangleHandleCap))
+                {
+                    enable = !enable;
+                    PieceController.DirectionDict[direction] = enable;
+
+                    Repaint();
+
+                    break;
+                }
             }
         }
     }
 
+    private Dictionary<Vector3, bool> m_ArtDirectionDict = new Dictionary<Vector3, bool>();
 
     public override void OnInspectorGUI()
     {
+        Dictionary<Vector3, bool>.Enumerator enumerator;
+
         base.OnInspectorGUI();
+
+        if (PieceController.DirectionDict != null)
+        {
+            enumerator = PieceController.DirectionDict.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Vector3 direction = enumerator.Current.Key;
+                bool enable = enumerator.Current.Value;
+                m_ArtDirectionDict[direction] = enable;
+            }
+
+            EditorGUILayout.LabelField("方向");
+            enumerator = m_ArtDirectionDict.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Vector3 direction = enumerator.Current.Key;
+                bool enable = enumerator.Current.Value;
+
+                enable = EditorGUILayout.Toggle(direction.ToString(), enable);
+
+                PieceController.DirectionDict[direction] = enable;
+            }
+        }
 
         if (PieceController.MeshRenderer != null)
         {

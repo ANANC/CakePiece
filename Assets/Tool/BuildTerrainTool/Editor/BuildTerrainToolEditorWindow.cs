@@ -12,13 +12,13 @@ public class BuildTerrainToolEditorWindow : Editor
 
         base.OnInspectorGUI();
 
-        EditorGUILayout.Space();
+        EditorGUILayout.Space(10);
 
         if (!string.IsNullOrEmpty(buildTerrainTool.TerrainName))
         {
             if (buildTerrainTool.TerrainRoot)
             {
-                if (GUILayout.Button("导出" + buildTerrainTool.TerrainName + "文件"))
+                if (GUILayout.Button("导出 [" + buildTerrainTool.TerrainName + "文件]"))
                 {
                     buildTerrainTool.CreatePieceTxt();
                 }
@@ -26,11 +26,17 @@ public class BuildTerrainToolEditorWindow : Editor
 
             GUILayout.Space(10);
 
-            if (GUILayout.Button("生成" + buildTerrainTool.TerrainName + "地形"))
+            if (GUILayout.Button("生成 [" + buildTerrainTool.TerrainName + "地形]"))
             {
                 buildTerrainTool.CreateTerrainByTxt();
             }
 
+            GUILayout.Space(10);
+
+            if(GUILayout.Button("刷新地形的方向"))
+            {
+                buildTerrainTool.RefreshTerrainDirection();
+            }
         }
     }
 }
