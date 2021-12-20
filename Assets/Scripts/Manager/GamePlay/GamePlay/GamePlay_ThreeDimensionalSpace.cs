@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 {
-    public const float TweenUpdateTime = 3;    //动画更新时间（单位：s）
+    public const float TweenUpdateTime = 1;    //动画更新时间（单位：s）
     public const float TweenMoveLength = 2;    //动画移动距离（单位：米）
 
     public class UserGamePlayInfo:Stone_BaseUserConfigData
@@ -84,7 +84,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     /// <param name="mainPlayerMoveEventInfo"></param>
     private void MainPlayerMoveEventListener(GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo)
     {
-        int curFloor = (int)mainPlayerMoveEventInfo.OldLogicPosition.y;
+        int curFloor = TerrainManager.GetCurFloor();//(int)mainPlayerMoveEventInfo.OldLogicPosition.y;
         int newFloor = (int)mainPlayerMoveEventInfo.NewLogicPosition.y;
 
         int floorDistance = newFloor - curFloor;
@@ -92,8 +92,8 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
         if (isUpdateFloor)
         {
-            ChangeFloorArt(curFloor,newFloor);
             TerrainManager.SetCurFloor(newFloor);
+            ChangeFloorArt(curFloor,newFloor);
         }
         else
         {
@@ -123,21 +123,6 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         //往下走
         if (curFloor > newFloor)
         {
-            sequence.AppendCallback(() =>   //原本的层上升
-            {
-                GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo();
-                info.UpFloor = curFloor;
-                info.TweenMoveLength = TweenMoveLength;
-                info.TweenUpdateTime = TweenUpdateTime;
-
-                EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEvent, info);
-            });
-            sequence.AppendInterval(TweenUpdateTime);   //插入动画时间
-        }
-
-        // 往上走
-        if (curFloor < newFloor)
-        {
             sequence.AppendCallback(() =>   //原本的层下降
             {
                 GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo();
@@ -146,6 +131,21 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
                 info.TweenUpdateTime = TweenUpdateTime;
 
                 EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEvent, info);
+            });
+            sequence.AppendInterval(TweenUpdateTime);   //插入动画时间
+        }
+
+        // 往上走
+        else if (curFloor < newFloor)
+        {
+            sequence.AppendCallback(() =>   //原本的层上升
+            {
+                GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo();
+                info.UpFloor = curFloor;
+                info.TweenMoveLength = TweenMoveLength;
+                info.TweenUpdateTime = TweenUpdateTime;
+
+                EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEvent, info);
             });
             sequence.AppendInterval(TweenUpdateTime);   //插入动画时间
         }

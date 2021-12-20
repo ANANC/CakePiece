@@ -20,13 +20,22 @@ public class ActionControlManager : Stone_Manager
         Down,
     }
 
+    private const float NextWaitTime = 0.2f; //下一个操作的等待时间（S）
+
     private RoleController m_MainPlayer;
+
+    private bool m_ReceiveUserControl;      //是否接收用户操作
+
+    private Vector3 m_BeforeLogicPos;       //上一个逻辑位置
+    private int m_NextActionTimer;          //下一个操作计时器
 
     private Stone_EventManager EventManager;
     private PieceManager PieceManager;
 
     public override void Init()
     {
+        m_ReceiveUserControl = true;
+
         EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
         PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
     }
@@ -47,44 +56,129 @@ public class ActionControlManager : Stone_Manager
         m_MainPlayer = roleManager.GetMainPlayer();
     }
 
+    /// <summary>
+    /// 控制主玩家移动
+    /// </summary>
+    /// <param name="actionDirection"></param>
+    /// <param name="speed"></param>
     public void ControlMainPlayerMove(ActionDirection actionDirection,int speed)
     {
+        if(!m_ReceiveUserControl)
+        {
+            return;
+        }
+
         TryInitMainPlayer();
 
         Vector3 mainplayerCurLogicPos = m_MainPlayer.GetLogicPosition();
         Vector3 position = ActionDirectionToVector3(actionDirection);
         Vector3 newLogicPos = mainplayerCurLogicPos + position * speed;
 
-        if(!PieceManager.HasPiece(newLogicPos))
-        {
-            return;
-        }
-
-        GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo = new GameEventDefine.MainPlayerMoveEventInfo();
-        mainPlayerMoveEventInfo.OldLogicPosition = m_MainPlayer.GetLogicPosition();
-        mainPlayerMoveEventInfo.NewLogicPosition = newLogicPos;
-
-        Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
-        m_MainPlayer.SetPosition(newLogicPos, newArtPos);
+        _ControlRoleMove(m_MainPlayer, newLogicPos);
     }
 
+    /// <summary>
+    /// 控制主玩家移动
+    /// </summary>
+    /// <param name="actionDirection"></param>
+    /// <param name="speed"></param>
     public void ControlMainPlayerMove(Vector3 logicPosition)
     {
-        TryInitMainPlayer();
-
-        Vector3 newLogicPos = logicPosition;
-
-        if (!PieceManager.HasPiece(newLogicPos))
+        if (!m_ReceiveUserControl)
         {
             return;
         }
 
-        GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo = new GameEventDefine.MainPlayerMoveEventInfo();
-        mainPlayerMoveEventInfo.OldLogicPosition = m_MainPlayer.GetLogicPosition();
-        mainPlayerMoveEventInfo.NewLogicPosition = newLogicPos;
+        TryInitMainPlayer();
+
+        _ControlRoleMove(m_MainPlayer, logicPosition);
+    }
+
+    /// <summary>
+    /// 控制角色移动
+    /// </summary>
+    /// <param name="role"></param>
+    /// <param name="logicPosition"></param>
+    private void _ControlRoleMove(RoleController role,Vector3 logicPosition)
+    {
+        Vector3 newLogicPos = logicPosition;
+        PieceController newPieceController = PieceManager.GetPiece(newLogicPos);
+        if (newPieceController == null)
+        {
+            return;
+        }
+
+        Vector3 curLogicPos = role.GetLogicPosition();
+        PieceController curPieceController = PieceManager.GetPiece(curLogicPos);
+        if (curPieceController == null)
+        {
+            return;
+        }
+
+        Vector3 direction = newLogicPos - curLogicPos;
+        if (!curPieceController.IsDirectionEnable(direction))
+        {
+            return;
+        }
 
         Vector3 newArtPos = PieceManager.LogicPositionToArtPosition(newLogicPos);
-        m_MainPlayer.SetPosition(newLogicPos, newArtPos);
+        role.SetPosition(newLogicPos, newArtPos);
+
+        //如果下一个块是上升或下降，添加下一个动作
+        Vector3 upOrDown = Vector3.zero;
+        bool isUpOrDown = false;
+        if (newPieceController.IsDirectionEnable(Vector3.up) && PieceManager.HasPiece(newLogicPos + Vector3.up))
+        {
+            if (m_ReceiveUserControl || (!m_ReceiveUserControl && (newLogicPos + Vector3.up != m_BeforeLogicPos)))
+            {
+                upOrDown = Vector3.up;
+                isUpOrDown = true;
+            }
+        }
+
+        if (newPieceController.IsDirectionEnable(Vector3.down) && PieceManager.HasPiece(newLogicPos + Vector3.down))
+        {
+            if (m_ReceiveUserControl || (!m_ReceiveUserControl && (newLogicPos + Vector3.down != m_BeforeLogicPos)))
+            {
+                upOrDown = Vector3.down;
+                isUpOrDown = true;
+            }
+        }
+
+        if (isUpOrDown)
+        {
+            m_ReceiveUserControl = false;
+            m_BeforeLogicPos = newLogicPos;
+
+            Stone_TimerManager stone_TimerManager = Stone_RunTime.GetManager<Stone_TimerManager>(Stone_TimerManager.Name);
+
+            if (m_NextActionTimer != 0)
+            {
+                stone_TimerManager.StopTimer(m_NextActionTimer);
+            }
+
+            m_NextActionTimer = stone_TimerManager.StarTimer(
+           () =>
+           {
+               m_NextActionTimer = 0;
+
+               _ControlRoleMove(role, newLogicPos + upOrDown);
+
+               m_BeforeLogicPos = Vector3.zero;
+               m_ReceiveUserControl = true;
+           }, interval: NextWaitTime, updateCount: 1);
+        }
+    }
+
+
+    public void SetEnableReceiveUserControl(bool enable)
+    {
+        m_ReceiveUserControl = enable;
+    }
+
+    public bool GetEnableReceiveUserControl()
+    {
+        return m_ReceiveUserControl;
     }
 
     private Vector3 ActionDirectionToVector3(ActionDirection actionDirection)

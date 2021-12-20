@@ -65,7 +65,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         GameObject gameObject = m_PieceController.GetGameObject();
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOLocalMove(Vector3.up * info.TweenMoveLength, info.TweenUpdateTime).From());
+        sequence.Append(transform.DOMove(transform.position + Vector3.up * info.TweenMoveLength, info.TweenUpdateTime));
         sequence.AppendCallback(() => { gameObject.SetActive(false); });
 
         m_SequenceDict.AddSequenceByOnlyRun(sequenceName, sequence);
@@ -89,7 +89,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         GameObject gameObject = m_PieceController.GetGameObject();
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOLocalMove(Vector3.down * info.TweenMoveLength, info.TweenUpdateTime).From());
+        sequence.Append(transform.DOMove(transform.position + Vector3.down * info.TweenMoveLength, info.TweenUpdateTime));
         sequence.AppendCallback(() => { gameObject.SetActive(false); });
 
         m_SequenceDict.AddSequenceByOnlyRun(sequenceName, sequence);

@@ -54,13 +54,21 @@ public class ModelManager : Stone_Manager
     /// </summary>
     /// <param name="modelName"></param>
     /// <returns></returns>
-    public GameObject InstanceModel(string modelName)
+    public GameObject InstanceModel(string modelName,string parentName = "")
     {
         GameObject modelGameObject = m_ResourceManager.Instance(modelName + ".prefab", m_ModelFolderPath);
 
         if (modelGameObject != null)
         {
-            modelGameObject.transform.SetParent(m_RootTransform);
+            if (string.IsNullOrEmpty(parentName))
+            {
+                modelGameObject.transform.SetParent(m_RootTransform);
+            }
+            else
+            {
+                GameObject parent = GetOrCreateNodeRoot(parentName);
+                modelGameObject.transform.SetParent(parent.transform);
+            }
         }
 
         return modelGameObject;

@@ -14,6 +14,10 @@ public class PieceController
     private Vector3 m_LogicPosition;
     private Vector3 m_ArtPosition;
 
+    private int m_EnableDirectionsX;
+    private int m_EnableDirectionsY;
+    private int m_EnableDirectionsZ;
+
     private List<PieceAction> m_ActionList;
 
 
@@ -45,6 +49,15 @@ public class PieceController
     {
         m_GameObject = null;
         m_Transform = null;
+    }
+    public GameObject GetGameObject()
+    {
+        return m_GameObject;
+    }
+
+    public Transform GetTransform()
+    {
+        return m_Transform;
     }
 
     public void AddAction(PieceAction action)
@@ -80,11 +93,6 @@ public class PieceController
 #endif
     }
 
-    public void SetColor(Color color)
-    {
-        m_Material.color = color;
-    }
-
     public Vector3 GetLogicPosition()
     {
         return m_LogicPosition;
@@ -95,13 +103,183 @@ public class PieceController
         return m_ArtPosition;
     }
 
-    public GameObject GetGameObject()
+    public void SetColor(Color color)
     {
-        return m_GameObject;
+        m_Material.color = color;
     }
 
-    public Transform GetTransform()
+    public void SetEnableDirection(Vector3 direction)
     {
-        return m_Transform;
+        m_EnableDirectionsX = (int)direction.x;
+        m_EnableDirectionsY = (int)direction.y;
+        m_EnableDirectionsZ = (int)direction.z;
     }
+
+    public void AddEnableDirection(Vector3 direction)
+    {
+        if (direction.x > 0)
+        {
+            if (m_EnableDirectionsX == 0)
+            {
+                m_EnableDirectionsX = 1;
+            } else if (m_EnableDirectionsX == -1)
+            {
+                m_EnableDirectionsX = 2;
+            }
+        }
+        if (direction.x < 0)
+        {
+            if (m_EnableDirectionsX == 0)
+            {
+                m_EnableDirectionsX = -1;
+            }
+            else if (m_EnableDirectionsX == 1)
+            {
+                m_EnableDirectionsX = 2;
+            }
+        }
+
+        if (direction.z > 0)
+        {
+            if (m_EnableDirectionsZ == 0)
+            {
+                m_EnableDirectionsZ = 1;
+            }
+            else if (m_EnableDirectionsZ == -1)
+            {
+                m_EnableDirectionsZ = 2;
+            }
+        }
+        if (direction.z < 0)
+        {
+            if (m_EnableDirectionsZ == 0)
+            {
+                m_EnableDirectionsZ = -1;
+            }
+            else if (m_EnableDirectionsZ == 1)
+            {
+                m_EnableDirectionsZ = 2;
+            }
+        }
+
+        if (direction.y > 0)
+        {
+            m_EnableDirectionsY = 1;
+        }
+        else if (direction.y < 0)
+        {
+            m_EnableDirectionsY = -1;
+        }
+
+    }
+
+    public void DeleteDirection(Vector3 direction)
+    {
+        if (direction.x > 0)
+        {
+            if (m_EnableDirectionsX == 1)
+            {
+                m_EnableDirectionsX = 0;
+            }
+            else if (m_EnableDirectionsX == 2)
+            {
+                m_EnableDirectionsX = -1;
+            }
+        }
+        if (direction.x < 0)
+        {
+            if (m_EnableDirectionsX == -1)
+            {
+                m_EnableDirectionsX = 0;
+            }
+            else if (m_EnableDirectionsX == 2)
+            {
+                m_EnableDirectionsX = 1;
+            }
+        }
+
+        if (direction.z > 0)
+        {
+            if (m_EnableDirectionsZ == 1)
+            {
+                m_EnableDirectionsZ = 0;
+            }
+            else if (m_EnableDirectionsZ == 2)
+            {
+                m_EnableDirectionsZ = -1;
+            }
+        }
+        if (direction.z < 0)
+        {
+            if (m_EnableDirectionsZ == -1)
+            {
+                m_EnableDirectionsZ = 0;
+            }
+            else if (m_EnableDirectionsZ == 2)
+            {
+                m_EnableDirectionsZ = 1;
+            }
+        }
+
+
+        if (direction.y != 0)
+        {
+            m_EnableDirectionsY = 0;
+        }
+    }
+
+
+    public bool IsDirectionEnable(Vector3 direction)
+    {
+        bool enableMove = true;
+
+        if (direction.x > 0)
+        {
+            if(m_EnableDirectionsX != 2 && m_EnableDirectionsX != 1)
+            {
+                enableMove = false;
+            }
+        }
+        else if (direction.x < 0)
+        {
+            if (m_EnableDirectionsX != 2 && m_EnableDirectionsX != -1)
+            {
+                enableMove = false;
+            }
+        }
+
+        if (direction.z > 0)
+        {
+            if (m_EnableDirectionsZ != 2 && m_EnableDirectionsZ != 1)
+            {
+                enableMove = false;
+            }
+        }
+        else if (direction.z < 0)
+        {
+            if (m_EnableDirectionsZ != 2 && m_EnableDirectionsZ != -1)
+            {
+                enableMove = false;
+            }
+        }
+
+        if (direction.y > 0)
+        {
+            if (m_EnableDirectionsY != 1)
+            {
+                enableMove = false;
+            }
+        }
+        else if (direction.y < 0)
+        {
+            if (m_EnableDirectionsY != -1)
+            {
+                enableMove = false;
+            }
+        }
+
+        return enableMove;
+    }
+
+
 }

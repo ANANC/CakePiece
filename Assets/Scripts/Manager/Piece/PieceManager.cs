@@ -26,8 +26,6 @@ public class PieceManager : Stone_Manager
         public float VerticalInterval;      //垂直间隔
     }
 
-    private GameObject m_RootGameObject;
-
     private Dictionary<Vector3, PieceController> m_LogicPos2PieceControllerDict;    //【逻辑位置】对应【棋子管理器】列表 dict
     private List<PieceController> m_PieceControllerPool;                            //棋子池 list
     private List<GameObject> m_PieceGameObjectPool;                                 //棋子GameObject池 list
@@ -52,12 +50,11 @@ public class PieceManager : Stone_Manager
         m_DefaultPieceActionNameList = new List<string>();
 
         ModelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
-        m_RootGameObject = ModelManager.GetOrCreateNodeRoot(PieceManager.Name);
     }
 
     public override void UnInit()
     {
-        GameObject.DestroyImmediate(m_RootGameObject);
+
     }
 
     public override void Active()
@@ -96,6 +93,7 @@ public class PieceManager : Stone_Manager
         Vector3 logic = pieceInfo.LogicPosition;
         Vector3 art = LogicPositionToArtPosition(logic);
         pieceController.SetPosition(logic, art);
+        pieceController.SetEnableDirection(pieceInfo.EnableDirection);
 
         pieceController.SetColor(pieceInfo.Color);
 
@@ -146,7 +144,7 @@ public class PieceManager : Stone_Manager
         }
         else
         {
-            pieceGameObject = ModelManager.InstanceModel("100000_Piece");
+            pieceGameObject = ModelManager.InstanceModel("100000_Piece", PieceManager.Name);
         }
 
         return pieceGameObject;
@@ -170,6 +168,17 @@ public class PieceManager : Stone_Manager
     public bool HasPiece(Vector3 logicPosition)
     {
         return m_LogicPos2PieceControllerDict.ContainsKey(logicPosition);
+    }
+
+    public PieceController GetPiece(Vector3 logicPosition)
+    {
+        PieceController pieceController;
+        if(m_LogicPos2PieceControllerDict.TryGetValue(logicPosition,out pieceController))
+        {
+            return pieceController;
+        }
+
+        return null;
     }
 
 }

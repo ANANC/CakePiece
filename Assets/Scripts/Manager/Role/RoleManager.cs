@@ -58,7 +58,7 @@ public class RoleManager : Stone_Manager
         roleController.SetId(id);
 
         ModelManager modelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
-        GameObject gameObject = modelManager.InstanceModel(modelName);
+        GameObject gameObject = modelManager.InstanceModel(modelName,RoleManager.Name);
 
         roleController.SetGameObject(gameObject);
 

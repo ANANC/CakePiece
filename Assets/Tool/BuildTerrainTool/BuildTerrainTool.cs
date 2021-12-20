@@ -125,11 +125,11 @@ public class BuildTerrainTool : MonoBehaviour
             }
             else if (directionDict[Vector3.up])
             {
-                enabelDirection.y = -1;
+                enabelDirection.y = 1;
             }
             else if (directionDict[Vector3.down])
             {
-                enabelDirection.y = 1;
+                enabelDirection.y = -1;
             }
             userPieceInfo.EnableDirection = enabelDirection;
 
@@ -280,6 +280,9 @@ public class BuildTerrainTool : MonoBehaviour
         {
             Vector3 logicPosition = enumerator.Current.Key;
             BuildTerrainTool_PieceController pieceController = enumerator.Current.Value;
+
+            pieceController.DirectionDict[Vector3.up] = false;
+            pieceController.DirectionDict[Vector3.down] = false;
 
             if (logicDict.ContainsKey(logicPosition + Vector3.up))
             {
