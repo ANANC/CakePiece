@@ -16,9 +16,9 @@ public class BuildTerrainTool : MonoBehaviour
     public const string OutputFolderPath = "Config/Terrain";
     public const string PieceRootName = "Pieces";
 
-    public const float PieceInterval = 1.5f;
-    public const float PieceRadius = 0.2f;
-    public const float PieceDirectionRadius = 0.45f;
+    public const float PieceInterval = 1.2f;            //排序 块间隔
+    public const float PieceRadius = 0.2f;              //scene界面 块点击
+    public const float PieceDirectionRadius = 0.45f;    //scene界面 方向点击
 
     public string GetMeshRendererPath()
     {
