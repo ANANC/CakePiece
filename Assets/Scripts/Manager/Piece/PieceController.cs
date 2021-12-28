@@ -103,6 +103,11 @@ public class PieceController
         return m_ArtPosition;
     }
 
+    public void SetTexture(Texture texture)
+    {
+        m_Material.mainTexture = texture;
+    }
+
     public void SetColor(Color color)
     {
         m_Material.color = color;

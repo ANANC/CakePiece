@@ -56,7 +56,7 @@ public class ModelManager : Stone_Manager
     /// <returns></returns>
     public GameObject InstanceModel(string modelName,string parentName = "")
     {
-        GameObject modelGameObject = m_ResourceManager.Instance(modelName + ".prefab", m_ModelFolderPath);
+        GameObject modelGameObject = m_ResourceManager.Instance(modelName, m_ModelFolderPath);
 
         if (modelGameObject != null)
         {

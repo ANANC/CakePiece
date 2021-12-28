@@ -5,6 +5,12 @@
             "AssetBundlePackagePath": "Model",
             "AssetBundlePackageUserName": "",
             "IsBuildDependent": true
+        },
+		{
+            "Type": 5,
+            "AssetBundlePackagePath": "Texture",
+            "AssetBundlePackageUserName": "",
+            "IsBuildDependent": false
         }
     ]
 }

@@ -45,6 +45,27 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
         GameObject gameObject = m_PieceController.GetGameObject();
         gameObject.SetActive(curFloor == myFloor);
+
+        PieceManager pieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
+        PieceManager.UserPieceArtInfo userPieceArtInfo = pieceManager.GetUserPieceArtInfo();
+        if (m_PieceController.IsDirectionEnable(Vector3.up))
+        {
+            GameObject up = pieceManager.GetOrCreateResourceGameObject(userPieceArtInfo.PieceDirectionUpPath);
+            Transform upTransform = up.transform;
+            upTransform.SetParent(gameObject.transform);
+            upTransform.localPosition = Vector3.zero;
+            upTransform.localRotation = Quaternion.identity;
+            upTransform.localScale = Vector3.one;
+        }
+        if (m_PieceController.IsDirectionEnable(Vector3.down))
+        {
+            GameObject down = pieceManager.GetOrCreateResourceGameObject(userPieceArtInfo.PieceDirectionDownPath);
+            down.transform.SetParent(gameObject.transform);
+            Transform downTransform = down.transform;
+            downTransform.localPosition = Vector3.zero;
+            downTransform.localRotation = Quaternion.identity;
+            downTransform.localScale = Vector3.one;
+        }
     }
 
     /// <summary>

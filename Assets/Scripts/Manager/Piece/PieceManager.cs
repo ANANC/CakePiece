@@ -17,10 +17,14 @@ public class PieceManager : Stone_Manager
         public Vector3 LogicPosition;       //逻辑位置
         public Vector3 EnableDirection;     //可以到达的方向
         public Color Color;                 //块颜色
+        public string PieceTexutePath;      //块图片资源路径
     }
 
     public class UserPieceArtInfo: Stone_BaseUserConfigData
     {
+        public string PiecePrefabPath;      //块资源路径
+        public string PieceDirectionUpPath; //块方向上 资源路径
+        public string PieceDirectionDownPath;//块方向下 资源路径
         public Vector3 OriginPosition;      //原点
         public float HorizontalInterval;    //水平间隔
         public float VerticalInterval;      //垂直间隔
@@ -28,7 +32,7 @@ public class PieceManager : Stone_Manager
 
     private Dictionary<Vector3, PieceController> m_LogicPos2PieceControllerDict;    //【逻辑位置】对应【棋子管理器】列表 dict
     private List<PieceController> m_PieceControllerPool;                            //棋子池 list
-    private List<GameObject> m_PieceGameObjectPool;                                 //棋子GameObject池 list
+    private Dictionary<string,List<GameObject>> m_GameObjectPool;                   //棋子GameObject池 list
 
     private Dictionary<string,Func<PieceAction>> m_PieceActionName2CreateFuncDict;  //【行为名】对应【创建函数】列表 dict
     private List<string> m_DefaultPieceActionNameList;                              //默认行为名列表 list
@@ -36,6 +40,7 @@ public class PieceManager : Stone_Manager
     private UserPieceArtInfo m_UserPieceArtInfo;
 
     private ModelManager ModelManager;
+    private Stone_ResourceManager ResourceManager;
 
     public PieceManager(Stone_IManagerLifeControl stone_ManagerLifeControl) : base(stone_ManagerLifeControl) { }
 
@@ -44,12 +49,13 @@ public class PieceManager : Stone_Manager
     {
         m_LogicPos2PieceControllerDict = new Dictionary<Vector3, PieceController>();
         m_PieceControllerPool = new List<PieceController>();
-        m_PieceGameObjectPool = new List<GameObject>();
+        m_GameObjectPool = new Dictionary<string, List<GameObject>>();
 
         m_PieceActionName2CreateFuncDict = new Dictionary<string, Func<PieceAction>>();
         m_DefaultPieceActionNameList = new List<string>();
 
         ModelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
+        ResourceManager = Stone_RunTime.GetManager<Stone_ResourceManager>(Stone_ResourceManager.Name);
     }
 
     public override void UnInit()
@@ -84,7 +90,8 @@ public class PieceManager : Stone_Manager
         }
 
         PieceController pieceController = GetOrCreatePieceController();
-        GameObject pieceGameObject = GetOrCreatePieceGameObject();
+
+        GameObject pieceGameObject = GetOrCreateResourceGameObject(m_UserPieceArtInfo.PiecePrefabPath);
 
         m_LogicPos2PieceControllerDict.Add(pieceInfo.LogicPosition, pieceController);
 
@@ -95,6 +102,8 @@ public class PieceManager : Stone_Manager
         pieceController.SetPosition(logic, art);
         pieceController.SetEnableDirection(pieceInfo.EnableDirection);
 
+        Texture pieceTexture = ResourceManager.LoadResource<Texture>(pieceInfo.PieceTexutePath);
+        pieceController.SetTexture(pieceTexture);
         pieceController.SetColor(pieceInfo.Color);
 
         for (int index = 0; index < m_DefaultPieceActionNameList.Count; index++)
@@ -130,21 +139,28 @@ public class PieceManager : Stone_Manager
         return pieceController;
     }
 
+
     /// <summary>
-    /// 获取或创建棋子GameObject
+    /// 获取或创建美术GameObject
     /// </summary>
     /// <returns></returns>
-    private GameObject GetOrCreatePieceGameObject()
+    public GameObject GetOrCreateResourceGameObject(string resourcePath)
     {
-        GameObject pieceGameObject;
-        if (m_PieceGameObjectPool.Count != 0)
+        GameObject pieceGameObject = null;
+
+        List<GameObject> pool;
+        if (m_GameObjectPool.TryGetValue(resourcePath, out pool))
         {
-            pieceGameObject = m_PieceGameObjectPool[0];
-            m_PieceGameObjectPool.RemoveAt(0);
+            if (pool.Count != 0)
+            {
+                pieceGameObject = pool[0];
+                pool.RemoveAt(0);
+            }
         }
-        else
+
+        if (pieceGameObject == null)
         {
-            pieceGameObject = ModelManager.InstanceModel("100000_Piece", PieceManager.Name);
+            pieceGameObject = ModelManager.InstanceModel(resourcePath, PieceManager.Name);
         }
 
         return pieceGameObject;
@@ -179,6 +195,11 @@ public class PieceManager : Stone_Manager
         }
 
         return null;
+    }
+
+    public UserPieceArtInfo GetUserPieceArtInfo()
+    {
+        return m_UserPieceArtInfo;
     }
 
 }

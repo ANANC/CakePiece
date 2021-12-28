@@ -1,9 +1,12 @@
 {
-    "OriginPosition": {
+    "PiecePrefabPath":"Model/100000_Piece/Prefab/100000_Piece.prefab",
+	"PieceDirectionUpPath":"Model/100001_PieceDirection/Prefab/100001_PieceDirection_Up.prefab",
+	"PieceDirectionDownPath":"Model/100001_PieceDirection/Prefab/100001_PieceDirection_Down.prefab",
+	"OriginPosition": {
         "x": 0,
         "y": 0,
         "z": 0
     },
-    "HorizontalInterval": 1.5,
+    "HorizontalInterval": 1.2,
     "VerticalInterval": 1
 }

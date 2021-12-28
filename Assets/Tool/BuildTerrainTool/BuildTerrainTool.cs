@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class BuildTerrainTool : MonoBehaviour
 {
@@ -88,7 +89,10 @@ public class BuildTerrainTool : MonoBehaviour
             userPieceInfo.LogicPosition = logic;
 
             Material material = child.Find(meshPath).GetComponent<MeshRenderer>().sharedMaterial;
+            Texture texture = material.mainTexture;
+            string path = AssetDatabase.GetAssetPath(texture).Replace("Assets/",string.Empty);
             userPieceInfo.Color = material.color;
+            userPieceInfo.PieceTexutePath = path;
 
             BuildTerrainTool_PieceController pieceController = child.gameObject.GetComponent<BuildTerrainTool_PieceController>();
             Dictionary<Vector3, bool> directionDict = pieceController.DirectionDict;
@@ -201,6 +205,8 @@ public class BuildTerrainTool : MonoBehaviour
             buildTerrainTool_PieceController.Color = userPieceInfo.Color;
             buildTerrainTool_PieceController.Material = new Material(buildTerrainTool_PieceController.MeshRenderer.sharedMaterial.shader);
             buildTerrainTool_PieceController.MeshRenderer.material = buildTerrainTool_PieceController.Material;
+            Texture mainTexture = AssetDatabase.LoadAssetAtPath<Texture>("Assets/"+userPieceInfo.PieceTexutePath);
+            buildTerrainTool_PieceController.Material.mainTexture = mainTexture;
             buildTerrainTool_PieceController.Material.color = buildTerrainTool_PieceController.Color;
             if (userPieceInfo.EnableDirection != Vector3.zero)
             {
