@@ -15,6 +15,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         public Vector3 OriginLogicPosition;     //出生点
         public string MainPlayerModelName;      //主玩家模型名
         public string[] MainPlayerActions;      //主玩家行为集合
+        public string MainCameraConfigName;     //主摄像机配置名
     }
 
     private UserGamePlayInfo m_GamePlayInfo;
@@ -72,10 +73,13 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     {
         TerrainManager.CreateTerrain(m_GamePlayInfo.TerrainName);
 
-        RoleManager.CreateMainPlayer(m_GamePlayInfo.MainPlayerModelName, m_GamePlayInfo.MainPlayerActions);
+        RoleController mainPlayer = RoleManager.CreateMainPlayer(m_GamePlayInfo.MainPlayerModelName, m_GamePlayInfo.MainPlayerActions);
 
         ActionControlManager actionControlManager = Stone_RunTime.GetManager<ActionControlManager>(ActionControlManager.Name);
         actionControlManager.ControlMainPlayerMove(m_GamePlayInfo.OriginLogicPosition);
+
+        CameraManager cameraManager = Stone_RunTime.GetManager<CameraManager>(CameraManager.Name);
+        cameraManager.CreateMainCamera(m_GamePlayInfo.MainCameraConfigName, mainPlayer.GetTransform());
     }
 
     /// <summary>

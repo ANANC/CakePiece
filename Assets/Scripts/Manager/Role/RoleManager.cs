@@ -38,14 +38,16 @@ public class RoleManager : Stone_Manager
         m_RoleActionName2CreateFuncDict.Add(roleActionName, createFunc);
     }
 
-    public void CreateMainPlayer(string modelName, string[] actionNames)
+    public RoleController CreateMainPlayer(string modelName, string[] actionNames)
     {
         if (m_MainPlayer != null)
         {
-            return;
+            return m_MainPlayer;
         }
 
         m_MainPlayer = CreateRole<RoleContole_MainPlayer>(modelName, actionNames);
+
+        return m_MainPlayer;
     }
 
     public RoleController CreateRole<T>(string modelName, string[] actionNames) where T: RoleController,new ()

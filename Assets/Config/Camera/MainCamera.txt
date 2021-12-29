@@ -1,0 +1,8 @@
+{
+    "CameraActions": [
+        "CameraAction_ContinueToFollow"
+    ],
+    "CameraActionInfoNames": [
+        "CameraAction_ContinueToFollowInfo"
+    ]
+}
