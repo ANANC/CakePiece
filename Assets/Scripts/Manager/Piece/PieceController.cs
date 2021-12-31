@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PieceController
 {
     private const string MaterialPath = ""; //材质球路径
+
+    private PieceManager.UserPieceInfo m_UserPieceInfo;
 
     private GameObject m_GameObject;
     private Transform m_Transform;
@@ -50,6 +53,17 @@ public class PieceController
         m_GameObject = null;
         m_Transform = null;
     }
+
+    public void SetUserPieceInfo(PieceManager.UserPieceInfo userPieceInfo)
+    {
+        m_UserPieceInfo = userPieceInfo;
+    }
+
+    public PieceManager.UserPieceInfo GetUserPieceInfo()
+    {
+        return m_UserPieceInfo;
+    }
+
     public GameObject GetGameObject()
     {
         return m_GameObject;
@@ -81,6 +95,25 @@ public class PieceController
         m_ActionList.Remove(action);
     }
 
+    public T GetPieceAction<T>() where T : PieceAction
+    {
+        T action = null;
+
+        Type findType = typeof(T);
+        Type actionType;
+        for (int index = 0; index < m_ActionList.Count; index++)
+        {
+            actionType = m_ActionList[index].GetType();
+
+            if (actionType == findType)
+            {
+                action = (T)m_ActionList[index];
+                continue;
+            }
+        }
+        return action;
+    }
+
     public void SetPosition(Vector3 logicPosition, Vector3 artPosition)
     {
         m_LogicPosition = logicPosition;
@@ -106,6 +139,11 @@ public class PieceController
     public void SetTexture(Texture texture)
     {
         m_Material.mainTexture = texture;
+    }
+
+    public Color GetColor()
+    {
+        return m_Material.color;
     }
 
     public void SetColor(Color color)

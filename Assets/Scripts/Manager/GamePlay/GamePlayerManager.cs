@@ -12,15 +12,7 @@ public class GamePlayerManager : Stone_Manager
         return GamePlayerManager.Name;
     }
 
-    public enum GamePlayType
-    {
-        ThreeDimensionalSpace = 1,  //三维空间
-    }
-
-    private Dictionary<GamePlayType, Type> GamePlayType2ControllerDict = new Dictionary<GamePlayType, Type>()
-    {
-        {GamePlayType.ThreeDimensionalSpace,typeof(GamePlay_ThreeDimensionalSpace) }
-    };
+    private Dictionary<int, Type> GamePlayType2ControllerDict;
 
     public class UserGamePlayInfo : Stone_BaseUserConfigData
     {
@@ -31,9 +23,13 @@ public class GamePlayerManager : Stone_Manager
     private UserGamePlayInfo m_GamePlayInfo;
     private IGamePlayController m_GamePlay;
 
+    public GamePlayerManager(Stone_IManagerLifeControl stone_ManagerLifeControl) : base(stone_ManagerLifeControl)
+    {
+    }
+
     public override void Init()
     {
-
+        GamePlayType2ControllerDict = new Dictionary<int, Type>();
     }
 
     public override void UnInit()
@@ -41,13 +37,17 @@ public class GamePlayerManager : Stone_Manager
         m_GamePlay?.UnInit();
     }
 
+    public void AddGamePlayTagAndType(int gamePlayTag,Type gameplayType)
+    {
+        GamePlayType2ControllerDict.Add(gamePlayTag, gameplayType);
+    }
+
     public void CreateGamePlay(string gamePlayName)
     {
         Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
         m_GamePlayInfo = userConfigManager.GetConfig<UserGamePlayInfo>(gamePlayName);
 
-        GamePlayType gamePlayTypeEnum = (GamePlayType)m_GamePlayInfo.GamePlayType;
-        Type gamePlayTypeClass = GamePlayType2ControllerDict[gamePlayTypeEnum];
+        Type gamePlayTypeClass = GamePlayType2ControllerDict[m_GamePlayInfo.GamePlayType];
 
         System.Object gamePlayerObject = Activator.CreateInstance(gamePlayTypeClass, null);
 

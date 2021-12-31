@@ -18,6 +18,8 @@ public class PieceManager : Stone_Manager
         public Vector3 EnableDirection;     //可以到达的方向
         public Color Color;                 //块颜色
         public string PieceTexutePath;      //块图片资源路径
+        public string[] ActionNames;        //行为名称
+        public string[] ActionInfos;        //行为信息
     }
 
     public class UserPieceArtInfo: Stone_BaseUserConfigData
@@ -116,6 +118,49 @@ public class PieceManager : Stone_Manager
             pieceAction.SetPieceController(pieceController);
             pieceController.AddAction(pieceAction);
         }
+
+        int userAcitonCount = pieceInfo.ActionNames == null ? 0 : pieceInfo.ActionNames.Length;
+        for (int index = 0; index < userAcitonCount; index++)
+        {
+            string actionName = pieceInfo.ActionNames[index];
+            Func<PieceAction> createFunc = m_PieceActionName2CreateFuncDict[actionName];
+
+            string actionInfo = pieceInfo.ActionInfos[index];
+
+            PieceAction pieceAction = createFunc();
+            pieceAction.SetInfo(actionInfo);
+
+            pieceAction.SetPieceController(pieceController);
+            pieceController.AddAction(pieceAction);
+        }
+    }
+
+    /// <summary>
+    /// 删除棋子
+    /// </summary>
+    /// <param name="logicPosition"></param>
+    public void DeletePiece(Vector3 logicPosition)
+    {
+        PieceController pieceController;
+        if (!m_LogicPos2PieceControllerDict.TryGetValue(logicPosition,out pieceController))
+        {
+            return;
+        }
+
+        m_LogicPos2PieceControllerDict.Remove(logicPosition);
+
+        GameObject gameObject = pieceController.GetGameObject();
+        if (gameObject != null)
+        {
+            gameObject.SetActive(false);
+#if UNITY_EDITOR
+            gameObject.name = "pool";
+#endif
+            PushResourceGameObject(m_UserPieceArtInfo.PiecePrefabPath, gameObject);
+        }
+
+        pieceController.UnInit();
+        m_PieceControllerPool.Add(pieceController);
     }
 
     /// <summary>
@@ -164,6 +209,22 @@ public class PieceManager : Stone_Manager
         }
 
         return pieceGameObject;
+    }
+
+    /// <summary>
+    /// 回收美术GameObject
+    /// </summary>
+    /// <returns></returns>
+    public void PushResourceGameObject(string resourcePath,GameObject gameObject)
+    {
+        List<GameObject> pool;
+        if (!m_GameObjectPool.TryGetValue(resourcePath, out pool))
+        {
+            pool = new List<GameObject>();
+            m_GameObjectPool.Add(resourcePath, pool);
+        }
+
+        pool.Add(gameObject);
     }
 
     /// <summary>

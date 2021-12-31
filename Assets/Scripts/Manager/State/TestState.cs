@@ -27,7 +27,7 @@ public class TestState : Stone_IState
         Stone_RunTime.AddManager(new TerrainManager());
         Stone_RunTime.AddManager(new RoleManager(new RoleManagerLiftControl()));
         Stone_RunTime.AddManager(new ActionControlManager());
-        Stone_RunTime.AddManager(new GamePlayerManager());
+        Stone_RunTime.AddManager(new GamePlayerManager(new GamePlayerManagerLifeControl()));
 
         GamePlayerManager gamePlayerManager = Stone_RunTime.GetManager<GamePlayerManager>(GamePlayerManager.Name);
         gamePlayerManager.CreateGamePlay("400000_GamePlay");

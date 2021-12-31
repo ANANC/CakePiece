@@ -101,11 +101,11 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Radius_0: 0.46
-    - _Radius_1: 0.31
+    - _Radius_0: 0.43
+    - _Radius_1: 0.35
     - _Radius_2: 0.67
-    - _Radius_3: 0.22
-    - _Radius_4: 0.38
+    - _Radius_3: 0.31
+    - _Radius_4: 0.47
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -115,14 +115,14 @@ Material:
     - _AppendColor: {r: 0, g: 0, b: 0, a: 1}
     - _BaseColor: {r: 0.18867922, g: 0.18459289, b: 0.18244925, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color_0: {r: 0.9339623, g: 0.8173667, b: 0.5683072, a: 1}
-    - _Color_1: {r: 0.5283019, g: 0.47912884, b: 0.41616234, a: 1}
-    - _Color_2: {r: 0.3962264, g: 0.29915652, b: 0.21493414, a: 1}
-    - _Color_3: {r: 0.3301887, g: 0.25765637, b: 0.21960664, a: 1}
-    - _Color_4: {r: 0.6132076, g: 0.4356167, b: 0.373131, a: 1}
+    - _Color_0: {r: 0.502225, g: 0.6226415, b: 0.5696582, a: 1}
+    - _Color_1: {r: 0.54509807, g: 0.7176471, b: 0.427451, a: 1}
+    - _Color_2: {r: 0.31523672, g: 0.41509432, b: 0.3837664, a: 1}
+    - _Color_3: {r: 0.3008188, g: 0.3773585, b: 0.3731063, a: 1}
+    - _Color_4: {r: 0.24452654, g: 0.32051715, b: 0.3301887, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Position_0: {r: 0, g: 0, b: 0, a: 0}
-    - _Position_1: {r: 0.37, g: 0.55, b: 0, a: 0}
-    - _Position_2: {r: 0.89, g: 0.35, b: 0, a: 0}
-    - _Position_3: {r: 0.21, g: 0.39, b: 0, a: 0}
-    - _Position_4: {r: 0.39, g: 0.17, b: 0, a: 0}
+    - _Position_1: {r: 0.15, g: 0.26, b: 0, a: 0}
+    - _Position_2: {r: 0.38, g: 0.35, b: 0, a: 0}
+    - _Position_3: {r: 0.42, g: 0.48, b: 0, a: 0}
+    - _Position_4: {r: 0.65, g: 0.14, b: 0, a: 0}

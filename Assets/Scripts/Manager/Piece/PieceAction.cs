@@ -15,4 +15,6 @@ public class PieceAction
 
     public virtual void UnInit() { }
 
+    public virtual void SetInfo(string infoStr) { }
+
 }

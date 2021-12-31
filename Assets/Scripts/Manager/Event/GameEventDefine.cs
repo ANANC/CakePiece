@@ -17,6 +17,21 @@ public class GameEventDefine
         public Vector3 NewArtPosition;      //新美术位置
     }
 
+    //三维空间 层移动表现 进入站立
+    public const string ThreeDimensionalSpace_FloorArt_StandInPieceEvent = "ThreeDimensionalSpace_FloorArt_StandInPiece";
+    public class ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public Vector3 LogicPos;    //逻辑位置
+    }
+
+
+    //三维空间 层移动表现 离开站立
+    public const string ThreeDimensionalSpace_FloorArt_StandOutPieceEvent = "ThreeDimensionalSpace_FloorArt_StandOutPiece";
+    public class ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public Vector3 LogicPos;    //逻辑位置
+    }
+
     //三维空间 层移动表现 提升层
     public const string ThreeDimensionalSpace_FloorArt_UpFloorEvent = "ThreeDimensionalSpace_FloorArt_UpFloor"; 
     public class ThreeDimensionalSpace_FloorArt_UpFloorEventInfo : Stone_EventObject.EventCallbackInfo

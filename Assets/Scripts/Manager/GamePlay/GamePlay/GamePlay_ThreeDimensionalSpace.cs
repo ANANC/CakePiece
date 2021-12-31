@@ -97,11 +97,11 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         if (isUpdateFloor)
         {
             TerrainManager.SetCurFloor(newFloor);
-            ChangeFloorArt(curFloor,newFloor);
+            ChangeFloorArt(curFloor,newFloor, mainPlayerMoveEventInfo.OldLogicPosition, mainPlayerMoveEventInfo.NewLogicPosition);
         }
         else
         {
-            ChangePlayerPositionArt();
+            ChangePlayerPositionArt(mainPlayerMoveEventInfo.OldLogicPosition, mainPlayerMoveEventInfo.NewLogicPosition);
         }
     }
 
@@ -109,7 +109,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     /// 改变层级表现
     /// </summary>
     /// <param name="newFloor"></param>
-    private void ChangeFloorArt(int curFloor,int newFloor)
+    private void ChangeFloorArt(int curFloor,int newFloor, Vector3 oldLogicPosition, Vector3 newLogicPosition)
     {
         string sequenceName = "ChangeFloorArt";
         Sequence sequence = DOTween.Sequence();
@@ -122,6 +122,14 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             info.PlayerId = RoleManager.GetMainPlayerId();
 
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEvent, info);
+        });
+
+        sequence.AppendCallback(() =>   //离开地块
+        {
+            GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo();
+            info.LogicPos = oldLogicPosition;
+
+            EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, info);
         });
 
         //往下走
@@ -187,12 +195,21 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEvent, info);
         });
+
+
+        sequence.AppendCallback(() =>   //进入地块
+        {
+            GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo();
+            info.LogicPos = newLogicPosition;
+
+            EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEvent, info);
+        });
     }
 
     /// <summary>
     /// 改变玩家位置表现
     /// </summary>
-    private void ChangePlayerPositionArt()
+    private void ChangePlayerPositionArt(Vector3 oldLogicPosition, Vector3 newLogicPosition)
     {
         string sequenceName = "ChangePlayerPositionArt";
         Sequence sequence = DOTween.Sequence();
@@ -205,6 +222,14 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             info.PlayerId = RoleManager.GetMainPlayerId();
 
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEvent, info);
+        });
+
+        sequence.AppendCallback(() =>   //离开地块
+        {
+            GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo();
+            info.LogicPos = oldLogicPosition;
+
+            EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, info);
         });
 
         sequence.AppendCallback(() =>   //重置主玩家位置
@@ -224,25 +249,15 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEvent, info);
         });
-    }
 
-
-    private void AddSequenceByOnlyRun(string name, Sequence sequence)
-    {
-        StopAllSequence();
-
-        m_SequenceDict.Add(name, sequence);
-    }
-
-    private void StopAllSequence()
-    {
-        Dictionary<string, Sequence>.Enumerator enumerator = m_SequenceDict.GetEnumerator();
-
-        while (enumerator.MoveNext())
+        sequence.AppendCallback(() =>   //进入地块
         {
-            Sequence tween = enumerator.Current.Value;
-            tween.Kill();
-        }
-        m_SequenceDict.Clear();
+            GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo();
+            info.LogicPos = newLogicPosition;
+
+            EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEvent, info);
+        });
     }
+
+
 }

@@ -245,10 +245,6 @@ public class BuildTerrainTool_BuildingController : MonoBehaviour
             Texture image = PieceImages[imgageIndex];
 
             pieceController.Material.mainTexture = image;
-
-            GameObject shader = pieceController.transform.Find("Shader").gameObject;
-            Material shaderMaterial = shader.GetComponent<MeshRenderer>().material;
-            shaderMaterial.mainTexture = image;
         }
 
         LogHelper.Debug?.Log("刷新表现", "刷新【图片】完毕");

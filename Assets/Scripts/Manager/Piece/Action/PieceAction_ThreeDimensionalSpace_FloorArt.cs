@@ -13,6 +13,9 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
     private Dictionary<string, Sequence> m_SequenceDict;
 
+    private SpriteRenderer m_DirectionUpSpriteRenderer;
+    private SpriteRenderer m_DirectionDownSpriteRenderer;
+
     private Stone_EventManager EventManager;
 
     public override void Init()
@@ -21,6 +24,8 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
         EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
 
+        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEvent, this, StandInPiece);
+        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, this, StandOutPiece);
         EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEvent, this, UpFloor);
         EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEvent, this, DownFloor);
         EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEvent, this, ShowFloor);
@@ -56,6 +61,8 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
             upTransform.localPosition = Vector3.zero;
             upTransform.localRotation = Quaternion.identity;
             upTransform.localScale = Vector3.one;
+
+            m_DirectionUpSpriteRenderer = up.transform.Find("Sprite").GetComponent<SpriteRenderer>();
         }
         if (m_PieceController.IsDirectionEnable(Vector3.down))
         {
@@ -65,6 +72,56 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
             downTransform.localPosition = Vector3.zero;
             downTransform.localRotation = Quaternion.identity;
             downTransform.localScale = Vector3.one;
+
+            m_DirectionDownSpriteRenderer = down.transform.Find("Sprite").GetComponent<SpriteRenderer>();
+        }
+    }
+
+    public void StandInPiece(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info)
+    {
+        Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
+        if (myLogicPosition != info.LogicPos)
+        {
+            return;
+        }
+
+        float newAlpha = 0.0f;
+
+        if(m_DirectionUpSpriteRenderer != null)
+        {
+            Color color = m_DirectionUpSpriteRenderer.color;
+            color.a = newAlpha;
+            m_DirectionUpSpriteRenderer.color = color;
+        }
+        if (m_DirectionDownSpriteRenderer != null)
+        {
+            Color color = m_DirectionDownSpriteRenderer.color;
+            color.a = newAlpha;
+            m_DirectionDownSpriteRenderer.color = color;
+        }
+    }
+
+    public void StandOutPiece(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info)
+    {
+        Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
+        if (myLogicPosition != info.LogicPos)
+        {
+            return;
+        }
+
+        float newAlpha = 0.6f;
+
+        if (m_DirectionUpSpriteRenderer != null)
+        {
+            Color color = m_DirectionUpSpriteRenderer.color;
+            color.a = newAlpha;
+            m_DirectionUpSpriteRenderer.color = color;
+        }
+        if (m_DirectionDownSpriteRenderer != null)
+        {
+            Color color = m_DirectionDownSpriteRenderer.color;
+            color.a = newAlpha;
+            m_DirectionDownSpriteRenderer.color = color;
         }
     }
 
