@@ -11,7 +11,7 @@ public class BuildTerrainTool : MonoBehaviour
     public GameObject TerrainRoot;
 
     public Transform PieceRoot;
-    public MeshRenderer PieceMesh;
+    public string PieceMesh;
 
     public GameObject PiecePrefab;
 
@@ -30,22 +30,22 @@ public class BuildTerrainTool : MonoBehaviour
 
     public string GetMeshRendererPath()
     {
-        string path = "";
+        //string path = "";
 
-        Transform pieceMeshTransform = PieceMesh.transform;
-        Transform curTransform = pieceMeshTransform;
-        while (curTransform != PieceRoot)
-        {
-            path +="/"+ curTransform.name;
-            curTransform = curTransform.parent;
-        }
+        //Transform pieceMeshTransform = PieceMesh.transform;
+        //Transform curTransform = pieceMeshTransform;
+        //while (curTransform != PieceRoot)
+        //{
+        //    path +="/"+ curTransform.name;
+        //    curTransform = curTransform.parent;
+        //}
 
-        if(path.StartsWith("/"))
-        {
-            path = path.Substring(1, path.Length - 1);
-        }
+        //if(path.StartsWith("/"))
+        //{
+        //    path = path.Substring(1, path.Length - 1);
+        //}
 
-        return path;
+        return PieceMesh;
     }
 
     public void CreatePieceTxt()

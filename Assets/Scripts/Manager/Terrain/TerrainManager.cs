@@ -39,6 +39,10 @@ public class TerrainManager : Stone_Manager
         PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
     }
 
+    /// <summary>
+    /// 创建地形
+    /// </summary>
+    /// <param name="terrainName"></param>
     public void CreateTerrain(string terrainName)
     {
         if(m_CurUserTerrainInfo!=null)
@@ -53,7 +57,22 @@ public class TerrainManager : Stone_Manager
         int pieceInfoCount = userPieceInfos.Length;
         for (int index = 0;index< pieceInfoCount; index++)
         {
-            PieceManager.LayPiece(userPieceInfos[index]);
+            PieceManager.LayPiece(PieceManager.UserPieceInfo.Clone(userPieceInfos[index]));
+        }
+    }
+
+    /// <summary>
+    /// 重置地形
+    /// </summary>
+    public void ResetTerrain()
+    {
+        PieceManager.DeleteAllPiece();
+
+        PieceManager.UserPieceInfo[] userPieceInfos = m_CurUserTerrainInfo.PieceInfos;
+        int pieceInfoCount = userPieceInfos.Length;
+        for (int index = 0; index < pieceInfoCount; index++)
+        {
+            PieceManager.LayPiece(PieceManager.UserPieceInfo.Clone(userPieceInfos[index]));
         }
     }
 

@@ -11,6 +11,12 @@
             "AssetBundlePackagePath": "Texture",
             "AssetBundlePackageUserName": "",
             "IsBuildDependent": false
+        },
+		{
+            "Type": 5,
+            "AssetBundlePackagePath": "UI",
+            "AssetBundlePackageUserName": "",
+            "IsBuildDependent": true
         }
     ]
 }

@@ -9,5 +9,7 @@ public class CameraManagerLifeControl : Stone_IManagerLifeControl
         CameraManager cameraManager = (CameraManager)manager;
 
         cameraManager.AddCreateCameraActionFunc(CameraAction_ContinueToFollow.Name, CameraAction_ContinueToFollow.CreateAction);
+        cameraManager.AddCreateCameraActionFunc(CameraAction_RangeToFollow.Name, CameraAction_RangeToFollow.CreateAction);
+
     }
 }

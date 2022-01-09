@@ -1,8 +1,8 @@
 {
     "CameraActions": [
-        "CameraAction_ContinueToFollow"
+        "CameraAction_RangeToFollow"
     ],
     "CameraActionInfoNames": [
-        "CameraAction_ContinueToFollowInfo"
+        "CameraAction_RangeToFollowInfo"
     ]
 }

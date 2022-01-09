@@ -1,0 +1,19 @@
+{
+	"OffsetPosition": {
+        "x": 0,
+        "y": 17,
+        "z": -12
+    },
+    "MoveRangeSize": {
+        "x": 100,
+        "y": 10,
+        "z": 100
+    },
+    "InitialRotate": {
+        "x": 45,
+        "y": 0,
+        "z": 0
+    },
+    "OrthographicSize": 5,
+    "MoveSpeed": 2
+}

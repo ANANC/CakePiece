@@ -43,6 +43,7 @@ public class GameEntrance : MonoBehaviour
         Stone_RunTime.AddManager(new Stone_StateManager(new Stone_StateManagerLifeControl()));
         Stone_RunTime.AddManager(new Stone_EventManager());
         Stone_RunTime.AddManager(new Stone_TimerManager(),true);
+        Stone_RunTime.AddManager(new Stone_UIManager(new Stone_UIManagerLifeControl()));
 
         //游戏-通用
         Stone_RunTime.AddManager(new ModelManager());

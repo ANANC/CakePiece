@@ -17,23 +17,46 @@ public class GameEventDefine
         public Vector3 NewArtPosition;      //新美术位置
     }
 
+    //地块添加
+    public const string PieceCreateEvent = "PieceCreateEvent";
+    public class PieceCreateEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public Vector3 LogicPos;    //逻辑位置
+    }
+
+    //地块删除
+    public const string PieceDestroyEvent = "PieceDestroyEvent";
+    public class PieceDestroyEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public Vector3 LogicPos;    //逻辑位置
+    }
+
+    //地块方向改变
+    public const string PieceEnableDirectionChangeEvent = "PieceEnableDirectionChangeEvent";
+    public class PieceEnableDirectionChangeEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public Vector3 LogicPos;    //逻辑位置
+    }
+
+    //游戏重置请求
+    public const string GameResetRequestEvent = "GameResetRequestEvent";
+
     //三维空间 层移动表现 进入站立
-    public const string ThreeDimensionalSpace_FloorArt_StandInPieceEvent = "ThreeDimensionalSpace_FloorArt_StandInPiece";
+    public const string ThreeDimensionalSpace_FloorArt_StandInPieceEvent = "ThreeDimensionalSpace_FloorArt_StandInPieceEvent";
     public class ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo : Stone_EventObject.EventCallbackInfo
     {
         public Vector3 LogicPos;    //逻辑位置
     }
 
-
     //三维空间 层移动表现 离开站立
-    public const string ThreeDimensionalSpace_FloorArt_StandOutPieceEvent = "ThreeDimensionalSpace_FloorArt_StandOutPiece";
+    public const string ThreeDimensionalSpace_FloorArt_StandOutPieceEvent = "ThreeDimensionalSpace_FloorArt_StandOutPieceEvent";
     public class ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo : Stone_EventObject.EventCallbackInfo
     {
         public Vector3 LogicPos;    //逻辑位置
     }
 
     //三维空间 层移动表现 提升层
-    public const string ThreeDimensionalSpace_FloorArt_UpFloorEvent = "ThreeDimensionalSpace_FloorArt_UpFloor"; 
+    public const string ThreeDimensionalSpace_FloorArt_UpFloorEvent = "ThreeDimensionalSpace_FloorArt_UpFloorEvent"; 
     public class ThreeDimensionalSpace_FloorArt_UpFloorEventInfo : Stone_EventObject.EventCallbackInfo
     {
         public int UpFloor; //层
@@ -71,14 +94,14 @@ public class GameEventDefine
         public int Floor; //层
     }
 
-    //三维空间 玩家表现 显示
+    //三维空间 玩家表现 隐藏
     public const string ThreeDimensionalSpace_PlayerArt_HideEvent = "ThreeDimensionalSpace_PlayerArt_HideEvent";
     public class ThreeDimensionalSpace_PlayerArt_HideEventInfo : Stone_EventObject.EventCallbackInfo
     {
         public int PlayerId; //玩家id
     }
 
-    //三维空间 玩家表现 隐藏
+    //三维空间 玩家表现 显示
     public const string ThreeDimensionalSpace_PlayerArt_ShowEvent = "ThreeDimensionalSpace_PlayerArt_ShowEvent";
     public class ThreeDimensionalSpace_PlayerArt_ShowEventInfo : Stone_EventObject.EventCallbackInfo
     {
@@ -91,5 +114,14 @@ public class GameEventDefine
     {
         public int PlayerId;        //玩家id
         public Vector3 ArtPosition; //美术位置
+    }
+
+    //三维空间 玩家表现 美术位置
+    public const string ThreeDimensionalSpace_PlayerArt_DownDeathEvent = "ThreeDimensionalSpace_PlayerArt_DownDeathEvent";
+    public class ThreeDimensionalSpace_PlayerArt_DownDeathEventInfo : Stone_EventObject.EventCallbackInfo
+    {
+        public int PlayerId;        //玩家id
+        public float DownTime;      //下降时间
+        public float DownDistance;  //下降距离
     }
 }

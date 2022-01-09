@@ -2,6 +2,10 @@
     "PiecePrefabPath":"Model/100000_Piece/Prefab/100000_Piece.prefab",
 	"PieceDirectionUpPath":"Model/100001_PieceDirection/Prefab/100001_PieceDirection_Up.prefab",
 	"PieceDirectionDownPath":"Model/100001_PieceDirection/Prefab/100001_PieceDirection_Down.prefab",
+	"PieceObstructLeftPath":"Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Left.prefab",
+	"PieceObstructRightPath":"Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Right.prefab",
+	"PieceObstructForwardPath":"Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Forward.prefab",
+	"PieceObstructBackPath":"Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Back.prefab",
 	"OriginPosition": {
         "x": 0,
         "y": 0,

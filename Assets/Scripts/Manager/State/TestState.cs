@@ -35,6 +35,9 @@ public class TestState : Stone_IState
         GameObject keyboardGameObject = new GameObject();
         keyboardGameObject.AddComponent<KeyboardControl>();
         keyboardGameObject.name = "KeyboardControl";
+
+        Stone_UIManager uiManager = Stone_RunTime.GetManager<Stone_UIManager>(Stone_UIManager.Name);
+        uiManager.OpenUI(GameMainPanel.Name);
     }
 
     public void Exist()

@@ -108,6 +108,11 @@ public class ActionControlManager : Stone_Manager
             return;
         }
 
+        if (!newPieceController.GetEnableMove())
+        {
+            return;
+        }
+
         Vector3 curLogicPos = role.GetLogicPosition();
         PieceController curPieceController = PieceManager.GetPiece(curLogicPos);
         if (curPieceController == null)
@@ -161,12 +166,13 @@ public class ActionControlManager : Stone_Manager
            () =>
            {
                m_NextActionTimer = 0;
-
                _ControlRoleMove(role, newLogicPos + upOrDown);
-
-               m_BeforeLogicPos = Vector3.zero;
-               m_ReceiveUserControl = true;
-           }, interval: NextWaitTime, updateCount: 1);
+           }, interval: NextWaitTime, updateTime: NextWaitTime);
+        }
+        else
+        {
+            m_BeforeLogicPos = Vector3.zero;
+            m_ReceiveUserControl = true;
         }
     }
 

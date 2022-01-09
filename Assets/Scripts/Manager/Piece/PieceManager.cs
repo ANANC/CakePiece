@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameEventDefine;
 
 public class PieceManager : Stone_Manager
 {
@@ -20,16 +21,41 @@ public class PieceManager : Stone_Manager
         public string PieceTexutePath;      //块图片资源路径
         public string[] ActionNames;        //行为名称
         public string[] ActionInfos;        //行为信息
+
+        public static UserPieceInfo Clone(UserPieceInfo res)
+        {
+            UserPieceInfo info = new UserPieceInfo();
+            info.LogicPosition = res.LogicPosition;
+            info.EnableDirection = res.EnableDirection;
+            info.Color = res.Color;
+            info.PieceTexutePath = res.PieceTexutePath;
+            info.ActionNames = new string[res.ActionNames.Length];
+            for(int index = 0;index< res.ActionNames.Length;index++)
+            {
+                info.ActionNames[index] = res.ActionNames[index];
+            }
+            info.ActionInfos = new string[res.ActionInfos.Length];
+            for (int index = 0; index < res.ActionInfos.Length; index++)
+            {
+                info.ActionInfos[index] = res.ActionInfos[index];
+            }
+
+            return info;
+        }
     }
 
     public class UserPieceArtInfo: Stone_BaseUserConfigData
     {
-        public string PiecePrefabPath;      //块资源路径
-        public string PieceDirectionUpPath; //块方向上 资源路径
-        public string PieceDirectionDownPath;//块方向下 资源路径
-        public Vector3 OriginPosition;      //原点
-        public float HorizontalInterval;    //水平间隔
-        public float VerticalInterval;      //垂直间隔
+        public string PiecePrefabPath;          //块              资源路径
+        public string PieceDirectionUpPath;     //块方向上        资源路径
+        public string PieceDirectionDownPath;   //块方向下        资源路径
+        public string PieceObstructLeftPath;    //块拦截方向左    资源路径
+        public string PieceObstructRightPath;   //块拦截方向右    资源路径
+        public string PieceObstructForwardPath; //块拦截方向前    资源路径
+        public string PieceObstructBackPath;    //块拦截方向后    资源路径
+        public Vector3 OriginPosition;          //原点
+        public float HorizontalInterval;        //水平间隔
+        public float VerticalInterval;          //垂直间隔
     }
 
     private Dictionary<Vector3, PieceController> m_LogicPos2PieceControllerDict;    //【逻辑位置】对应【棋子管理器】列表 dict
@@ -41,8 +67,11 @@ public class PieceManager : Stone_Manager
 
     private UserPieceArtInfo m_UserPieceArtInfo;
 
+    private Transform RootTransform;
+
     private ModelManager ModelManager;
     private Stone_ResourceManager ResourceManager;
+    private Stone_EventManager EventManager;
 
     public PieceManager(Stone_IManagerLifeControl stone_ManagerLifeControl) : base(stone_ManagerLifeControl) { }
 
@@ -58,11 +87,20 @@ public class PieceManager : Stone_Manager
 
         ModelManager = Stone_RunTime.GetManager<ModelManager>(ModelManager.Name);
         ResourceManager = Stone_RunTime.GetManager<Stone_ResourceManager>(Stone_ResourceManager.Name);
+        EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
+
+        RootTransform = ModelManager.GetOrCreateNodeRoot(PieceManager.Name).transform;
     }
 
     public override void UnInit()
     {
+        DeleteAllPiece();
 
+        GameObject.Destroy(RootTransform);
+
+        ModelManager = null;
+        ResourceManager = null;
+        EventManager = null;
     }
 
     public override void Active()
@@ -92,11 +130,13 @@ public class PieceManager : Stone_Manager
         }
 
         PieceController pieceController = GetOrCreatePieceController();
+        pieceController.Init();
 
         GameObject pieceGameObject = GetOrCreateResourceGameObject(m_UserPieceArtInfo.PiecePrefabPath);
 
         m_LogicPos2PieceControllerDict.Add(pieceInfo.LogicPosition, pieceController);
 
+        pieceController.SetUserPieceInfo(pieceInfo);
         pieceController.Active(pieceGameObject);
 
         Vector3 logic = pieceInfo.LogicPosition;
@@ -133,6 +173,10 @@ public class PieceManager : Stone_Manager
             pieceAction.SetPieceController(pieceController);
             pieceController.AddAction(pieceAction);
         }
+
+        PieceCreateEventInfo pieceCreateEventInfo = new PieceCreateEventInfo();
+        pieceCreateEventInfo.LogicPos = pieceInfo.LogicPosition;
+        EventManager.Execute(PieceCreateEvent, pieceCreateEventInfo);
     }
 
     /// <summary>
@@ -147,20 +191,32 @@ public class PieceManager : Stone_Manager
             return;
         }
 
-        m_LogicPos2PieceControllerDict.Remove(logicPosition);
-
-        GameObject gameObject = pieceController.GetGameObject();
-        if (gameObject != null)
-        {
-            gameObject.SetActive(false);
-#if UNITY_EDITOR
-            gameObject.name = "pool";
-#endif
-            PushResourceGameObject(m_UserPieceArtInfo.PiecePrefabPath, gameObject);
-        }
-
         pieceController.UnInit();
+
+        m_LogicPos2PieceControllerDict.Remove(logicPosition);
         m_PieceControllerPool.Add(pieceController);
+
+        PieceDestroyEventInfo pieceDestroyEventInfo = new PieceDestroyEventInfo();
+        pieceDestroyEventInfo.LogicPos = logicPosition;
+        EventManager.Execute(PieceDestroyEvent, pieceDestroyEventInfo);
+    }
+
+    /// <summary>
+    /// 删除全部地块
+    /// </summary>
+    public void DeleteAllPiece()
+    {
+        List<Vector3> logicPositions = new List<Vector3>();
+        Dictionary<Vector3, PieceController>.Enumerator enumerator = m_LogicPos2PieceControllerDict.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            Vector3 logicPos = enumerator.Current.Key;
+            logicPositions.Add(logicPos);
+        }
+        for (int index = 0; index < logicPositions.Count; index++)
+        {
+            DeletePiece(logicPositions[index]);
+        }
     }
 
     /// <summary>
@@ -178,7 +234,6 @@ public class PieceManager : Stone_Manager
         else
         {
             pieceController = new PieceController();
-            pieceController.Init();
         }
 
         return pieceController;
@@ -217,6 +272,12 @@ public class PieceManager : Stone_Manager
     /// <returns></returns>
     public void PushResourceGameObject(string resourcePath,GameObject gameObject)
     {
+        gameObject.SetActive(false);
+        Transform transform = gameObject.transform;
+        transform.SetParent(RootTransform);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+
         List<GameObject> pool;
         if (!m_GameObjectPool.TryGetValue(resourcePath, out pool))
         {
@@ -225,6 +286,10 @@ public class PieceManager : Stone_Manager
         }
 
         pool.Add(gameObject);
+
+#if UNITY_EDITOR
+        gameObject.name = resourcePath + "_"+ pool.Count;
+#endif
     }
 
     /// <summary>
@@ -245,6 +310,24 @@ public class PieceManager : Stone_Manager
     public bool HasPiece(Vector3 logicPosition)
     {
         return m_LogicPos2PieceControllerDict.ContainsKey(logicPosition);
+    }
+
+    public List<Vector3> GetFloorLogicPositions(int floor)
+    {
+        List<Vector3> logicPositions = new List<Vector3>();
+
+        Dictionary<Vector3, PieceController>.Enumerator enumerator = m_LogicPos2PieceControllerDict.GetEnumerator();
+        while(enumerator.MoveNext())
+        {
+            Vector3 logicPos = enumerator.Current.Key;
+
+            if((int)logicPos.y == floor)
+            {
+                logicPositions.Add(logicPos);
+            }
+        }
+
+        return logicPositions;
     }
 
     public PieceController GetPiece(Vector3 logicPosition)

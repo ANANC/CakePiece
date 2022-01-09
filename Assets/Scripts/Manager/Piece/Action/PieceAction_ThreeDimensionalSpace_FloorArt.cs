@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameEventDefine;
 
 public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 {
@@ -15,7 +16,12 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
     private SpriteRenderer m_DirectionUpSpriteRenderer;
     private SpriteRenderer m_DirectionDownSpriteRenderer;
+    private SpriteRenderer m_ObstructLeftSpriteRenderer;
+    private SpriteRenderer m_ObstructRightSpriteRenderer;
+    private SpriteRenderer m_ObstructForwardSpriteRenderer;
+    private SpriteRenderer m_ObstructBackSpriteRenderer;
 
+    private PieceManager PieceManager;
     private Stone_EventManager EventManager;
 
     public override void Init()
@@ -23,14 +29,18 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         m_SequenceDict = new Dictionary<string, Sequence>();
 
         EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
+        PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
 
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEvent, this, StandInPiece);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, this, StandOutPiece);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEvent, this, UpFloor);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEvent, this, DownFloor);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEvent, this, ShowFloor);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_HideFloorEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_HideFloorEvent, this, HideFloor);
-        EventManager.AddListener<GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo>(GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEvent, this, ResetArtPositionFromLogic);
+        EventManager.AddListener<PieceCreateEventInfo>(PieceCreateEvent, this, PieceCreateEventListener);
+        EventManager.AddListener<PieceDestroyEventInfo>(PieceDestroyEvent, this, PieceDestroyEventListener);
+        EventManager.AddListener<PieceEnableDirectionChangeEventInfo>(PieceEnableDirectionChangeEvent, this, PieceEnableDirectionChangeEventListener);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo>(ThreeDimensionalSpace_FloorArt_StandInPieceEvent, this, StandInPiece);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo>(ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, this, StandOutPiece);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_UpFloorEventInfo>(ThreeDimensionalSpace_FloorArt_UpFloorEvent, this, UpFloor);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_DownFloorEventInfo>(ThreeDimensionalSpace_FloorArt_DownFloorEvent, this, DownFloor);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo>(ThreeDimensionalSpace_FloorArt_ShowFloorEvent, this, ShowFloor);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_HideFloorEventInfo>(ThreeDimensionalSpace_FloorArt_HideFloorEvent, this, HideFloor);
+        EventManager.AddListener<ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo>(ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEvent, this, ResetArtPositionFromLogic);
 
         InitFloorArt();
     }
@@ -38,6 +48,19 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
     public override void UnInit()
     {
         EventManager.DeleteTargetAllListener(this);
+        m_SequenceDict.StopAllSequence();
+
+        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+
+        UnInitSpriteRenderer(userPieceArtInfo.PieceDirectionUpPath,ref m_DirectionUpSpriteRenderer);
+        UnInitSpriteRenderer(userPieceArtInfo.PieceDirectionDownPath, ref m_DirectionDownSpriteRenderer);
+        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructLeftPath, ref m_ObstructLeftSpriteRenderer);
+        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructRightPath, ref m_ObstructRightSpriteRenderer);
+        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructForwardPath, ref m_ObstructForwardSpriteRenderer);
+        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructBackPath, ref m_ObstructBackSpriteRenderer);
+
+        PieceManager = null;
+        EventManager = null;
     }
 
     private void InitFloorArt()
@@ -50,34 +73,136 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
         GameObject gameObject = m_PieceController.GetGameObject();
         gameObject.SetActive(curFloor == myFloor);
+        Transform transform = gameObject.transform;
 
-        PieceManager pieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
-        PieceManager.UserPieceArtInfo userPieceArtInfo = pieceManager.GetUserPieceArtInfo();
-        if (m_PieceController.IsDirectionEnable(Vector3.up))
+        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+
+        InitSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+        InitSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        InitSpriteRenderer(Vector3.left, false, userPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
+        InitSpriteRenderer(Vector3.right, false, userPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
+        InitSpriteRenderer(Vector3.forward, false, userPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
+        InitSpriteRenderer(Vector3.back, false, userPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
+    }
+
+    private void InitSpriteRenderer(Vector3 direction,bool enable,string resourcePath,Transform parent,ref SpriteRenderer spriteRenderer)
+    {
+        bool curEnable = m_PieceController.IsDirectionEnable(direction) == enable;
+        if(direction == Vector3.up || direction == Vector3.down)
         {
-            GameObject up = pieceManager.GetOrCreateResourceGameObject(userPieceArtInfo.PieceDirectionUpPath);
-            Transform upTransform = up.transform;
-            upTransform.SetParent(gameObject.transform);
-            upTransform.localPosition = Vector3.zero;
-            upTransform.localRotation = Quaternion.identity;
-            upTransform.localScale = Vector3.one;
-
-            m_DirectionUpSpriteRenderer = up.transform.Find("Sprite").GetComponent<SpriteRenderer>();
+            Vector3 nextLogicPos = m_PieceController.GetLogicPosition() + direction;
+            curEnable = PieceManager.HasPiece(nextLogicPos) && curEnable;
         }
-        if (m_PieceController.IsDirectionEnable(Vector3.down))
-        {
-            GameObject down = pieceManager.GetOrCreateResourceGameObject(userPieceArtInfo.PieceDirectionDownPath);
-            down.transform.SetParent(gameObject.transform);
-            Transform downTransform = down.transform;
-            downTransform.localPosition = Vector3.zero;
-            downTransform.localRotation = Quaternion.identity;
-            downTransform.localScale = Vector3.one;
 
-            m_DirectionDownSpriteRenderer = down.transform.Find("Sprite").GetComponent<SpriteRenderer>();
+        if (curEnable)
+        {
+            GameObject artGameObject = PieceManager.GetOrCreateResourceGameObject(resourcePath);
+            artGameObject.transform.SetParent(parent);
+            Transform artTransform = artGameObject.transform;
+            artTransform.localPosition = Vector3.zero;
+            artTransform.localRotation = Quaternion.identity;
+            artTransform.localScale = Vector3.one;
+
+            spriteRenderer = artTransform.Find("Sprite").GetComponent<SpriteRenderer>();
+
+            artGameObject.SetActive(true);
+        }
+        else
+        {
+            spriteRenderer = null;
         }
     }
 
-    public void StandInPiece(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info)
+    private void UnInitSpriteRenderer(string resourcePath, ref SpriteRenderer spriteRenderer)
+    {
+        if (spriteRenderer != null)
+        {
+            //tip:对应find的路径
+            PieceManager.PushResourceGameObject(resourcePath, spriteRenderer.transform.parent.gameObject);
+        }
+        spriteRenderer = null;
+    }
+
+    private void PieceCreateEventListener(PieceCreateEventInfo info)
+    {
+        Vector3 curLogicPos = m_PieceController.GetLogicPosition();
+        if (info.LogicPos == curLogicPos + Vector3.up || info.LogicPos == curLogicPos + Vector3.down)
+        {
+            GameObject gameObject = m_PieceController.GetGameObject();
+            Transform transform = gameObject.transform;
+
+            PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+
+            ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+            ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        }
+    }
+
+    private void PieceDestroyEventListener(PieceDestroyEventInfo info)
+    {
+        Vector3 curLogicPos = m_PieceController.GetLogicPosition();
+        if (info.LogicPos == curLogicPos + Vector3.up || info.LogicPos == curLogicPos + Vector3.down)
+        {
+            GameObject gameObject = m_PieceController.GetGameObject();
+            Transform transform = gameObject.transform;
+
+            PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+
+            ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+            ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        }
+    }
+
+    private void PieceEnableDirectionChangeEventListener(PieceEnableDirectionChangeEventInfo info)
+    {
+        Vector3 curLogicPos = m_PieceController.GetLogicPosition();
+        if(curLogicPos != info.LogicPos)
+        {
+            return;
+        }
+
+        GameObject gameObject = m_PieceController.GetGameObject();
+        Transform transform = gameObject.transform;
+
+        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+
+        ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+        ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        ResetSpriteRenderer(Vector3.left, false, userPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
+        ResetSpriteRenderer(Vector3.right, false, userPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
+        ResetSpriteRenderer(Vector3.forward, false, userPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
+        ResetSpriteRenderer(Vector3.back, false, userPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
+    }
+
+
+    private void ResetSpriteRenderer(Vector3 direction, bool enable, string resourcePath, Transform parent, ref SpriteRenderer spriteRenderer)
+    {
+        bool curEnable = m_PieceController.IsDirectionEnable(direction) == enable;
+        if (direction == Vector3.up || direction == Vector3.down)
+        {
+            Vector3 nextLogicPos = m_PieceController.GetLogicPosition() + direction;
+            curEnable = PieceManager.HasPiece(nextLogicPos) && curEnable;
+        }
+
+        if (curEnable)
+        {
+            if (spriteRenderer == null)
+            {
+                InitSpriteRenderer(direction, enable, resourcePath, parent, ref spriteRenderer);
+            }
+        }
+        else
+        {
+            if (spriteRenderer != null)
+            {
+                UnInitSpriteRenderer(resourcePath, ref spriteRenderer);
+            }
+        }
+    }
+
+
+
+    public void StandInPiece(ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if (myLogicPosition != info.LogicPos)
@@ -101,7 +226,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         }
     }
 
-    public void StandOutPiece(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info)
+    public void StandOutPiece(ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if (myLogicPosition != info.LogicPos)
@@ -129,7 +254,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
     /// 上升特效
     /// </summary>
     /// <param name="info"></param>
-    public void UpFloor(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo info)
+    public void UpFloor(ThreeDimensionalSpace_FloorArt_UpFloorEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if ((int)myLogicPosition.y != info.UpFloor)
@@ -153,7 +278,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
     /// 下降特效
     /// </summary>
     /// <param name="info"></param>
-    public void DownFloor(GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo info)
+    public void DownFloor(ThreeDimensionalSpace_FloorArt_DownFloorEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if ((int)myLogicPosition.y != info.DownFloor)
@@ -177,7 +302,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
     /// 显示特效
     /// </summary>
     /// <param name="info"></param>
-    public void ShowFloor(GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo info)
+    public void ShowFloor(ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if ((int)myLogicPosition.y != info.Floor)
@@ -195,7 +320,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
     /// 隐藏特效
     /// </summary>
     /// <param name="info"></param>
-    public void HideFloor(GameEventDefine.ThreeDimensionalSpace_FloorArt_HideFloorEventInfo info)
+    public void HideFloor(ThreeDimensionalSpace_FloorArt_HideFloorEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if ((int)myLogicPosition.y != info.Floor)
@@ -209,7 +334,7 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         gameObject.SetActive(false);
     }
 
-    public void ResetArtPositionFromLogic(GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo info)
+    public void ResetArtPositionFromLogic(ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo info)
     {
         Vector3 myLogicPosition = m_PieceController.GetLogicPosition();
         if ((int)myLogicPosition.y != info.Floor)

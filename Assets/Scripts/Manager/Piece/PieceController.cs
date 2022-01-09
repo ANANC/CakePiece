@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameEventDefine;
 
 public class PieceController
 {
-    private const string MaterialPath = ""; //材质球路径
+    private const string MaterialPath = "Piece"; //材质球路径
 
     private PieceManager.UserPieceInfo m_UserPieceInfo;
 
@@ -21,12 +22,21 @@ public class PieceController
     private int m_EnableDirectionsY;
     private int m_EnableDirectionsZ;
 
+    private bool m_EnableMove;   //能否移动
+
     private List<PieceAction> m_ActionList;
 
+    private Stone_EventManager EventManager;
+    private PieceManager PieceManager;
 
     public void Init()
     {
+        m_EnableMove = true;
+
         m_ActionList = new List<PieceAction>();
+
+        EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
+        PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
     }
 
     public void UnInit()
@@ -38,6 +48,21 @@ public class PieceController
             action.SetPieceController(null);
         }
         m_ActionList.Clear();
+
+        if (m_GameObject != null)
+        {
+            PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
+            PieceManager.PushResourceGameObject(userPieceArtInfo.PiecePrefabPath, m_GameObject);
+        }
+
+        m_GameObject = null;
+        m_Transform = null;
+        m_Material = null;
+
+        m_UserPieceInfo = null;
+
+        EventManager = null;
+        PieceManager = null;
     }
 
     public void Active(GameObject gameObject)
@@ -52,6 +77,7 @@ public class PieceController
     {
         m_GameObject = null;
         m_Transform = null;
+        m_Material = null;
     }
 
     public void SetUserPieceInfo(PieceManager.UserPieceInfo userPieceInfo)
@@ -156,6 +182,33 @@ public class PieceController
         m_EnableDirectionsX = (int)direction.x;
         m_EnableDirectionsY = (int)direction.y;
         m_EnableDirectionsZ = (int)direction.z;
+    }
+
+    public void UpdateDirectionEnable(Vector3 direction, bool enable)
+    {
+        if (direction == Vector3.zero)
+        {
+            return;
+        }
+
+        bool curEnable = IsDirectionEnable(direction);
+        if (curEnable == enable)
+        {
+            return;
+        }
+
+        if (enable)
+        {
+            AddEnableDirection(direction);
+        }
+        else
+        {
+            DeleteDirection(direction);
+        }
+
+        PieceEnableDirectionChangeEventInfo info = new PieceEnableDirectionChangeEventInfo();
+        info.LogicPos = m_LogicPosition;
+        EventManager.Execute(PieceEnableDirectionChangeEvent, info);
     }
 
     public void AddEnableDirection(Vector3 direction)
@@ -324,5 +377,15 @@ public class PieceController
         return enableMove;
     }
 
+
+    public void SetEnableMove( bool enableMove)
+    {
+        m_EnableMove = enableMove;
+    }
+
+    public bool GetEnableMove()
+    {
+        return m_EnableMove;
+    }
 
 }
