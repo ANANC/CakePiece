@@ -1,4 +1,5 @@
-﻿
+﻿#if UNITY_EDITOR
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -250,3 +251,6 @@ public class BuildTerrainTool_BuildingController : MonoBehaviour
         LogHelper.Debug?.Log("刷新表现", "刷新【图片】完毕");
     }
 }
+
+
+#endif

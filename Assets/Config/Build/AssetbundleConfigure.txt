@@ -1,19 +1,19 @@
 {
     "Configures": [
         {
-            "Type": 5,
+            "ConfigureType": 5,
             "AssetBundlePackagePath": "Model",
             "AssetBundlePackageUserName": "",
             "IsBuildDependent": true
         },
 		{
-            "Type": 5,
+            "ConfigureType": 5,
             "AssetBundlePackagePath": "Texture",
             "AssetBundlePackageUserName": "",
             "IsBuildDependent": false
         },
 		{
-            "Type": 5,
+            "ConfigureType": 5,
             "AssetBundlePackagePath": "UI",
             "AssetBundlePackageUserName": "",
             "IsBuildDependent": true

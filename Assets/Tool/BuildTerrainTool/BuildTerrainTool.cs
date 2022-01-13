@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if UNITY_EDITOR
+
+using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -359,3 +361,5 @@ public class BuildTerrainTool : MonoBehaviour
 
     }
 }
+
+#endif

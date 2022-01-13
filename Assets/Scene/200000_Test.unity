@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75442b3990ae35d47a425fbf6c063c42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseAssetBundle: 0
+  m_UseAssetBundle: 1
 --- !u!4 &1816511675
 Transform:
   m_ObjectHideFlags: 0

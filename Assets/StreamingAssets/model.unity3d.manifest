@@ -1,0 +1,60 @@
+ManifestFileVersion: 0
+CRC: 2488957057
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 5cb8d7d3c4a4174487109fe7c359cd2d
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 163a80c19c1296d29209b97b06c97171
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 212
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Model/100002_PieceObstruct/Image/obstruct_10.png
+- Assets/Model/102000_Background/Image/randon.jpg
+- Assets/Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Left.prefab
+- Assets/Model/102000_Background/Material/102000_Background.mat
+- Assets/Model/102000_Background/Image/circle_11.png
+- Assets/Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Right.prefab
+- Assets/Model/100002_PieceObstruct/Image/obstruct_15.png
+- Assets/Model/100000_Piece/Material/100000_Piece_Shader.mat
+- Assets/Model/100001_PieceDirection/Prefab/100001_PieceDirection_Up.prefab
+- Assets/Model/102000_Background/Image/circle_05.png
+- Assets/Model/100001_PieceDirection/Image/direction_03.png
+- Assets/Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Forward.prefab
+- Assets/Model/100002_PieceObstruct/Image/obstruct_03.png
+- Assets/Model/102000_Background/Image/circle_09.png
+- Assets/Model/102000_Background/Image/circle_07.png
+- Assets/Model/102000_Background/Image/circle_03.png
+- Assets/Model/102000_Background/Prefab/102000_Background.prefab
+- Assets/Model/100002_PieceObstruct/Image/obstruct_07.png
+- Assets/Model/100001_PieceDirection/Prefab/100001_PieceDirection_Down.prefab
+- Assets/Model/100002_PieceObstruct/Prefab/100002_PieceObstruct_Back.prefab
+- Assets/Model/101000_Player/Prefab/101000_Player.prefab
+- Assets/Model/100000_Piece/Prefab/100000_Piece.prefab
+- Assets/Model/100000_Piece/Material/100000_Piece.mat
+- Assets/Model/100001_PieceDirection/Image/direction_06.png
+Dependencies:
+- F:/SelfEnvironment/CakePiece/Assets/../output/AssetBundles/windows/texture.unity3d
