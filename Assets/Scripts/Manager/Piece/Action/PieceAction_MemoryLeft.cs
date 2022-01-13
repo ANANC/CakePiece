@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class PieceAction_MemoryLeft : PieceAction
 {
-    private const float StandingWaitTime = 2.5f; //站立等待时间（秒）
-    private const float RotationTweenTime = 0.4f; //翻转动画时间（秒）
+    private const float StandingWaitTime = 1f; //站立等待时间（秒）
+    private const float RotationTweenTime = 0.3f; //翻转动画时间（秒）
     private const float RotationValue = 90; //翻转角度
     private Color DarkColor = new Color(0.165f, 0.165f, 0.165f, 1);  //黑色
 

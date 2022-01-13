@@ -258,12 +258,12 @@ public class BuildTerrainTool : MonoBehaviour
         buildTerrainTool_PieceController.Material.color = buildTerrainTool_PieceController.Color;
         if (userPieceInfo.EnableDirection != Vector3.zero)
         {
-            buildTerrainTool_PieceController.DirectionDict[Vector3.left] = userPieceInfo.EnableDirection.x == -1 || userPieceInfo.EnableDirection.x == 2;
-            buildTerrainTool_PieceController.DirectionDict[Vector3.right] = userPieceInfo.EnableDirection.x == 1 || userPieceInfo.EnableDirection.x == 2;
-            buildTerrainTool_PieceController.DirectionDict[Vector3.forward] = userPieceInfo.EnableDirection.z == 1 || userPieceInfo.EnableDirection.x == 2;
-            buildTerrainTool_PieceController.DirectionDict[Vector3.back] = userPieceInfo.EnableDirection.z == -1 || userPieceInfo.EnableDirection.x == 2;
-            buildTerrainTool_PieceController.DirectionDict[Vector3.up] = userPieceInfo.EnableDirection.y == 1;
-            buildTerrainTool_PieceController.DirectionDict[Vector3.down] = userPieceInfo.EnableDirection.y == -1;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.left] = (int)userPieceInfo.EnableDirection.x == -1 || (int)userPieceInfo.EnableDirection.x == 2;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.right] = (int)userPieceInfo.EnableDirection.x == 1 || (int)userPieceInfo.EnableDirection.x == 2;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.forward] = (int)userPieceInfo.EnableDirection.z == 1 || (int)userPieceInfo.EnableDirection.z == 2;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.back] = (int)userPieceInfo.EnableDirection.z == -1 || (int)userPieceInfo.EnableDirection.z == 2;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.up] = (int)userPieceInfo.EnableDirection.y == 1;
+            buildTerrainTool_PieceController.DirectionDict[Vector3.down] = (int)userPieceInfo.EnableDirection.y == -1;
         }
 
         string[] actionNames = userPieceInfo.ActionNames;

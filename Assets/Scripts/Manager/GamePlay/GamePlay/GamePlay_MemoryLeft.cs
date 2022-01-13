@@ -49,9 +49,9 @@ public class GamePlay_MemoryLeft : IGamePlayController
         m_OldTerrain = new Dictionary<Vector3, bool>();
         m_NextTerrain = new List<PieceManager.UserPieceInfo>();
 
-        AddListeners();     //添加监听
         InitGamePlayInfo(); //初始化数据
         EnterProcedure();   //进入
+        AddListeners();     //添加监听
     }
 
     public void UnInit()
