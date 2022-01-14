@@ -4,7 +4,6 @@ Library
 *.sln
 obj
 ProjectSettings
-Packages
 Logs
 Temp
-win
+StreamingAssets

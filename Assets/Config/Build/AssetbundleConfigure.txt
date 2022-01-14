@@ -1,5 +1,11 @@
 {
     "Configures": [
+		{
+            "ConfigureType": 2,
+            "AssetBundlePackagePath": "Config",
+            "AssetBundlePackageUserName": "",
+            "IsBuildDependent": false
+        },
         {
             "ConfigureType": 5,
             "AssetBundlePackagePath": "Model",
