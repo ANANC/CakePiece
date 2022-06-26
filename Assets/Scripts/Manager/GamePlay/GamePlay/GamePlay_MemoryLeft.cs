@@ -11,6 +11,7 @@ public class GamePlay_MemoryLeft : IGamePlayController
 
     public class UserGamePlayInfo : Stone_BaseUserConfigData
     {
+        public string PieceArtInfoName;         //地形配置文件名
         public string[] PieceActions;           //地块行为集合
         public string TerrainName;              //地形
         public string MainPlayerModelName;      //主玩家模型名
@@ -44,6 +45,8 @@ public class GamePlay_MemoryLeft : IGamePlayController
 
         Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
         m_GamePlayInfo = userConfigManager.GetConfig<UserGamePlayInfo>(configName);
+
+        PieceManager.SetArtInfoName(m_GamePlayInfo.PieceArtInfoName);
 
         m_SequenceDict = new Dictionary<string, Sequence>();
         m_OldTerrain = new Dictionary<Vector3, bool>();

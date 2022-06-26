@@ -46,13 +46,7 @@ public class PieceManager : Stone_Manager
 
     public class UserPieceArtInfo: Stone_BaseUserConfigData
     {
-        public string PiecePrefabPath;          //块              资源路径
-        public string PieceDirectionUpPath;     //块方向上        资源路径
-        public string PieceDirectionDownPath;   //块方向下        资源路径
-        public string PieceObstructLeftPath;    //块拦截方向左    资源路径
-        public string PieceObstructRightPath;   //块拦截方向右    资源路径
-        public string PieceObstructForwardPath; //块拦截方向前    资源路径
-        public string PieceObstructBackPath;    //块拦截方向后    资源路径
+        public string PiecePrefabPath;          //块 资源路径
         public Vector3 OriginPosition;          //原点
         public float HorizontalInterval;        //水平间隔
         public float VerticalInterval;          //垂直间隔
@@ -105,8 +99,12 @@ public class PieceManager : Stone_Manager
 
     public override void Active()
     {
+    }
+
+    public void SetArtInfoName(string infoName)
+    {
         Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
-        m_UserPieceArtInfo = userConfigManager.GetConfig<UserPieceArtInfo>();
+        m_UserPieceArtInfo = userConfigManager.GetConfig<UserPieceArtInfo>(infoName);
     }
 
     public void AddAcitonCreateFunc(string actionName,Func<PieceAction> createFunc)

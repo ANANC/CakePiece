@@ -1,22 +1,23 @@
-ï»¿using DG.Tweening;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GamePlay_ThreeDimensionalSpace : IGamePlayController
-{
-    public const float TweenUpdateTime = 1;    //åŠ¨ç”»æ›´æ–°æ—¶é—´ï¼ˆå•ä½ï¼šsï¼‰
-    public const float TweenMoveLength = 2;    //åŠ¨ç”»ç§»åŠ¨è·ç¦»ï¼ˆå•ä½ï¼šç±³ï¼‰
 
-    public class UserGamePlayInfo:Stone_BaseUserConfigData
+public class GamePlay_Jigsaw : IGamePlayController
+{
+    public const float TweenUpdateTime = 1;    //¶¯»­¸üĞÂÊ±¼ä£¨µ¥Î»£ºs£©
+    public const float TweenMoveLength = 2;    //¶¯»­ÒÆ¶¯¾àÀë£¨µ¥Î»£ºÃ×£©
+
+    public class UserGamePlayInfo : Stone_BaseUserConfigData
     {
-        public string PieceArtInfoName;         //åœ°å½¢é…ç½®æ–‡ä»¶å
-        public string[] PieceActions;           //åœ°å—è¡Œä¸ºé›†åˆ
-        public string TerrainName;              //åœ°å½¢
-        public Vector3 OriginLogicPosition;     //å‡ºç”Ÿç‚¹
-        public string MainPlayerModelName;      //ä¸»ç©å®¶æ¨¡å‹å
-        public string[] MainPlayerActions;      //ä¸»ç©å®¶è¡Œä¸ºé›†åˆ
-        public string MainCameraConfigName;     //ä¸»æ‘„åƒæœºé…ç½®å
+        public string PieceArtInfoName;         //µØĞÎÅäÖÃÎÄ¼şÃû
+        public string[] PieceActions;           //µØ¿éĞĞÎª¼¯ºÏ
+        public string TerrainName;              //µØĞÎ
+        public Vector3 OriginLogicPosition;     //³öÉúµã
+        public string MainPlayerModelName;      //Ö÷Íæ¼ÒÄ£ĞÍÃû
+        public string[] MainPlayerActions;      //Ö÷Íæ¼ÒĞĞÎª¼¯ºÏ
+        public string MainCameraConfigName;     //Ö÷ÉãÏñ»úÅäÖÃÃû
     }
 
     private UserGamePlayInfo m_GamePlayInfo;
@@ -44,9 +45,9 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
         EventManager.AddListener<GameEventDefine.MainPlayerMoveEventInfo>(GameEventDefine.MainPlayerMoveEvent, this, this.MainPlayerMoveEventListener);
 
-        InitGamePlayInfo(); //åˆå§‹åŒ–æ•°æ®
+        InitGamePlayInfo(); //³õÊ¼»¯Êı¾İ
 
-        EnterProcedure();   //è¿›å…¥
+        EnterProcedure();   //½øÈë
     }
 
     public void UnInit()
@@ -55,7 +56,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     }
 
     /// <summary>
-    /// åˆå§‹åŒ–ç©æ³•æ•°æ®
+    /// ³õÊ¼»¯Íæ·¨Êı¾İ
     /// </summary>
     private void InitGamePlayInfo()
     {
@@ -70,7 +71,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     }
 
     /// <summary>
-    /// è¿›å…¥æµç¨‹
+    /// ½øÈëÁ÷³Ì
     /// </summary>
     private void EnterProcedure()
     {
@@ -86,7 +87,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     }
 
     /// <summary>
-    /// ç›‘å¬äº‹ä»¶ï¼šMainPlayerMoveEvent
+    /// ¼àÌıÊÂ¼ş£ºMainPlayerMoveEvent
     /// </summary>
     /// <param name="mainPlayerMoveEventInfo"></param>
     private void MainPlayerMoveEventListener(GameEventDefine.MainPlayerMoveEventInfo mainPlayerMoveEventInfo)
@@ -100,7 +101,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         if (isUpdateFloor)
         {
             TerrainManager.SetCurFloor(newFloor);
-            ChangeFloorArt(curFloor,newFloor, mainPlayerMoveEventInfo.OldLogicPosition, mainPlayerMoveEventInfo.NewLogicPosition);
+            ChangeFloorArt(curFloor, newFloor, mainPlayerMoveEventInfo.OldLogicPosition, mainPlayerMoveEventInfo.NewLogicPosition);
         }
         else
         {
@@ -109,17 +110,17 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     }
 
     /// <summary>
-    /// æ”¹å˜å±‚çº§è¡¨ç°
+    /// ¸Ä±ä²ã¼¶±íÏÖ
     /// </summary>
     /// <param name="newFloor"></param>
-    private void ChangeFloorArt(int curFloor,int newFloor, Vector3 oldLogicPosition, Vector3 newLogicPosition)
+    private void ChangeFloorArt(int curFloor, int newFloor, Vector3 oldLogicPosition, Vector3 newLogicPosition)
     {
         string sequenceName = "ChangeFloorArt";
         Sequence sequence = DOTween.Sequence();
 
         m_SequenceDict.AddSequenceByOnlyRun(sequenceName, sequence);
 
-        sequence.AppendCallback(() =>   //éšè—ä¸»ç©å®¶
+        sequence.AppendCallback(() =>   //Òş²ØÖ÷Íæ¼Ò
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -127,7 +128,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //ç¦»å¼€åœ°å—
+        sequence.AppendCallback(() =>   //Àë¿ªµØ¿é
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo();
             info.LogicPos = oldLogicPosition;
@@ -135,10 +136,10 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, info);
         });
 
-        //å¾€ä¸‹èµ°
+        //ÍùÏÂ×ß
         if (curFloor > newFloor)
         {
-            sequence.AppendCallback(() =>   //åŸæœ¬çš„å±‚ä¸‹é™
+            sequence.AppendCallback(() =>   //Ô­±¾µÄ²ãÏÂ½µ
             {
                 GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEventInfo();
                 info.DownFloor = curFloor;
@@ -147,13 +148,13 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
                 EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_DownFloorEvent, info);
             });
-            sequence.AppendInterval(TweenUpdateTime);   //æ’å…¥åŠ¨ç”»æ—¶é—´
+            sequence.AppendInterval(TweenUpdateTime);   //²åÈë¶¯»­Ê±¼ä
         }
 
-        // å¾€ä¸Šèµ°
+        // ÍùÉÏ×ß
         else if (curFloor < newFloor)
         {
-            sequence.AppendCallback(() =>   //åŸæœ¬çš„å±‚ä¸Šå‡
+            sequence.AppendCallback(() =>   //Ô­±¾µÄ²ãÉÏÉı
             {
                 GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEventInfo();
                 info.UpFloor = curFloor;
@@ -162,10 +163,10 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
                 EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_UpFloorEvent, info);
             });
-            sequence.AppendInterval(TweenUpdateTime);   //æ’å…¥åŠ¨ç”»æ—¶é—´
+            sequence.AppendInterval(TweenUpdateTime);   //²åÈë¶¯»­Ê±¼ä
         }
 
-        sequence.AppendCallback(() =>   //é‡ç½®æ–°å±‚çš„ä½ç½®
+        sequence.AppendCallback(() =>   //ÖØÖÃĞÂ²ãµÄÎ»ÖÃ
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEventInfo();
             info.Floor = newFloor;
@@ -173,7 +174,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_ResetArtPositionFromLogicEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //æ˜¾ç¤ºæ–°å±‚
+        sequence.AppendCallback(() =>   //ÏÔÊ¾ĞÂ²ã
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEventInfo();
             info.Floor = newFloor;
@@ -181,7 +182,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_ShowFloorEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //é‡ç½®ä¸»ç©å®¶ä½ç½®
+        sequence.AppendCallback(() =>   //ÖØÖÃÖ÷Íæ¼ÒÎ»ÖÃ
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -191,7 +192,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //æ˜¾ç¤ºä¸»ç©å®¶
+        sequence.AppendCallback(() =>   //ÏÔÊ¾Ö÷Íæ¼Ò
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -200,7 +201,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
         });
 
 
-        sequence.AppendCallback(() =>   //è¿›å…¥åœ°å—
+        sequence.AppendCallback(() =>   //½øÈëµØ¿é
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo();
             info.LogicPos = newLogicPosition;
@@ -210,7 +211,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
     }
 
     /// <summary>
-    /// æ”¹å˜ç©å®¶ä½ç½®è¡¨ç°
+    /// ¸Ä±äÍæ¼ÒÎ»ÖÃ±íÏÖ
     /// </summary>
     private void ChangePlayerPositionArt(Vector3 oldLogicPosition, Vector3 newLogicPosition)
     {
@@ -219,7 +220,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
 
         m_SequenceDict.AddSequenceByOnlyRun(sequenceName, sequence);
 
-        sequence.AppendCallback(() =>   //éšè—ä¸»ç©å®¶
+        sequence.AppendCallback(() =>   //Òş²ØÖ÷Íæ¼Ò
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -227,7 +228,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_HideEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //ç¦»å¼€åœ°å—
+        sequence.AppendCallback(() =>   //Àë¿ªµØ¿é
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEventInfo();
             info.LogicPos = oldLogicPosition;
@@ -235,7 +236,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandOutPieceEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //é‡ç½®ä¸»ç©å®¶ä½ç½®
+        sequence.AppendCallback(() =>   //ÖØÖÃÖ÷Íæ¼ÒÎ»ÖÃ
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -245,7 +246,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_UpdateArtPositionEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //æ˜¾ç¤ºä¸»ç©å®¶
+        sequence.AppendCallback(() =>   //ÏÔÊ¾Ö÷Íæ¼Ò
         {
             GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEventInfo info = new GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEventInfo();
             info.PlayerId = RoleManager.GetMainPlayerId();
@@ -253,7 +254,7 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_PlayerArt_ShowEvent, info);
         });
 
-        sequence.AppendCallback(() =>   //è¿›å…¥åœ°å—
+        sequence.AppendCallback(() =>   //½øÈëµØ¿é
         {
             GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo info = new GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEventInfo();
             info.LogicPos = newLogicPosition;
@@ -261,6 +262,4 @@ public class GamePlay_ThreeDimensionalSpace : IGamePlayController
             EventManager.Execute(GameEventDefine.ThreeDimensionalSpace_FloorArt_StandInPieceEvent, info);
         });
     }
-
-
 }

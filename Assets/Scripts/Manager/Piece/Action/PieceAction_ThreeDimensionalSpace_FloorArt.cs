@@ -12,6 +12,18 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         return new PieceAction_ThreeDimensionalSpace_FloorArt();
     }
 
+    public class ThreeDimensionalSpaceArtInfo : Stone_BaseUserConfigData
+    {
+        public string PieceDirectionUpPath;     //块方向上        资源路径
+        public string PieceDirectionDownPath;   //块方向下        资源路径
+        public string PieceObstructLeftPath;    //块拦截方向左    资源路径
+        public string PieceObstructRightPath;   //块拦截方向右    资源路径
+        public string PieceObstructForwardPath; //块拦截方向前    资源路径
+        public string PieceObstructBackPath;    //块拦截方向后    资源路径
+    }
+
+    private ThreeDimensionalSpaceArtInfo m_UserPieceArtInfo;
+
     private Dictionary<string, Sequence> m_SequenceDict;
 
     private SpriteRenderer m_DirectionUpSpriteRenderer;
@@ -30,6 +42,9 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
 
         EventManager = Stone_RunTime.GetManager<Stone_EventManager>(Stone_EventManager.Name);
         PieceManager = Stone_RunTime.GetManager<PieceManager>(PieceManager.Name);
+
+        Stone_UserConfigManager userConfigManager = Stone_RunTime.GetManager<Stone_UserConfigManager>(Stone_UserConfigManager.Name);
+        m_UserPieceArtInfo = userConfigManager.GetConfig<ThreeDimensionalSpaceArtInfo>();
 
         EventManager.AddListener<PieceCreateEventInfo>(PieceCreateEvent, this, PieceCreateEventListener);
         EventManager.AddListener<PieceDestroyEventInfo>(PieceDestroyEvent, this, PieceDestroyEventListener);
@@ -50,14 +65,12 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         EventManager.DeleteTargetAllListener(this);
         m_SequenceDict.StopAllSequence();
 
-        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
-
-        UnInitSpriteRenderer(userPieceArtInfo.PieceDirectionUpPath,ref m_DirectionUpSpriteRenderer);
-        UnInitSpriteRenderer(userPieceArtInfo.PieceDirectionDownPath, ref m_DirectionDownSpriteRenderer);
-        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructLeftPath, ref m_ObstructLeftSpriteRenderer);
-        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructRightPath, ref m_ObstructRightSpriteRenderer);
-        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructForwardPath, ref m_ObstructForwardSpriteRenderer);
-        UnInitSpriteRenderer(userPieceArtInfo.PieceObstructBackPath, ref m_ObstructBackSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceDirectionUpPath,ref m_DirectionUpSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceDirectionDownPath, ref m_DirectionDownSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceObstructLeftPath, ref m_ObstructLeftSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceObstructRightPath, ref m_ObstructRightSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceObstructForwardPath, ref m_ObstructForwardSpriteRenderer);
+        UnInitSpriteRenderer(m_UserPieceArtInfo.PieceObstructBackPath, ref m_ObstructBackSpriteRenderer);
 
         PieceManager = null;
         EventManager = null;
@@ -75,14 +88,12 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         gameObject.SetActive(curFloor == myFloor);
         Transform transform = gameObject.transform;
 
-        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
-
-        InitSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
-        InitSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
-        InitSpriteRenderer(Vector3.left, false, userPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
-        InitSpriteRenderer(Vector3.right, false, userPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
-        InitSpriteRenderer(Vector3.forward, false, userPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
-        InitSpriteRenderer(Vector3.back, false, userPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
+        InitSpriteRenderer(Vector3.up, true, m_UserPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+        InitSpriteRenderer(Vector3.down, true, m_UserPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        InitSpriteRenderer(Vector3.left, false, m_UserPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
+        InitSpriteRenderer(Vector3.right, false, m_UserPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
+        InitSpriteRenderer(Vector3.forward, false, m_UserPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
+        InitSpriteRenderer(Vector3.back, false, m_UserPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
     }
 
     private void InitSpriteRenderer(Vector3 direction,bool enable,string resourcePath,Transform parent,ref SpriteRenderer spriteRenderer)
@@ -131,10 +142,8 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
             GameObject gameObject = m_PieceController.GetGameObject();
             Transform transform = gameObject.transform;
 
-            PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
-
-            ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
-            ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+            ResetSpriteRenderer(Vector3.up, true, m_UserPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+            ResetSpriteRenderer(Vector3.down, true, m_UserPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
         }
     }
 
@@ -146,10 +155,8 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
             GameObject gameObject = m_PieceController.GetGameObject();
             Transform transform = gameObject.transform;
 
-            PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
-
-            ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
-            ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+            ResetSpriteRenderer(Vector3.up, true, m_UserPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+            ResetSpriteRenderer(Vector3.down, true, m_UserPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
         }
     }
 
@@ -164,14 +171,12 @@ public class PieceAction_ThreeDimensionalSpace_FloorArt : PieceAction
         GameObject gameObject = m_PieceController.GetGameObject();
         Transform transform = gameObject.transform;
 
-        PieceManager.UserPieceArtInfo userPieceArtInfo = PieceManager.GetUserPieceArtInfo();
-
-        ResetSpriteRenderer(Vector3.up, true, userPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
-        ResetSpriteRenderer(Vector3.down, true, userPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
-        ResetSpriteRenderer(Vector3.left, false, userPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
-        ResetSpriteRenderer(Vector3.right, false, userPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
-        ResetSpriteRenderer(Vector3.forward, false, userPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
-        ResetSpriteRenderer(Vector3.back, false, userPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
+        ResetSpriteRenderer(Vector3.up, true, m_UserPieceArtInfo.PieceDirectionUpPath, transform, ref m_DirectionUpSpriteRenderer);
+        ResetSpriteRenderer(Vector3.down, true, m_UserPieceArtInfo.PieceDirectionDownPath, transform, ref m_DirectionDownSpriteRenderer);
+        ResetSpriteRenderer(Vector3.left, false, m_UserPieceArtInfo.PieceObstructLeftPath, transform, ref m_ObstructLeftSpriteRenderer);
+        ResetSpriteRenderer(Vector3.right, false, m_UserPieceArtInfo.PieceObstructRightPath, transform, ref m_ObstructRightSpriteRenderer);
+        ResetSpriteRenderer(Vector3.forward, false, m_UserPieceArtInfo.PieceObstructForwardPath, transform, ref m_ObstructForwardSpriteRenderer);
+        ResetSpriteRenderer(Vector3.back, false, m_UserPieceArtInfo.PieceObstructBackPath, transform, ref m_ObstructBackSpriteRenderer);
     }
 
 

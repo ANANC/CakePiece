@@ -1,4 +1,5 @@
 {
+    "PieceArtInfoName": "500000_UserPieceArtInfo",
     "PieceActions": [
         "PieceAction_ThreeDimensionalSpace_FloorArt"
     ],
