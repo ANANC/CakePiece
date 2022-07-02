@@ -6,6 +6,9 @@ using UnityEngine;
 [CustomEditor(typeof(BuildTerrainTool_BuildingController))]
 public class BuildTerrainTool_BuildingControllerEditorWindow : Editor
 {
+    List<string> AddComponentTypeNameList = new List<string>();
+    string AddComponentTypeName;
+
     public void Awake()
     {
         SceneView.duringSceneGui += OnSceneGUI;
@@ -18,6 +21,34 @@ public class BuildTerrainTool_BuildingControllerEditorWindow : Editor
         base.OnInspectorGUI();
 
         EditorGUILayout.Space(10);
+
+        EditorGUILayout.BeginHorizontal();
+
+        EditorGUILayout.LabelField("添加类：", GUILayout.Width(50));
+        AddComponentTypeName = EditorGUILayout.TextField( AddComponentTypeName);
+
+        if (GUILayout.Button("确定", GUILayout.Width(60)))
+        {
+            AddComponentTypeNameList.Add(AddComponentTypeName);
+            AddComponentTypeName = string.Empty;
+        }
+        EditorGUILayout.EndHorizontal();
+
+        for (int index = 0;index< AddComponentTypeNameList.Count;index++)
+        {
+            EditorGUILayout.BeginHorizontal("helpbox");
+
+            EditorGUILayout.LabelField(index.ToString(), GUILayout.Width(30));
+            EditorGUILayout.LabelField(AddComponentTypeNameList[index]);
+
+            if(GUILayout.Button("-", GUILayout.Width(40)))
+            {
+                AddComponentTypeNameList.RemoveAt(index);
+                EditorGUILayout.EndHorizontal();
+                break;
+            }
+            EditorGUILayout.EndHorizontal();
+        }
 
         //if (GUILayout.Button("生成 [山]"))
         //{

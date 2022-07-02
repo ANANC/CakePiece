@@ -12,7 +12,7 @@ public class BuildTerrainTool_BuildingController : MonoBehaviour
     public const float SideLength = 0.5f;     //边宽
     public const float FloorLength = 1f;    //层高
 
-
+    public List<System.Type> AddComponents;   //附加到piece上的components
     private class MountainInfo
     {
         public float Floor;

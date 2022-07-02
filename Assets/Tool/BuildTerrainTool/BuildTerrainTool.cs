@@ -20,15 +20,26 @@ public class BuildTerrainTool : MonoBehaviour
     public const string OutputFolderPath = "Config/Terrain";
     public const string PieceRootName = "Pieces";
 
-    public const float PieceInterval = 1.2f;            //排序 块间隔
-    public const float PieceRadius = 0.2f;              //scene界面 块点击
-    public const float PieceDirectionRadius = 0.45f;    //scene界面 方向点击
+    public static float PieceInterval = 1.2f;            //排序 块间隔
+    public static float PieceRadius = 0.2f;              //scene界面 块点击
+    public static float PieceDirectionRadius = 0.45f;    //scene界面 方向点击
 
     private Dictionary<string, Type> m_PieceActionName2Type = new Dictionary<string, Type>()
     {
         {PieceAction_MemoryLeft.Name,typeof(BuildTerrainTool_PieceAction_MemoryLeft) }
     };
 
+    [MenuItem("GamePlay/TerrainTool/Create", false, 200)]
+    public static void CreateTerrainTool()
+    {
+        GameObject gameObject = new GameObject("TerrainTool");
+        BuildTerrainTool buildTerrainTool = gameObject.AddComponent<BuildTerrainTool>();
+        BuildTerrainTool_BuildingController buildingController = gameObject.AddComponent<BuildTerrainTool_BuildingController>();
+
+        buildTerrainTool.TerrainRoot = gameObject;
+
+        buildingController.buildTerrainTool = buildTerrainTool;
+    }
 
     public string GetMeshRendererPath()
     {

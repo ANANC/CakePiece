@@ -14,6 +14,9 @@ public class BuildTerrainToolEditorWindow : Editor
 
         EditorGUILayout.Space(10);
 
+        BuildTerrainTool.PieceInterval = EditorGUILayout.FloatField("排序间隔：",BuildTerrainTool.PieceInterval);
+
+        EditorGUILayout.Space(10);
 
         if (!string.IsNullOrEmpty(buildTerrainTool.TerrainName))
         {
