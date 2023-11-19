@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class BuildTerrainTool_PieceAction_Jigsaw : MonoBehaviour
 {
-    public static string Piece_One_Out_Path = "Assets/Texture/110000_Piece/piece_03.gif";
-    public static string Piece_Two_Out_Close_Path = "Assets/Texture/110000_Piece/piece_05.gif";
-    public static string Piece_Two_Out_Far_Path = "Assets/Texture/110000_Piece/piece_07.gif";
-    public static string Piece_Three_Out_Path = "Assets/Texture/110000_Piece/piece_09.gif";
-    public static string Piece_Four_Out_Path = "Assets/Texture/110000_Piece/piece_11.gif";
-    public static string Piece_Four_In_Path = "Assets/Texture/110000_Piece/piece_17.gif";
-    public static string Piece_Perfect_Path = "Assets/Texture/110000_Piece/piece_14.gif";
+    public static string Piece_One_Out_Path = "Assets/Texture/110000_Piece/piece_03.png";
+    public static string Piece_Two_Out_Close_Path = "Assets/Texture/110000_Piece/piece_05.png";
+    public static string Piece_Two_Out_Far_Path = "Assets/Texture/110000_Piece/piece_07.png";
+    public static string Piece_Three_Out_Path = "Assets/Texture/110000_Piece/piece_09.png";
+    public static string Piece_Four_Out_Path = "Assets/Texture/110000_Piece/piece_11.png";
+    public static string Piece_Four_In_Path = "Assets/Texture/110000_Piece/piece_17.png";
+    public static string Piece_Perfect_Path = "Assets/Texture/110000_Piece/piece_14.png";
 }
 
 
 [CustomEditor(typeof(BuildTerrainTool_PieceAction_Jigsaw))]
 public class BuildTerrainTool_PieceAction_JigsawEditorWindow : Editor
 {
+    Dictionary<string, Texture> path2TextureDict = new Dictionary<string, Texture>();
 
     public override void OnInspectorGUI()
     {
@@ -139,8 +140,17 @@ public class BuildTerrainTool_PieceAction_JigsawEditorWindow : Editor
             return;
         }
 
-        Texture mainTexture = AssetDatabase.LoadAssetAtPath<Texture>(path);
-        pieceController.Material.mainTexture = mainTexture;
+        Texture mainTexture;
+        if (!path2TextureDict.TryGetValue(path,out mainTexture))
+        {
+            mainTexture = AssetDatabase.LoadAssetAtPath<Texture>(path);
+            if(mainTexture!=null)
+            {
+                path2TextureDict.Add(path, mainTexture);
+            }
+        }
+
+        pieceController.MeshRenderer.material.mainTexture = mainTexture;
 
         quaternion.eulerAngles = angle;
         pieceController.transform.rotation = quaternion;

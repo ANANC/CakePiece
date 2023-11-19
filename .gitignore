@@ -8,3 +8,7 @@ Logs
 Temp
 StreamingAssets
 build
+Binaries
+Intermediate
+Platforms
+DerivedDataCache

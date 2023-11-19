@@ -15,12 +15,13 @@ public class BuildTerrainTool : MonoBehaviour
     public Transform PieceRoot;
     public string PieceMesh;
 
+    public string PiecePrefabPath = "Assets/Model/110000_Piece/Prefab/110000_Piece.prefab";
     public GameObject PiecePrefab;
 
     public const string OutputFolderPath = "Config/Terrain";
     public const string PieceRootName = "Pieces";
 
-    public static float PieceInterval = 1.2f;            //排序 块间隔
+    public static float PieceInterval = 1f;            //排序 块间隔
     public static float PieceRadius = 0.2f;              //scene界面 块点击
     public static float PieceDirectionRadius = 0.45f;    //scene界面 方向点击
 
@@ -37,8 +38,9 @@ public class BuildTerrainTool : MonoBehaviour
         BuildTerrainTool_BuildingController buildingController = gameObject.AddComponent<BuildTerrainTool_BuildingController>();
 
         buildTerrainTool.TerrainRoot = gameObject;
-
         buildingController.buildTerrainTool = buildTerrainTool;
+
+        buildingController.AddComponents.Add(typeof(BuildTerrainTool_PieceAction_Jigsaw));
     }
 
     public string GetMeshRendererPath()
@@ -253,6 +255,11 @@ public class BuildTerrainTool : MonoBehaviour
 
     public BuildTerrainTool_PieceController CreatePieceController(PieceManager.UserPieceInfo userPieceInfo, Transform pieceRoot, string meshPath)
     {
+        if (PiecePrefab == null)
+        {
+            PiecePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PiecePrefabPath);
+        }
+
         GameObject gameObject = GameObject.Instantiate(PiecePrefab);
         Transform transform = gameObject.transform;
 
@@ -291,6 +298,16 @@ public class BuildTerrainTool : MonoBehaviour
 
             BuildTerrainTool_PieceAction pieceAction = (BuildTerrainTool_PieceAction) gameObject.AddComponent(actionType);
             pieceAction.SetJsonStr(actionInfo);
+        }
+
+        BuildTerrainTool_BuildingController buildingController = GetComponent<BuildTerrainTool_BuildingController>();
+        if (buildingController != null)
+        {
+            for(int index = 0;index< buildingController.AddComponents.Count;index++)
+            {
+                Type componetType = buildingController.AddComponents[index];
+                gameObject.AddComponent(componetType);
+            }
         }
 
         return buildTerrainTool_PieceController;

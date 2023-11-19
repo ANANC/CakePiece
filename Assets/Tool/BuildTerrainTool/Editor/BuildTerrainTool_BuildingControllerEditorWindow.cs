@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(BuildTerrainTool_BuildingController))]
 public class BuildTerrainTool_BuildingControllerEditorWindow : Editor
 {
-    List<string> AddComponentTypeNameList = new List<string>();
     string AddComponentTypeName;
 
     public void Awake()
@@ -25,25 +25,35 @@ public class BuildTerrainTool_BuildingControllerEditorWindow : Editor
         EditorGUILayout.BeginHorizontal();
 
         EditorGUILayout.LabelField("添加类：", GUILayout.Width(50));
-        AddComponentTypeName = EditorGUILayout.TextField( AddComponentTypeName);
+        AddComponentTypeName = EditorGUILayout.TextField(AddComponentTypeName);
 
         if (GUILayout.Button("确定", GUILayout.Width(60)))
         {
-            AddComponentTypeNameList.Add(AddComponentTypeName);
+            string path = Application.dataPath + "/../Library/ScriptAssemblies/Assembly-CSharp.dll";
+            Assembly assembly = Assembly.LoadFile(path);
+            System.Type componentType = assembly.GetType(AddComponentTypeName);
+            if (componentType != null)
+            {
+                buildingController.AddComponents.Add(componentType);
+            }
             AddComponentTypeName = string.Empty;
         }
         EditorGUILayout.EndHorizontal();
 
-        for (int index = 0;index< AddComponentTypeNameList.Count;index++)
+        for (int index = 0; index < buildingController.AddComponents.Count; index++)
         {
             EditorGUILayout.BeginHorizontal("helpbox");
 
-            EditorGUILayout.LabelField(index.ToString(), GUILayout.Width(30));
-            EditorGUILayout.LabelField(AddComponentTypeNameList[index]);
+            System.Type componentType = buildingController.AddComponents[index];
+            string componentTypeName = componentType.Name;
 
-            if(GUILayout.Button("-", GUILayout.Width(40)))
+            EditorGUILayout.LabelField(index.ToString(), GUILayout.Width(30));
+            EditorGUILayout.LabelField(componentTypeName);
+
+            if (GUILayout.Button("-", GUILayout.Width(40)))
             {
-                AddComponentTypeNameList.RemoveAt(index);
+                buildingController.AddComponents.RemoveAt(index);
+
                 EditorGUILayout.EndHorizontal();
                 break;
             }

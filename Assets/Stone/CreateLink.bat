@@ -1,9 +1,9 @@
  @echo off
 
 @rem 【自行修改】项目目录地址
-set GamePath=F:\SelfEnvironment\CakePiece
+set GamePath=E:\SelfEnvironment\CakePiece
 @rem 【自行修改】Stone框架的目录地址
-set StonePath=F:\SelfEnvironment\StoneFramework
+set StonePath=E:\SelfEnvironment\StoneFramework
 
 @rem 项目框架文件夹名
 set MyGameStoneName=StoneLink
